@@ -6,27 +6,7 @@ import 'models.dart';
 import 'scope.dart';
 import 'theme.dart';
 
-/// A customizable virtual on-screen keyboard.
-///
-/// This keyboard integrates with [VirtualKeypadScope] to automatically
-/// send input to the focused [VirtualKeypadTextField].
-///
-/// Example:
-/// ```dart
-/// VirtualKeypadScope(
-///   child: Column(
-///     children: [
-///       VirtualKeypadTextField(controller: controller),
-///       VirtualKeypad(
-///         type: KeyboardType.text,
-///         theme: VirtualKeypadTheme.light,
-///       ),
-///     ],
-///   ),
-/// )
-/// ```
 class VirtualKeypad extends StatefulWidget {
-  /// Creates a virtual keyboard.
   const VirtualKeypad({
     super.key,
     this.type = KeyboardType.text,
@@ -40,34 +20,14 @@ class VirtualKeypad extends StatefulWidget {
     this.animationCurve = Curves.easeInOut,
   });
 
-  /// The type of keyboard layout.
   final KeyboardType type;
-
-  /// Height of the keyboard.
   final double height;
-
-  /// Width of the keyboard (defaults to screen width).
   final double? width;
-
-  /// Theme for the keyboard appearance.
   final VirtualKeypadTheme theme;
-
-  /// Called when a key is pressed.
   final void Function(VirtualKey key)? onKeyPressed;
-
-  /// Custom keyboard layout (used when type is [KeyboardType.custom]).
   final KeyboardLayout? customLayout;
-
-  /// When true, the keyboard is hidden when no text field is focused.
-  /// When false (default), the keyboard is always visible.
   final bool hideWhenUnfocused;
-
-  /// Duration for the show/hide animation when [hideWhenUnfocused] is true.
-  /// Defaults to 200 milliseconds.
   final Duration animationDuration;
-
-  /// Curve for the show/hide animation.
-  /// Defaults to [Curves.easeInOut].
   final Curve animationCurve;
 
   @override
@@ -83,7 +43,6 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Listen to scope changes for hideWhenUnfocused
     final newScope = VirtualKeypadScope.of(context);
     if (_scope != newScope) {
       _scope?.removeActiveControllerListener(_onActiveControllerChanged);
@@ -97,7 +56,6 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   @override
   void didUpdateWidget(VirtualKeypad oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Update listener if hideWhenUnfocused changed
     if (widget.hideWhenUnfocused != oldWidget.hideWhenUnfocused) {
       if (widget.hideWhenUnfocused) {
         _scope?.addActiveControllerListener(_onActiveControllerChanged);
@@ -147,7 +105,6 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       final text = key.getInsertText(shift: _shift, capsLock: _capsLock);
       scope?.insertText(text);
 
-      // Reset shift after character input (unless caps lock)
       if (_shift && !_capsLock) {
         setState(() => _shift = false);
       }
@@ -163,7 +120,6 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
         case KeyAction.space:
           scope?.insertText(' ');
-          // Auto-capitalize after ". "
           final text = scope?.activeController?.text ?? '';
           if (text.endsWith('. ') ||
               text.endsWith('? ') ||
@@ -208,7 +164,6 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
           break;
 
         case KeyAction.switchLanguage:
-          // TODO: Implement language switching
           break;
 
         default:
@@ -221,14 +176,14 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
   @override
   Widget build(BuildContext context) {
-    final isVisible = !widget.hideWhenUnfocused || (_scope?.hasActiveController ?? false);
-    
+    final isVisible =
+        !widget.hideWhenUnfocused || (_scope?.hasActiveController ?? false);
+
     final width = widget.width ?? MediaQuery.of(context).size.width;
     final layout = _currentLayout;
     final rows = layout.length;
     final maxColumns = layout.map((row) => row.length).reduce(max);
 
-    // Calculate key dimensions
     final usedHeight = (rows + 1) * widget.theme.verticalGap;
     final keyHeight = (widget.height - usedHeight) / rows;
     final usedWidth = (maxColumns + 1) * widget.theme.horizontalGap;
@@ -269,27 +224,22 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       ),
     );
 
-    // If hideWhenUnfocused is false, just show the keyboard without animation
     if (!widget.hideWhenUnfocused) {
       return keyboardContent;
     }
 
-    // Animated show/hide
-    return AnimatedSlide(
-      duration: widget.animationDuration,
-      curve: widget.animationCurve,
-      offset: isVisible ? Offset.zero : const Offset(0, 1),
-      child: AnimatedOpacity(
+    return ClipRect(
+      child: AnimatedAlign(
         duration: widget.animationDuration,
         curve: widget.animationCurve,
-        opacity: isVisible ? 1.0 : 0.0,
+        alignment: Alignment.topCenter,
+        heightFactor: isVisible ? 1.0 : 0.0,
         child: keyboardContent,
       ),
     );
   }
 }
 
-/// Widget for a single key.
 class _KeyWidget extends StatefulWidget {
   const _KeyWidget({
     super.key,
@@ -352,7 +302,6 @@ class _KeyWidgetState extends State<_KeyWidget> {
         ? widget.theme.actionKeyDecoration
         : widget.theme.keyDecoration;
 
-    // Calculate width based on flex
     final width = widget.baseWidth * key.flex +
         (key.flex - 1) * widget.theme.horizontalGap;
 
@@ -386,7 +335,6 @@ class _KeyWidgetState extends State<_KeyWidget> {
   BoxDecoration _getDecoration(BoxDecoration base) {
     final key = widget.virtualKey;
 
-    // Highlight shift key when active
     if (key.action == KeyAction.shift && (widget.shift || widget.capsLock)) {
       return base.copyWith(
         color: widget.capsLock
@@ -395,7 +343,6 @@ class _KeyWidgetState extends State<_KeyWidget> {
       );
     }
 
-    // Highlight symbols key when on symbols layout
     if (key.action == KeyAction.symbols &&
         widget.layoutStage != LayoutStage.primary) {
       return base.copyWith(color: widget.theme.keyColor);
@@ -417,7 +364,6 @@ class _KeyWidgetState extends State<_KeyWidget> {
       );
     }
 
-    // Action key icons/labels
     switch (key.action) {
       case KeyAction.backSpace:
         return Icon(
@@ -477,11 +423,6 @@ class _KeyWidgetState extends State<_KeyWidget> {
   }
 }
 
-// =============================================================================
-// KEYBOARD LAYOUTS
-// =============================================================================
-
-/// Number pad layout
 final KeyboardLayout _numberLayout = [
   [
     VirtualKey.character(text: '1'),
@@ -505,7 +446,6 @@ final KeyboardLayout _numberLayout = [
   ],
 ];
 
-/// Phone pad layout
 final KeyboardLayout _phoneLayout = [
   [
     VirtualKey.character(text: '1'),
@@ -529,7 +469,6 @@ final KeyboardLayout _phoneLayout = [
   ],
 ];
 
-/// QWERTY text layout - primary (letters)
 final KeyboardLayout _textLayoutPrimary = [
   [
     VirtualKey.character(text: 'q'),
@@ -574,7 +513,6 @@ final KeyboardLayout _textLayoutPrimary = [
   ],
 ];
 
-/// QWERTY text layout - secondary (numbers & symbols)
 final KeyboardLayout _textLayoutSecondary = [
   [
     VirtualKey.character(text: '1'),
@@ -620,7 +558,6 @@ final KeyboardLayout _textLayoutSecondary = [
   ],
 ];
 
-/// QWERTY text layout - tertiary (more symbols)
 final KeyboardLayout _textLayoutTertiary = [
   [
     VirtualKey.character(text: '['),
