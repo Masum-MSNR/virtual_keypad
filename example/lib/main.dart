@@ -33,25 +33,19 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Virtual Keypad'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Virtual Keypad'), centerTitle: true),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // Header
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Text(
               'Examples',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
             ),
           ),
-
-          // Basic Examples
           _ExampleTile(
             icon: Icons.dialpad,
             title: 'Numeric Input',
@@ -76,18 +70,16 @@ class HomePage extends StatelessWidget {
             subtitle: 'Text area with auto-scroll',
             onTap: () => _navigate(context, const MultilineTextExample()),
           ),
-
           const SizedBox(height: 24),
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Text(
               'Features',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
             ),
           ),
-
           _ExampleTile(
             icon: Icons.keyboard_hide_outlined,
             title: 'Auto-Hide Keyboard',
@@ -137,4 +129,3 @@ class _ExampleTile extends StatelessWidget {
     );
   }
 }
-
