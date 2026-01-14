@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
-/// Example: Multi-Field Form
-///
-/// Demonstrates multiple text fields with shared keyboard.
 class MultiFieldExample extends StatefulWidget {
   const MultiFieldExample({super.key});
 
@@ -12,13 +9,13 @@ class MultiFieldExample extends StatefulWidget {
 }
 
 class _MultiFieldExampleState extends State<MultiFieldExample> {
-  final _usernameController = VirtualKeypadController();
+  final _nameController = VirtualKeypadController();
   final _emailController = VirtualKeypadController();
   final _passwordController = VirtualKeypadController();
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -32,75 +29,63 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
         body: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'Create Account',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Tap a field to activate it, then use the virtual keyboard',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                    const SizedBox(height: 32),
-                    VirtualKeypadTextField(
-                      controller: _usernameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Username',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.person_outline),
+              child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                behavior: HitTestBehavior.opaque,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Text(
+                        'Tap any field to activate the keyboard.\n'
+                        'Tap outside to dismiss.',
+                        style: TextStyle(color: Colors.grey),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    VirtualKeypadTextField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.email_outlined),
+                      const SizedBox(height: 24),
+                      VirtualKeypadTextField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Name',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.person_outline),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    VirtualKeypadTextField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.lock_outline),
+                      const SizedBox(height: 16),
+                      VirtualKeypadTextField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.email_outlined),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    FilledButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Username: ${_usernameController.text}, '
-                              'Email: ${_emailController.text}',
-                            ),
-                          ),
-                        );
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Text('Create Account'),
+                      const SizedBox(height: 16),
+                      VirtualKeypadTextField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Password',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.lock_outline),
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 24),
+                      FilledButton(
+                        onPressed: () {
+                          FocusScope.of(context).unfocus();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Form submitted')),
+                          );
+                        },
+                        child: const Text('Submit'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            VirtualKeypad(
-              theme: VirtualKeypadTheme.light,
-              hideWhenUnfocused: true,
-            ),
+            VirtualKeypad(hideWhenUnfocused: true),
           ],
         ),
       ),
