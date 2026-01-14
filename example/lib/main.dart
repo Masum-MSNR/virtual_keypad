@@ -267,15 +267,12 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                       decoration: const InputDecoration(
                         labelText: 'Amount',
                         border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.attach_money),
-                        prefixText: '\$ ',
                       ),
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
-                      allowPhysicalKeyboard: true,
                     ),
                     const SizedBox(height: 24),
                     Row(

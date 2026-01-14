@@ -276,6 +276,78 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
     setState(() {});
   }
 
+  /// Handle paste from clipboard manually since readOnly blocks default paste
+  Future<void> _handlePaste() async {
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    if (data?.text != null && data!.text!.isNotEmpty) {
+      final selection = widget.controller.selection;
+      if (selection.isValid) {
+        // Replace selection or insert at cursor
+        widget.controller.replaceRange(
+          selection.start,
+          selection.end,
+          data.text!,
+        );
+      }
+    }
+  }
+
+  /// Build custom context menu with working paste option
+  Widget _buildContextMenu(BuildContext context, EditableTextState editableTextState) {
+    final List<ContextMenuButtonItem> buttonItems = [];
+    
+    // Cut - only if there's a selection and not readOnly for physical keyboard
+    if (!editableTextState.textEditingValue.selection.isCollapsed) {
+      buttonItems.add(ContextMenuButtonItem(
+        label: 'Cut',
+        onPressed: () {
+          final selection = widget.controller.selection;
+          if (selection.isValid && !selection.isCollapsed) {
+            final selectedText = widget.controller.text.substring(
+              selection.start,
+              selection.end,
+            );
+            Clipboard.setData(ClipboardData(text: selectedText));
+            widget.controller.deleteRange(selection.start, selection.end);
+          }
+          editableTextState.hideToolbar();
+        },
+      ));
+    }
+    
+    // Copy - only if there's a selection
+    if (!editableTextState.textEditingValue.selection.isCollapsed) {
+      buttonItems.add(ContextMenuButtonItem(
+        label: 'Copy',
+        onPressed: () {
+          editableTextState.copySelection(SelectionChangedCause.toolbar);
+        },
+      ));
+    }
+    
+    // Paste - always available (we handle it manually)
+    buttonItems.add(ContextMenuButtonItem(
+      label: 'Paste',
+      onPressed: () {
+        _handlePaste();
+        editableTextState.hideToolbar();
+      },
+    ));
+    
+    // Select All
+    buttonItems.add(ContextMenuButtonItem(
+      label: 'Select All',
+      onPressed: () {
+        editableTextState.selectAll(SelectionChangedCause.toolbar);
+      },
+    ));
+    
+    return AdaptiveTextSelectionToolbar.buttonItems(
+      anchors: editableTextState.contextMenuAnchors,
+      buttonItems: buttonItems,
+    );
+  }
+
   bool _deleteSelection() {
     final selection = widget.controller.selection;
     if (selection.isValid && !selection.isCollapsed) {
@@ -334,11 +406,7 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
       enableInteractiveSelection: true,
       onTap: _handleTap,
       onSubmitted: widget.onSubmitted,
-      contextMenuBuilder: (context, editableTextState) {
-        return AdaptiveTextSelectionToolbar.editableText(
-          editableTextState: editableTextState,
-        );
-      },
+      contextMenuBuilder: _buildContextMenu,
     );
   }
 }
