@@ -227,10 +227,11 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     final usedWidth = (maxColumns + 1) * widget.theme.horizontalGap;
     final baseKeyWidth = (width - usedWidth) / maxColumns;
 
-    return ExcludeFocus(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTapDown: (_) {}, // Consume taps to prevent unfocusing
+    // TextFieldTapRegion tells Flutter that tapping on the keyboard
+    // is "part of" the text field group, so it won't unfocus the text field.
+    // This is Flutter's official solution for virtual keyboards.
+    return TextFieldTapRegion(
+      child: ExcludeFocus(
         child: Container(
           width: width,
           height: widget.height,

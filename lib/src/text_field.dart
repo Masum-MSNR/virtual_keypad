@@ -3,24 +3,6 @@ import 'package:flutter/services.dart';
 import 'controller.dart';
 import 'scope.dart';
 
-/// A FocusNode that can be prevented from losing focus.
-/// Used to keep the text field focused while interacting with the virtual keyboard.
-class _ProtectedFocusNode extends FocusNode {
-  bool _protectFocus = false;
-
-  void setProtectFocus(bool value) {
-    _protectFocus = value;
-  }
-
-  @override
-  void unfocus({UnfocusDisposition disposition = UnfocusDisposition.scope}) {
-    // Only allow unfocus if not protected
-    if (!_protectFocus) {
-      super.unfocus(disposition: disposition);
-    }
-  }
-}
-
 /// A text field that integrates with [VirtualKeypad] through [VirtualKeypadScope].
 ///
 /// This widget:
@@ -132,7 +114,7 @@ class VirtualKeypadTextField extends StatefulWidget {
 }
 
 class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
-  late _ProtectedFocusNode _focusNode;
+  late FocusNode _focusNode;
   final GlobalKey _textFieldKey = GlobalKey();
   bool _isActiveInScope = false;
   VirtualKeypadScopeState? _scope;
@@ -141,7 +123,7 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
   @override
   void initState() {
     super.initState();
-    _focusNode = _ProtectedFocusNode();
+    _focusNode = FocusNode();
     _focusNode.addListener(_onFocusChanged);
     widget.controller.addListener(_onControllerChanged);
     _previousText = widget.controller.text;
@@ -191,15 +173,9 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
     if (isActive != _isActiveInScope) {
       _isActiveInScope = isActive;
 
-      // Protect focus while this field is active in the scope
-      _focusNode.setProtectFocus(isActive);
-
       if (isActive && !_focusNode.hasFocus) {
         // Ensure we have Flutter focus when we're active in scope
         _focusNode.requestFocus();
-      } else if (!isActive && _focusNode.hasFocus) {
-        // Unfocus when we're no longer active in scope
-        _focusNode.unfocus();
       }
 
       if (mounted) setState(() {});
@@ -213,7 +189,6 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
       // Clear the active controller when focus is lost
       _clearScopeCallbacks();
       _scope?.clearActiveController();
-      _focusNode.setProtectFocus(false);
       _isActiveInScope = false;
     }
     setState(() {});
@@ -267,8 +242,6 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
       _scope!.setGetSelectionCallback(_getSelection);
       _scope!.setClearSelectionCallback(_clearSelection);
 
-      // Protect focus while we're active
-      _focusNode.setProtectFocus(true);
       _isActiveInScope = true;
     }
   }
@@ -282,7 +255,6 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
 
   /// Called when this field should be unfocused (e.g., tapping outside)
   void unfocus() {
-    _focusNode.setProtectFocus(false);
     _isActiveInScope = false;
     _focusNode.unfocus();
     _clearScopeCallbacks();
