@@ -1,27 +1,31 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'enums.dart';
-import 'models.dart';
-import 'scope.dart';
-import 'theme.dart';
+import '../enums.dart';
+import '../models.dart';
+import '../scope.dart';
+import '../theme.dart';
+import '../layouts/text_layouts.dart';
+import '../layouts/email_layouts.dart';
+import '../layouts/url_layouts.dart';
+import '../layouts/number_layouts.dart';
+import '../layouts/phone_layouts.dart';
 
 /// A customizable virtual on-screen keyboard widget.
 ///
 /// Automatically integrates with [VirtualKeypadScope] to send input to
-/// the focused [VirtualKeypadTextField]. Supports multiple layouts
-/// (text, number, phone) and custom themes.
+/// the focused [VirtualKeypadTextField]. The keyboard automatically adapts
+/// its layout based on the focused text field's [KeyboardType].
 ///
 /// ```dart
 /// VirtualKeypadScope(
 ///   child: Column(
 ///     children: [
-///       VirtualKeypadTextField(controller: controller),
-///       VirtualKeypad(
-///         type: KeyboardType.text,
-///         theme: VirtualKeypadTheme.dark,
-///         hideWhenUnfocused: true,
+///       VirtualKeypadTextField(
+///         controller: controller,
+///         keyboardType: KeyboardType.emailAddress,
 ///       ),
+///       VirtualKeypad(), // Automatically shows email layout
 ///     ],
 ///   ),
 /// )
@@ -30,7 +34,7 @@ class VirtualKeypad extends StatefulWidget {
   /// Creates a virtual keyboard.
   const VirtualKeypad({
     super.key,
-    this.type = KeyboardType.text,
+    this.type,
     this.height = 280,
     this.width,
     this.theme = VirtualKeypadTheme.light,
@@ -41,8 +45,8 @@ class VirtualKeypad extends StatefulWidget {
     this.animationCurve = Curves.easeInOut,
   });
 
-  /// The type of keyboard layout to display.
-  final KeyboardType type;
+  /// Override keyboard type. If null, uses the type from the focused text field.
+  final KeyboardType? type;
 
   /// Height of the keyboard in logical pixels.
   final double height;
@@ -77,6 +81,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   bool _shift = false;
   bool _capsLock = false;
   VirtualKeypadScopeState? _scope;
+  KeyboardType? _lastKeyboardType;
 
   @override
   void didChangeDependencies() {
@@ -85,21 +90,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     if (_scope != newScope) {
       _scope?.removeActiveControllerListener(_onActiveControllerChanged);
       _scope = newScope;
-      if (widget.hideWhenUnfocused) {
-        _scope?.addActiveControllerListener(_onActiveControllerChanged);
-      }
-    }
-  }
-
-  @override
-  void didUpdateWidget(VirtualKeypad oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.hideWhenUnfocused != oldWidget.hideWhenUnfocused) {
-      if (widget.hideWhenUnfocused) {
-        _scope?.addActiveControllerListener(_onActiveControllerChanged);
-      } else {
-        _scope?.removeActiveControllerListener(_onActiveControllerChanged);
-      }
+      _scope?.addActiveControllerListener(_onActiveControllerChanged);
     }
   }
 
@@ -110,29 +101,87 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   }
 
   void _onActiveControllerChanged() {
-    if (mounted) setState(() {});
+    if (mounted) {
+      final newType = _effectiveKeyboardType;
+      if (_lastKeyboardType != newType) {
+        _layoutStage = LayoutStage.primary;
+        _shift = false;
+        _capsLock = false;
+        _lastKeyboardType = newType;
+      }
+      setState(() {});
+    }
+  }
+
+  KeyboardType get _effectiveKeyboardType {
+    return widget.type ?? _scope?.activeKeyboardType ?? KeyboardType.text;
+  }
+
+  TextInputAction get _effectiveInputAction {
+    return _scope?.activeInputAction ?? TextInputAction.done;
   }
 
   KeyboardLayout get _currentLayout {
-    if (widget.type == KeyboardType.custom && widget.customLayout != null) {
+    final type = _effectiveKeyboardType;
+
+    if (type == KeyboardType.custom && widget.customLayout != null) {
       return widget.customLayout!;
     }
 
-    switch (widget.type) {
+    switch (type) {
       case KeyboardType.number:
-        return _numberLayout;
+      case KeyboardType.numberDecimal:
+        return numberLayout;
+      case KeyboardType.numberSigned:
+        return signedNumberLayout;
       case KeyboardType.phone:
-        return _phoneLayout;
+        return phoneLayout;
+      case KeyboardType.emailAddress:
+        return _getEmailLayout();
+      case KeyboardType.url:
+        return _getUrlLayout();
       case KeyboardType.text:
+      case KeyboardType.multiline:
+      case KeyboardType.visiblePassword:
+      case KeyboardType.name:
+      case KeyboardType.streetAddress:
+      case KeyboardType.datetime:
+      case KeyboardType.none:
       case KeyboardType.custom:
-        switch (_layoutStage) {
-          case LayoutStage.primary:
-            return _textLayoutPrimary;
-          case LayoutStage.secondary:
-            return _textLayoutSecondary;
-          case LayoutStage.tertiary:
-            return _textLayoutTertiary;
-        }
+        return _getTextLayout();
+    }
+  }
+
+  KeyboardLayout _getTextLayout() {
+    switch (_layoutStage) {
+      case LayoutStage.primary:
+        return textLayoutPrimary;
+      case LayoutStage.secondary:
+        return textLayoutSecondary;
+      case LayoutStage.tertiary:
+        return textLayoutTertiary;
+    }
+  }
+
+  KeyboardLayout _getEmailLayout() {
+    switch (_layoutStage) {
+      case LayoutStage.primary:
+        return emailLayoutPrimary;
+      case LayoutStage.secondary:
+        return emailLayoutSecondary;
+      case LayoutStage.tertiary:
+        return emailLayoutTertiary;
+    }
+  }
+
+  KeyboardLayout _getUrlLayout() {
+    switch (_layoutStage) {
+      case LayoutStage.primary:
+        return urlLayoutPrimary;
+      case LayoutStage.secondary:
+        return urlLayoutSecondary;
+      case LayoutStage.tertiary:
+        return urlLayoutTertiary;
     }
   }
 
@@ -147,69 +196,84 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         setState(() => _shift = false);
       }
     } else if (key.isAction) {
-      switch (key.action) {
-        case KeyAction.backSpace:
-          scope?.deleteBackward();
-          break;
-
-        case KeyAction.enter:
-          scope?.insertText('\n');
-          break;
-
-        case KeyAction.space:
-          scope?.insertText(' ');
-          final text = scope?.activeController?.text ?? '';
-          if (text.endsWith('. ') ||
-              text.endsWith('? ') ||
-              text.endsWith('! ')) {
-            if (!_shift && !_capsLock) {
-              setState(() => _shift = true);
-            }
-          }
-          break;
-
-        case KeyAction.shift:
-          setState(() {
-            if (!_shift) {
-              _shift = true;
-            } else if (_shift && !_capsLock) {
-              _capsLock = true;
-            } else {
-              _shift = false;
-              _capsLock = false;
-            }
-          });
-          break;
-
-        case KeyAction.symbols:
-          setState(() {
-            if (_layoutStage == LayoutStage.primary) {
-              _layoutStage = LayoutStage.secondary;
-            } else {
-              _layoutStage = LayoutStage.primary;
-            }
-          });
-          break;
-
-        case KeyAction.symbolsAlt:
-          setState(() {
-            if (_layoutStage == LayoutStage.secondary) {
-              _layoutStage = LayoutStage.tertiary;
-            } else {
-              _layoutStage = LayoutStage.secondary;
-            }
-          });
-          break;
-
-        case KeyAction.switchLanguage:
-          break;
-
-        default:
-          break;
-      }
+      _handleAction(key.action!, scope);
     }
 
     widget.onKeyPressed?.call(key);
+  }
+
+  void _handleAction(KeyAction action, VirtualKeypadScopeState? scope) {
+    switch (action) {
+      case KeyAction.backSpace:
+        scope?.deleteBackward();
+        break;
+
+      case KeyAction.enter:
+        final inputAction = _effectiveInputAction;
+        if (inputAction == TextInputAction.newline ||
+            _effectiveKeyboardType == KeyboardType.multiline) {
+          scope?.insertText('\n');
+        } else {
+          scope?.submit();
+        }
+        break;
+
+      case KeyAction.space:
+        scope?.insertText(' ');
+        final text = scope?.activeController?.text ?? '';
+        if (text.endsWith('. ') || text.endsWith('? ') || text.endsWith('! ')) {
+          if (!_shift && !_capsLock) {
+            setState(() => _shift = true);
+          }
+        }
+        break;
+
+      case KeyAction.shift:
+        setState(() {
+          if (!_shift) {
+            _shift = true;
+          } else if (_shift && !_capsLock) {
+            _capsLock = true;
+          } else {
+            _shift = false;
+            _capsLock = false;
+          }
+        });
+        break;
+
+      case KeyAction.symbols:
+        setState(() {
+          if (_layoutStage == LayoutStage.primary) {
+            _layoutStage = LayoutStage.secondary;
+          } else {
+            _layoutStage = LayoutStage.primary;
+          }
+        });
+        break;
+
+      case KeyAction.symbolsAlt:
+        setState(() {
+          if (_layoutStage == LayoutStage.secondary) {
+            _layoutStage = LayoutStage.tertiary;
+          } else {
+            _layoutStage = LayoutStage.secondary;
+          }
+        });
+        break;
+
+      case KeyAction.done:
+      case KeyAction.go:
+      case KeyAction.search:
+      case KeyAction.send:
+      case KeyAction.call:
+        scope?.submit();
+        break;
+
+      case KeyAction.next:
+      case KeyAction.previous:
+      case KeyAction.switchLanguage:
+        break;
+    }
   }
 
   @override
@@ -217,15 +281,23 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     final isVisible =
         !widget.hideWhenUnfocused || (_scope?.hasActiveController ?? false);
 
+    if (_effectiveKeyboardType == KeyboardType.none) {
+      return const SizedBox.shrink();
+    }
+
     final width = widget.width ?? MediaQuery.of(context).size.width;
     final layout = _currentLayout;
     final rows = layout.length;
     final maxColumns = layout.map((row) => row.length).reduce(max);
 
+    final totalFlex = layout
+        .map((row) => row.fold(0, (sum, key) => sum + key.flex))
+        .reduce(max);
+
     final usedHeight = (rows + 1) * widget.theme.verticalGap;
     final keyHeight = (widget.height - usedHeight) / rows;
     final usedWidth = (maxColumns + 1) * widget.theme.horizontalGap;
-    final baseKeyWidth = (width - usedWidth) / maxColumns;
+    final baseKeyWidth = (width - usedWidth) / totalFlex;
 
     final keyboardContent = TextFieldTapRegion(
       child: ExcludeFocus(
@@ -252,6 +324,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
                     shift: _shift,
                     capsLock: _capsLock,
                     layoutStage: _layoutStage,
+                    inputAction: _effectiveInputAction,
                     onPressed: _onKeyPressed,
                   );
                 }).toList(),
@@ -288,6 +361,7 @@ class _KeyWidget extends StatefulWidget {
     required this.shift,
     required this.capsLock,
     required this.layoutStage,
+    required this.inputAction,
     required this.onPressed,
   });
 
@@ -298,6 +372,7 @@ class _KeyWidget extends StatefulWidget {
   final bool shift;
   final bool capsLock;
   final LayoutStage layoutStage;
+  final TextInputAction inputAction;
   final void Function(VirtualKey) onPressed;
 
   @override
@@ -455,188 +530,84 @@ class _KeyWidgetState extends State<_KeyWidget> {
           ),
         );
 
+      case KeyAction.done:
+        return Text(
+          _getActionLabel(),
+          style: TextStyle(
+            fontSize: widget.theme.keyTextSize * 0.7,
+            color: widget.theme.keyTextColor,
+          ),
+        );
+
+      case KeyAction.go:
+        return Text(
+          'Go',
+          style: TextStyle(
+            fontSize: widget.theme.keyTextSize * 0.8,
+            color: widget.theme.keyTextColor,
+          ),
+        );
+
+      case KeyAction.search:
+        return Icon(
+          Icons.search,
+          size: widget.theme.keyTextSize,
+          color: widget.theme.keyTextColor,
+        );
+
+      case KeyAction.send:
+        return Icon(
+          Icons.send,
+          size: widget.theme.keyTextSize,
+          color: widget.theme.keyTextColor,
+        );
+
+      case KeyAction.call:
+        return Icon(
+          Icons.call,
+          size: widget.theme.keyTextSize,
+          color: widget.theme.keyTextColor,
+        );
+
+      case KeyAction.next:
+        return Text(
+          'Next',
+          style: TextStyle(
+            fontSize: widget.theme.keyTextSize * 0.8,
+            color: widget.theme.keyTextColor,
+          ),
+        );
+
+      case KeyAction.previous:
+        return Text(
+          'Prev',
+          style: TextStyle(
+            fontSize: widget.theme.keyTextSize * 0.8,
+            color: widget.theme.keyTextColor,
+          ),
+        );
+
       default:
         return const SizedBox.shrink();
     }
   }
+
+  String _getActionLabel() {
+    switch (widget.inputAction) {
+      case TextInputAction.done:
+        return 'Done';
+      case TextInputAction.go:
+        return 'Go';
+      case TextInputAction.search:
+        return 'Search';
+      case TextInputAction.send:
+        return 'Send';
+      case TextInputAction.next:
+        return 'Next';
+      case TextInputAction.previous:
+        return 'Prev';
+      default:
+        return 'Done';
+    }
+  }
 }
-
-final KeyboardLayout _numberLayout = [
-  [
-    VirtualKey.character(text: '1'),
-    VirtualKey.character(text: '2'),
-    VirtualKey.character(text: '3'),
-  ],
-  [
-    VirtualKey.character(text: '4'),
-    VirtualKey.character(text: '5'),
-    VirtualKey.character(text: '6'),
-  ],
-  [
-    VirtualKey.character(text: '7'),
-    VirtualKey.character(text: '8'),
-    VirtualKey.character(text: '9'),
-  ],
-  [
-    VirtualKey.character(text: '.'),
-    VirtualKey.character(text: '0'),
-    VirtualKey.action(action: KeyAction.backSpace),
-  ],
-];
-
-final KeyboardLayout _phoneLayout = [
-  [
-    VirtualKey.character(text: '1'),
-    VirtualKey.character(text: '2'),
-    VirtualKey.character(text: '3'),
-  ],
-  [
-    VirtualKey.character(text: '4'),
-    VirtualKey.character(text: '5'),
-    VirtualKey.character(text: '6'),
-  ],
-  [
-    VirtualKey.character(text: '7'),
-    VirtualKey.character(text: '8'),
-    VirtualKey.character(text: '9'),
-  ],
-  [
-    VirtualKey.character(text: '+'),
-    VirtualKey.character(text: '0'),
-    VirtualKey.action(action: KeyAction.backSpace),
-  ],
-];
-
-final KeyboardLayout _textLayoutPrimary = [
-  [
-    VirtualKey.character(text: 'q'),
-    VirtualKey.character(text: 'w'),
-    VirtualKey.character(text: 'e'),
-    VirtualKey.character(text: 'r'),
-    VirtualKey.character(text: 't'),
-    VirtualKey.character(text: 'y'),
-    VirtualKey.character(text: 'u'),
-    VirtualKey.character(text: 'i'),
-    VirtualKey.character(text: 'o'),
-    VirtualKey.character(text: 'p'),
-  ],
-  [
-    VirtualKey.character(text: 'a'),
-    VirtualKey.character(text: 's'),
-    VirtualKey.character(text: 'd'),
-    VirtualKey.character(text: 'f'),
-    VirtualKey.character(text: 'g'),
-    VirtualKey.character(text: 'h'),
-    VirtualKey.character(text: 'j'),
-    VirtualKey.character(text: 'k'),
-    VirtualKey.character(text: 'l'),
-  ],
-  [
-    VirtualKey.action(action: KeyAction.shift, flex: 1),
-    VirtualKey.character(text: 'z'),
-    VirtualKey.character(text: 'x'),
-    VirtualKey.character(text: 'c'),
-    VirtualKey.character(text: 'v'),
-    VirtualKey.character(text: 'b'),
-    VirtualKey.character(text: 'n'),
-    VirtualKey.character(text: 'm'),
-    VirtualKey.action(action: KeyAction.backSpace, flex: 1),
-  ],
-  [
-    VirtualKey.action(action: KeyAction.symbols, flex: 2),
-    VirtualKey.character(text: ','),
-    VirtualKey.action(action: KeyAction.space, flex: 4),
-    VirtualKey.character(text: '.'),
-    VirtualKey.action(action: KeyAction.enter, flex: 2),
-  ],
-];
-
-final KeyboardLayout _textLayoutSecondary = [
-  [
-    VirtualKey.character(text: '1'),
-    VirtualKey.character(text: '2'),
-    VirtualKey.character(text: '3'),
-    VirtualKey.character(text: '4'),
-    VirtualKey.character(text: '5'),
-    VirtualKey.character(text: '6'),
-    VirtualKey.character(text: '7'),
-    VirtualKey.character(text: '8'),
-    VirtualKey.character(text: '9'),
-    VirtualKey.character(text: '0'),
-  ],
-  [
-    VirtualKey.character(text: '-'),
-    VirtualKey.character(text: '/'),
-    VirtualKey.character(text: ':'),
-    VirtualKey.character(text: ';'),
-    VirtualKey.character(text: '('),
-    VirtualKey.character(text: ')'),
-    VirtualKey.character(text: '\$'),
-    VirtualKey.character(text: '&'),
-    VirtualKey.character(text: '@'),
-    VirtualKey.character(text: '"'),
-  ],
-  [
-    VirtualKey.action(action: KeyAction.symbolsAlt, flex: 1),
-    VirtualKey.character(text: '.'),
-    VirtualKey.character(text: ','),
-    VirtualKey.character(text: '?'),
-    VirtualKey.character(text: '!'),
-    VirtualKey.character(text: "'"),
-    VirtualKey.character(text: '#'),
-    VirtualKey.character(text: '%'),
-    VirtualKey.action(action: KeyAction.backSpace, flex: 1),
-  ],
-  [
-    VirtualKey.action(action: KeyAction.symbols, flex: 2),
-    VirtualKey.character(text: ','),
-    VirtualKey.action(action: KeyAction.space, flex: 4),
-    VirtualKey.character(text: '.'),
-    VirtualKey.action(action: KeyAction.enter, flex: 2),
-  ],
-];
-
-final KeyboardLayout _textLayoutTertiary = [
-  [
-    VirtualKey.character(text: '['),
-    VirtualKey.character(text: ']'),
-    VirtualKey.character(text: '{'),
-    VirtualKey.character(text: '}'),
-    VirtualKey.character(text: '#'),
-    VirtualKey.character(text: '%'),
-    VirtualKey.character(text: '^'),
-    VirtualKey.character(text: '*'),
-    VirtualKey.character(text: '+'),
-    VirtualKey.character(text: '='),
-  ],
-  [
-    VirtualKey.character(text: '_'),
-    VirtualKey.character(text: '\\'),
-    VirtualKey.character(text: '|'),
-    VirtualKey.character(text: '~'),
-    VirtualKey.character(text: '<'),
-    VirtualKey.character(text: '>'),
-    VirtualKey.character(text: '€'),
-    VirtualKey.character(text: '£'),
-    VirtualKey.character(text: '¥'),
-    VirtualKey.character(text: '•'),
-  ],
-  [
-    VirtualKey.action(action: KeyAction.symbolsAlt, flex: 1),
-    VirtualKey.character(text: '.'),
-    VirtualKey.character(text: ','),
-    VirtualKey.character(text: '?'),
-    VirtualKey.character(text: '!'),
-    VirtualKey.character(text: "'"),
-    VirtualKey.character(text: '`'),
-    VirtualKey.character(text: '°'),
-    VirtualKey.action(action: KeyAction.backSpace, flex: 1),
-  ],
-  [
-    VirtualKey.action(action: KeyAction.symbols, flex: 2),
-    VirtualKey.character(text: ','),
-    VirtualKey.action(action: KeyAction.space, flex: 4),
-    VirtualKey.character(text: '.'),
-    VirtualKey.action(action: KeyAction.enter, flex: 2),
-  ],
-];

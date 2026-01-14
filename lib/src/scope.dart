@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'controller.dart';
+import 'enums.dart';
 
 /// Manages the connection between [VirtualKeypadTextField] widgets and [VirtualKeypad].
 ///
@@ -46,17 +47,26 @@ class VirtualKeypadScope extends StatefulWidget {
 class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
   VirtualKeypadController? _activeController;
   int? _activeMaxLength;
+  KeyboardType _activeKeyboardType = KeyboardType.text;
+  TextInputAction _activeInputAction = TextInputAction.done;
   final List<VoidCallback> _listeners = [];
 
   bool Function()? _deleteSelectionCallback;
   (int, int)? Function()? _getSelectionCallback;
   VoidCallback? _clearSelectionCallback;
+  VoidCallback? _onSubmitCallback;
 
   /// The currently active (focused) text field's controller.
   VirtualKeypadController? get activeController => _activeController;
 
   /// The max length constraint of the active text field, if any.
   int? get activeMaxLength => _activeMaxLength;
+
+  /// The keyboard type requested by the active text field.
+  KeyboardType get activeKeyboardType => _activeKeyboardType;
+
+  /// The input action for the active text field (done, next, search, etc.).
+  TextInputAction get activeInputAction => _activeInputAction;
 
   /// Whether a text field is currently focused.
   bool get hasActiveController => _activeController != null;
@@ -86,6 +96,11 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
     _clearSelectionCallback = callback;
   }
 
+  /// Sets the callback for when the submit/done action is triggered.
+  void setOnSubmitCallback(VoidCallback? callback) {
+    _onSubmitCallback = callback;
+  }
+
   void _notifyListeners() {
     for (final listener in _listeners) {
       listener();
@@ -96,11 +111,19 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
   void setActiveController(
     VirtualKeypadController? controller, {
     int? maxLength,
+    KeyboardType keyboardType = KeyboardType.text,
+    TextInputAction inputAction = TextInputAction.done,
   }) {
-    if (_activeController != controller) {
+    final changed = _activeController != controller ||
+        _activeKeyboardType != keyboardType ||
+        _activeInputAction != inputAction;
+
+    if (changed) {
       setState(() {
         _activeController = controller;
         _activeMaxLength = maxLength;
+        _activeKeyboardType = keyboardType;
+        _activeInputAction = inputAction;
       });
       _notifyListeners();
     }
@@ -112,6 +135,8 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
       setState(() {
         _activeController = null;
         _activeMaxLength = null;
+        _activeKeyboardType = KeyboardType.text;
+        _activeInputAction = TextInputAction.done;
       });
       _notifyListeners();
     }
@@ -152,6 +177,11 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
     _activeController?.clear();
   }
 
+  /// Triggers the submit/done action for the active text field.
+  void submit() {
+    _onSubmitCallback?.call();
+  }
+
   @override
   Widget build(BuildContext context) {
     return _VirtualKeypadScopeInherited(
@@ -171,7 +201,9 @@ class _VirtualKeypadScopeInherited extends InheritedWidget {
 
   @override
   bool updateShouldNotify(_VirtualKeypadScopeInherited oldWidget) {
-    return state.activeController != oldWidget.state.activeController;
+    return state.activeController != oldWidget.state.activeController ||
+        state.activeKeyboardType != oldWidget.state.activeKeyboardType ||
+        state.activeInputAction != oldWidget.state.activeInputAction;
   }
 }
 

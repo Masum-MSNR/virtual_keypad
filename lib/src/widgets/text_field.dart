@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'controller.dart';
-import 'scope.dart';
+import '../controller.dart';
+import '../enums.dart';
+import '../scope.dart';
 
 /// A text field that integrates with [VirtualKeypad] through [VirtualKeypadScope].
 ///
@@ -44,7 +45,8 @@ class VirtualKeypadTextField extends StatefulWidget {
     this.onTap,
     this.onSubmitted,
     this.allowPhysicalKeyboard = false,
-    this.keyboardType,
+    this.keyboardType = KeyboardType.text,
+    this.textInputAction,
   });
 
   /// Controller for the text field's content and selection.
@@ -97,7 +99,7 @@ class VirtualKeypadTextField extends StatefulWidget {
   /// Called when the text field is tapped.
   final VoidCallback? onTap;
 
-  /// Called when the user submits (e.g., presses enter).
+  /// Called when the user submits (e.g., presses enter/done).
   final ValueChanged<String>? onSubmitted;
 
   /// Whether to allow physical keyboard input alongside virtual keyboard.
@@ -106,8 +108,16 @@ class VirtualKeypadTextField extends StatefulWidget {
   /// When true, both keyboards work together.
   final bool allowPhysicalKeyboard;
 
-  /// The type of keyboard to show when [allowPhysicalKeyboard] is true.
-  final TextInputType? keyboardType;
+  /// The type of virtual keyboard to display.
+  ///
+  /// Determines which layout the [VirtualKeypad] shows when this field is focused.
+  /// For example, [KeyboardType.emailAddress] shows @ on the primary layout.
+  final KeyboardType keyboardType;
+
+  /// The action button to show on the keyboard (done, next, search, etc.).
+  ///
+  /// If null, defaults based on [maxLines]: enter for multiline, done for single-line.
+  final TextInputAction? textInputAction;
 
   @override
   State<VirtualKeypadTextField> createState() => _VirtualKeypadTextFieldState();
@@ -127,6 +137,38 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
     _focusNode.addListener(_onFocusChanged);
     widget.controller.addListener(_onControllerChanged);
     _previousText = widget.controller.text;
+  }
+
+  TextInputType _toTextInputType(KeyboardType type) {
+    switch (type) {
+      case KeyboardType.text:
+        return TextInputType.text;
+      case KeyboardType.multiline:
+        return TextInputType.multiline;
+      case KeyboardType.number:
+        return TextInputType.number;
+      case KeyboardType.numberSigned:
+        return const TextInputType.numberWithOptions(signed: true);
+      case KeyboardType.numberDecimal:
+        return const TextInputType.numberWithOptions(decimal: true);
+      case KeyboardType.phone:
+        return TextInputType.phone;
+      case KeyboardType.datetime:
+        return TextInputType.datetime;
+      case KeyboardType.emailAddress:
+        return TextInputType.emailAddress;
+      case KeyboardType.url:
+        return TextInputType.url;
+      case KeyboardType.visiblePassword:
+        return TextInputType.visiblePassword;
+      case KeyboardType.name:
+        return TextInputType.name;
+      case KeyboardType.streetAddress:
+        return TextInputType.streetAddress;
+      case KeyboardType.none:
+      case KeyboardType.custom:
+        return TextInputType.none;
+    }
   }
 
   @override
@@ -228,20 +270,35 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
 
   void _registerWithScope() {
     if (_scope != null && widget.enabled && !widget.readOnly) {
-      _scope!
-          .setActiveController(widget.controller, maxLength: widget.maxLength);
+      final inputAction = widget.textInputAction ??
+          (widget.maxLines != 1
+              ? TextInputAction.newline
+              : TextInputAction.done);
+
+      _scope!.setActiveController(
+        widget.controller,
+        maxLength: widget.maxLength,
+        keyboardType: widget.keyboardType,
+        inputAction: inputAction,
+      );
       _scope!.setDeleteSelectionCallback(_deleteSelection);
       _scope!.setGetSelectionCallback(_getSelection);
       _scope!.setClearSelectionCallback(_clearSelection);
+      _scope!.setOnSubmitCallback(_handleSubmit);
 
       _isActiveInScope = true;
     }
+  }
+
+  void _handleSubmit() {
+    widget.onSubmitted?.call(widget.controller.text);
   }
 
   void _clearScopeCallbacks() {
     _scope?.setDeleteSelectionCallback(null);
     _scope?.setGetSelectionCallback(null);
     _scope?.setClearSelectionCallback(null);
+    _scope?.setOnSubmitCallback(null);
   }
 
   void unfocus() {
@@ -369,7 +426,7 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
           ? MaxLengthEnforcement.enforced
           : MaxLengthEnforcement.none,
       keyboardType: widget.allowPhysicalKeyboard
-          ? widget.keyboardType
+          ? _toTextInputType(widget.keyboardType)
           : TextInputType.none,
       enableInteractiveSelection: true,
       onTap: _handleTap,

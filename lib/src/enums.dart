@@ -20,6 +20,27 @@ enum KeyAction {
 
   /// Switch keyboard language (reserved for future use).
   switchLanguage,
+
+  /// Done action (submit/close keyboard for single-line inputs).
+  done,
+
+  /// Go action (for URL inputs - navigate).
+  go,
+
+  /// Search action (for search inputs).
+  search,
+
+  /// Send action (for chat/messaging inputs).
+  send,
+
+  /// Next action (move to next field).
+  next,
+
+  /// Previous action (move to previous field).
+  previous,
+
+  /// Call action (for phone inputs).
+  call,
 }
 
 /// The type of a virtual keyboard key.
@@ -31,16 +52,48 @@ enum KeyType {
   character,
 }
 
-/// Predefined keyboard layout types.
+/// Keyboard input types that determine the layout shown.
+///
+/// These map closely to Flutter's [TextInputType] values.
 enum KeyboardType {
-  /// Full QWERTY text keyboard with letters, numbers, and symbols.
+  /// Standard text keyboard with QWERTY layout.
   text,
+
+  /// Multiline text input (shows enter key for newlines).
+  multiline,
 
   /// Numeric keypad (0-9 with decimal point).
   number,
 
-  /// Phone dialer layout (0-9 with + symbol).
+  /// Signed number input (includes minus sign).
+  numberSigned,
+
+  /// Decimal number input.
+  numberDecimal,
+
+  /// Phone dialer layout.
   phone,
+
+  /// Date/time input keyboard.
+  datetime,
+
+  /// Email address input (@ and . easily accessible).
+  emailAddress,
+
+  /// URL input (/, :, . easily accessible).
+  url,
+
+  /// Password input (same as text but may show different action).
+  visiblePassword,
+
+  /// Person name input (similar to text).
+  name,
+
+  /// Street address input.
+  streetAddress,
+
+  /// No keyboard (hidden).
+  none,
 
   /// Custom layout provided via [VirtualKeypad.customLayout].
   custom,

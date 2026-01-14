@@ -5,7 +5,8 @@ class AutoHideKeyboardExample extends StatefulWidget {
   const AutoHideKeyboardExample({super.key});
 
   @override
-  State<AutoHideKeyboardExample> createState() => _AutoHideKeyboardExampleState();
+  State<AutoHideKeyboardExample> createState() =>
+      _AutoHideKeyboardExampleState();
 }
 
 class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
@@ -49,7 +50,9 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                                   const SizedBox(width: 8),
                                   Text(
                                     'hideWhenUnfocused: true',
-                                    style: Theme.of(context).textTheme.titleMedium,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleMedium,
                                   ),
                                 ],
                               ),
@@ -64,7 +67,10 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      const Text('Editable Fields', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text(
+                        'Editable Fields',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(height: 12),
                       VirtualKeypadTextField(
                         controller: _field1,
@@ -77,6 +83,7 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                       const SizedBox(height: 16),
                       VirtualKeypadTextField(
                         controller: _field2,
+                        keyboardType: KeyboardType.emailAddress,
                         decoration: const InputDecoration(
                           labelText: 'Field 2',
                           hintText: 'Tap to show keyboard',
@@ -84,7 +91,10 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                         ),
                       ),
                       const SizedBox(height: 24),
-                      const Text('Read-Only Field', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text(
+                        'Read-Only Field',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(height: 8),
                       const Text(
                         'Read-only fields do not activate the keyboard.',
@@ -113,4 +123,3 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
     );
   }
 }
-
