@@ -2,69 +2,77 @@ import 'package:flutter/material.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const VirtualKeypadExampleApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class VirtualKeypadExampleApp extends StatelessWidget {
+  const VirtualKeypadExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Virtual Keypad Demo',
+      title: 'Virtual Keypad Example',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
       ),
-      darkTheme: ThemeData.dark(useMaterial3: true),
-      home: const HomePage(),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.indigo,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+      home: const ExampleHomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class ExampleHomePage extends StatelessWidget {
+  const ExampleHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Virtual Keypad Examples'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        centerTitle: true,
       ),
       body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          ListTile(
-            title: const Text('Password Entry'),
-            subtitle: const Text('Text keyboard with obscured input'),
-            trailing: const Icon(Icons.arrow_forward_ios),
+          _ExampleCard(
+            title: 'Password Entry',
+            subtitle: 'Secure PIN/password input with virtual keyboard',
+            icon: Icons.lock_outline,
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const PasswordEntryExample()),
             ),
           ),
-          ListTile(
-            title: const Text('Numeric Input'),
-            subtitle: const Text('Number keypad for PIN or amounts'),
-            trailing: const Icon(Icons.arrow_forward_ios),
+          _ExampleCard(
+            title: 'Numeric Input',
+            subtitle: 'Number pad for numeric input only',
+            icon: Icons.dialpad,
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const NumericInputExample()),
             ),
           ),
-          ListTile(
-            title: const Text('Multiple Fields'),
-            subtitle: const Text('Auto-focus between fields'),
-            trailing: const Icon(Icons.arrow_forward_ios),
+          _ExampleCard(
+            title: 'Multi-Field Form',
+            subtitle: 'Multiple text fields with shared keyboard',
+            icon: Icons.article_outlined,
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const MultiFieldExample()),
             ),
           ),
-          ListTile(
-            title: const Text('Custom Theme'),
-            subtitle: const Text('Dark themed keyboard'),
-            trailing: const Icon(Icons.arrow_forward_ios),
+          _ExampleCard(
+            title: 'Custom Theme',
+            subtitle: 'Customized keyboard appearance',
+            icon: Icons.palette_outlined,
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const CustomThemeExample()),
@@ -76,10 +84,40 @@ class HomePage extends StatelessWidget {
   }
 }
 
-// =============================================================================
-// Password Entry Example
-// =============================================================================
+class _ExampleCard extends StatelessWidget {
+  const _ExampleCard({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.onTap,
+  });
 
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          child: Icon(icon, color: Theme.of(context).colorScheme.primary),
+        ),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// Example 1: Password Entry
+// =============================================================================
 class PasswordEntryExample extends StatefulWidget {
   const PasswordEntryExample({super.key});
 
@@ -99,22 +137,29 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Password Entry')),
-      body: VirtualKeypadScope(
-        child: Column(
+    return VirtualKeypadScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Password Entry'),
+        ),
+        body: Column(
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.lock_outline, size: 64),
+                    const Icon(Icons.lock, size: 64, color: Colors.grey),
                     const SizedBox(height: 24),
+                    Text(
+                      'Enter Your Password',
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
-                      'Enter your password',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      'Use the virtual keyboard below',
+                      style: TextStyle(color: Colors.grey),
                     ),
                     const SizedBox(height: 32),
                     VirtualKeypadTextField(
@@ -123,9 +168,12 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                       decoration: InputDecoration(
                         labelText: 'Password',
                         border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.lock_outline),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscureText ? Icons.visibility : Icons.visibility_off,
+                            _obscureText
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
                           ),
                           onPressed: () {
                             setState(() => _obscureText = !_obscureText);
@@ -140,11 +188,16 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                         onPressed: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Password: ${_controller.text}'),
+                              content: Text(
+                                'Password entered: ${_controller.text}',
+                              ),
                             ),
                           );
                         },
-                        child: const Text('Submit'),
+                        child: const Padding(
+                          padding: EdgeInsets.all(12),
+                          child: Text('Submit'),
+                        ),
                       ),
                     ),
                   ],
@@ -152,8 +205,7 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
               ),
             ),
             VirtualKeypad(
-              type: KeyboardType.text,
-              height: 260,
+              theme: VirtualKeypadTheme.light,
             ),
           ],
         ),
@@ -163,9 +215,8 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
 }
 
 // =============================================================================
-// Numeric Input Example
+// Example 2: Numeric Input
 // =============================================================================
-
 class NumericInputExample extends StatefulWidget {
   const NumericInputExample({super.key});
 
@@ -174,47 +225,71 @@ class NumericInputExample extends StatefulWidget {
 }
 
 class _NumericInputExampleState extends State<NumericInputExample> {
-  final _controller = VirtualKeypadController();
+  final _amountController = VirtualKeypadController();
 
   @override
   void dispose() {
-    _controller.dispose();
+    _amountController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Numeric Input')),
-      body: VirtualKeypadScope(
-        child: Column(
+    return VirtualKeypadScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Numeric Input'),
+        ),
+        body: Column(
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.pin_outlined, size: 64),
+                    const Icon(Icons.attach_money, size: 64, color: Colors.green),
                     const SizedBox(height: 24),
-                    const Text(
-                      'Enter PIN',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    Text(
+                      'Enter Amount',
+                      style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     const SizedBox(height: 32),
                     VirtualKeypadTextField(
-                      controller: _controller,
-                      obscureText: true,
-                      maxLength: 6,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 32,
-                        letterSpacing: 16,
-                      ),
+                      controller: _amountController,
                       decoration: const InputDecoration(
-                        counterText: '',
+                        labelText: 'Amount',
                         border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.attach_money),
+                        prefixText: '\$ ',
                       ),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () => _amountController.clear(),
+                          child: const Text('Clear'),
+                        ),
+                        FilledButton(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Amount: \$${_amountController.text}',
+                                ),
+                              ),
+                            );
+                          },
+                          child: const Text('Confirm'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -222,7 +297,7 @@ class _NumericInputExampleState extends State<NumericInputExample> {
             ),
             VirtualKeypad(
               type: KeyboardType.number,
-              height: 300,
+              theme: VirtualKeypadTheme.light,
             ),
           ],
         ),
@@ -232,9 +307,8 @@ class _NumericInputExampleState extends State<NumericInputExample> {
 }
 
 // =============================================================================
-// Multiple Fields Example
+// Example 3: Multi-Field Form
 // =============================================================================
-
 class MultiFieldExample extends StatefulWidget {
   const MultiFieldExample({super.key});
 
@@ -257,28 +331,37 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Multiple Fields')),
-      body: VirtualKeypadScope(
-        child: Column(
+    return VirtualKeypadScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Multi-Field Form'),
+        ),
+        body: Column(
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
-                      'Sign Up',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    Text(
+                      'Create Account',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                      textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Tap a field to activate it, then use the virtual keyboard',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    const SizedBox(height: 32),
                     VirtualKeypadTextField(
                       controller: _usernameController,
                       decoration: const InputDecoration(
                         labelText: 'Username',
-                        prefixIcon: Icon(Icons.person),
                         border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.person_outline),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -286,8 +369,8 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
                       controller: _emailController,
                       decoration: const InputDecoration(
                         labelText: 'Email',
-                        prefixIcon: Icon(Icons.email),
                         border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.email_outlined),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -296,20 +379,34 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
                       obscureText: true,
                       decoration: const InputDecoration(
                         labelText: 'Password',
-                        prefixIcon: Icon(Icons.lock),
                         border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.lock_outline),
                       ),
                     ),
                     const SizedBox(height: 24),
                     FilledButton(
-                      onPressed: () {},
-                      child: const Text('Create Account'),
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Username: ${_usernameController.text}, '
+                              'Email: ${_emailController.text}',
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Text('Create Account'),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            VirtualKeypad(height: 240),
+            VirtualKeypad(
+              theme: VirtualKeypadTheme.light,
+            ),
           ],
         ),
       ),
@@ -318,9 +415,8 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
 }
 
 // =============================================================================
-// Custom Theme Example
+// Example 4: Custom Theme
 // =============================================================================
-
 class CustomThemeExample extends StatefulWidget {
   const CustomThemeExample({super.key});
 
@@ -339,45 +435,71 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1E),
-      appBar: AppBar(
-        title: const Text('Custom Theme'),
-        backgroundColor: const Color(0xFF2C2C2E),
-        foregroundColor: Colors.white,
-      ),
-      body: VirtualKeypadScope(
-        child: Column(
+    // Custom purple theme
+    const customTheme = VirtualKeypadTheme(
+      backgroundColor: Color(0xFF2D1B69),
+      keyColor: Color(0xFF4A3580),
+      keyTextColor: Colors.white,
+      actionKeyColor: Color(0xFF6B4EAE),
+      keyBorderRadius: 16,
+      horizontalGap: 8,
+      verticalGap: 10,
+    );
+
+    return VirtualKeypadScope(
+      child: Scaffold(
+        backgroundColor: const Color(0xFF1A1035),
+        appBar: AppBar(
+          title: const Text('Custom Theme'),
+          backgroundColor: const Color(0xFF2D1B69),
+          foregroundColor: Colors.white,
+        ),
+        body: Column(
           children: [
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.keyboard, size: 64, color: Colors.white54),
+                    const Icon(Icons.palette, size: 64, color: Colors.purple),
                     const SizedBox(height: 24),
+                    Text(
+                      'Custom Styled Keyboard',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: Colors.white,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
                     const Text(
-                      'Dark Theme Keyboard',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      'VirtualKeypadTheme allows full customization',
+                      style: TextStyle(color: Colors.white70),
                     ),
                     const SizedBox(height: 32),
                     VirtualKeypadTextField(
                       controller: _controller,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
-                        labelText: 'Type something...',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelText: 'Type something',
+                        labelStyle: const TextStyle(color: Colors.white70),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey[700]!),
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.purple),
                         ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Colors.purpleAccent,
+                            width: 2,
+                          ),
                         ),
+                        prefixIcon:
+                            const Icon(Icons.edit, color: Colors.purple),
+                        filled: true,
+                        fillColor: const Color(0xFF2D1B69),
                       ),
                     ),
                   ],
@@ -385,9 +507,7 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
               ),
             ),
             VirtualKeypad(
-              type: KeyboardType.text,
-              height: 260,
-              theme: VirtualKeypadTheme.dark,
+              theme: customTheme,
             ),
           ],
         ),
