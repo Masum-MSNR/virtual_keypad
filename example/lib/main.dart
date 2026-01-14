@@ -78,6 +78,15 @@ class ExampleHomePage extends StatelessWidget {
               MaterialPageRoute(builder: (_) => const CustomThemeExample()),
             ),
           ),
+          _ExampleCard(
+            title: 'Multiline Text',
+            subtitle: 'Multi-line text area with auto-scroll',
+            icon: Icons.notes_outlined,
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const MultilineTextExample()),
+            ),
+          ),
         ],
       ),
     );
@@ -139,9 +148,7 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
   Widget build(BuildContext context) {
     return VirtualKeypadScope(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Password Entry'),
-        ),
+        appBar: AppBar(title: const Text('Password Entry')),
         body: Column(
           children: [
             Expanded(
@@ -204,9 +211,7 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                 ),
               ),
             ),
-            VirtualKeypad(
-              theme: VirtualKeypadTheme.light,
-            ),
+            VirtualKeypad(theme: VirtualKeypadTheme.light),
           ],
         ),
       ),
@@ -237,9 +242,7 @@ class _NumericInputExampleState extends State<NumericInputExample> {
   Widget build(BuildContext context) {
     return VirtualKeypadScope(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Numeric Input'),
-        ),
+        appBar: AppBar(title: const Text('Numeric Input')),
         body: Column(
           children: [
             Expanded(
@@ -248,7 +251,11 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.attach_money, size: 64, color: Colors.green),
+                    const Icon(
+                      Icons.attach_money,
+                      size: 64,
+                      color: Colors.green,
+                    ),
                     const SizedBox(height: 24),
                     Text(
                       'Enter Amount',
@@ -268,6 +275,7 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
+                      allowPhysicalKeyboard: true,
                     ),
                     const SizedBox(height: 24),
                     Row(
@@ -333,9 +341,7 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
   Widget build(BuildContext context) {
     return VirtualKeypadScope(
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Multi-Field Form'),
-        ),
+        appBar: AppBar(title: const Text('Multi-Field Form')),
         body: Column(
           children: [
             Expanded(
@@ -404,9 +410,7 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
                 ),
               ),
             ),
-            VirtualKeypad(
-              theme: VirtualKeypadTheme.light,
-            ),
+            VirtualKeypad(theme: VirtualKeypadTheme.light),
           ],
         ),
       ),
@@ -466,9 +470,9 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                     const SizedBox(height: 24),
                     Text(
                       'Custom Styled Keyboard',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: Colors.white,
-                          ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.headlineSmall?.copyWith(color: Colors.white),
                     ),
                     const SizedBox(height: 8),
                     const Text(
@@ -496,8 +500,10 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                             width: 2,
                           ),
                         ),
-                        prefixIcon:
-                            const Icon(Icons.edit, color: Colors.purple),
+                        prefixIcon: const Icon(
+                          Icons.edit,
+                          color: Colors.purple,
+                        ),
                         filled: true,
                         fillColor: const Color(0xFF2D1B69),
                       ),
@@ -506,9 +512,97 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                 ),
               ),
             ),
-            VirtualKeypad(
-              theme: customTheme,
+            VirtualKeypad(theme: customTheme),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// Example 5: Multiline Text
+// =============================================================================
+class MultilineTextExample extends StatefulWidget {
+  const MultilineTextExample({super.key});
+
+  @override
+  State<MultilineTextExample> createState() => _MultilineTextExampleState();
+}
+
+class _MultilineTextExampleState extends State<MultilineTextExample> {
+  final _notesController = VirtualKeypadController();
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return VirtualKeypadScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Multiline Text'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              onPressed: () => _notesController.clear(),
+              tooltip: 'Clear',
             ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Write Your Notes',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Text will auto-scroll as you type',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    const SizedBox(height: 16),
+                    Expanded(
+                      child: VirtualKeypadTextField(
+                        controller: _notesController,
+                        maxLines: null, // Unlimited lines
+                        minLines: 5,
+                        textAlignVertical: TextAlignVertical.top,
+                        decoration: const InputDecoration(
+                          hintText: 'Start typing here...',
+                          border: OutlineInputBorder(),
+                          alignLabelWithHint: true,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ListenableBuilder(
+                      listenable: _notesController,
+                      builder: (context, _) {
+                        final charCount = _notesController.text.length;
+                        final lineCount =
+                            '\n'.allMatches(_notesController.text).length + 1;
+                        return Text(
+                          '$charCount characters • $lineCount lines',
+                          style: Theme.of(context).textTheme.bodySmall,
+                          textAlign: TextAlign.end,
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            VirtualKeypad(theme: VirtualKeypadTheme.light),
           ],
         ),
       ),

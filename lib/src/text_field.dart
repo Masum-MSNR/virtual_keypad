@@ -127,6 +127,7 @@ class VirtualKeypadTextField extends StatefulWidget {
 
 class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
   late _ProtectedFocusNode _focusNode;
+  late ScrollController _scrollController;
   bool _isActiveInScope = false;
   VirtualKeypadScopeState? _scope;
 
@@ -134,6 +135,7 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
   void initState() {
     super.initState();
     _focusNode = _ProtectedFocusNode();
+    _scrollController = ScrollController();
     _focusNode.addListener(_onFocusChanged);
     widget.controller.addListener(_onControllerChanged);
   }
@@ -167,6 +169,7 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
     _scope?.removeActiveControllerListener(_onScopeChanged);
     _focusNode.removeListener(_onFocusChanged);
     _focusNode.dispose();
+    _scrollController.dispose();
     widget.controller.removeListener(_onControllerChanged);
     super.dispose();
   }
@@ -206,6 +209,39 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
 
   void _onControllerChanged() {
     widget.onChanged?.call(widget.controller.text);
+    // Ensure cursor is visible by scrolling to end when text changes
+    _scrollToCursor();
+  }
+
+  void _scrollToCursor() {
+    // Schedule scroll after the frame is rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      
+      // For single-line text fields, scroll to show the cursor
+      // For multi-line, the TextField handles vertical scrolling
+      if (widget.maxLines == 1) {
+        // Scroll to the end to show the cursor
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 50),
+          curve: Curves.easeOut,
+        );
+      } else {
+        // For multiline, scroll to max extent if cursor is at or near end
+        final cursorPos = widget.controller.cursorPosition;
+        final textLength = widget.controller.text.length;
+        
+        // If cursor is within last 10% of text or at the end, scroll to bottom
+        if (cursorPos >= textLength * 0.9) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 50),
+            curve: Curves.easeOut,
+          );
+        }
+      }
+    });
   }
 
   void _registerWithScope() {
@@ -272,6 +308,7 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
     return TextField(
       controller: widget.controller,
       focusNode: _focusNode,
+      scrollController: _scrollController,
       decoration: widget.decoration,
       style: widget.style,
       obscureText: widget.obscureText,
