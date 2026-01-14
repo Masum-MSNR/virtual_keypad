@@ -65,7 +65,8 @@ final KeyboardLayout _textLayoutPrimary = [
   ],
   // Row 5: Special keys and modifiers
   [
-    VirtualKey.action(action: KeyAction.symbols, flex: 1),
+    VirtualKey.action(
+        action: KeyAction.symbols, label: '১২৩', altLabel: 'কখ', flex: 1),
     VirtualKey.character(text: 'স'),
     VirtualKey.character(text: 'হ'),
     VirtualKey.character(text: '্'), // Hasanta (virama)
@@ -106,7 +107,8 @@ final KeyboardLayout _textLayoutSecondary = [
   ],
   // Row 3: Punctuation and symbols
   [
-    VirtualKey.action(action: KeyAction.symbolsAlt, flex: 1),
+    VirtualKey.action(
+        action: KeyAction.symbolsAlt, label: '#+=', altLabel: '১২৩', flex: 1),
     VirtualKey.character(text: '-'),
     VirtualKey.character(text: '/'),
     VirtualKey.character(text: ':'),
@@ -118,7 +120,8 @@ final KeyboardLayout _textLayoutSecondary = [
   ],
   // Row 4: Space and navigation
   [
-    VirtualKey.action(action: KeyAction.symbols, flex: 1),
+    VirtualKey.action(
+        action: KeyAction.symbols, label: '১২৩', altLabel: 'কখ', flex: 1),
     VirtualKey.character(text: ','),
     VirtualKey.character(text: '্'), // Hasanta
     VirtualKey.action(action: KeyAction.space, flex: 3),
@@ -155,7 +158,8 @@ final KeyboardLayout _textLayoutTertiary = [
     VirtualKey.character(text: '•'),
   ],
   [
-    VirtualKey.action(action: KeyAction.symbolsAlt, flex: 1),
+    VirtualKey.action(
+        action: KeyAction.symbolsAlt, label: '#+=', altLabel: '১২৩', flex: 1),
     VirtualKey.character(text: '.'),
     VirtualKey.character(text: ','),
     VirtualKey.character(text: '?'),
@@ -166,7 +170,8 @@ final KeyboardLayout _textLayoutTertiary = [
     VirtualKey.action(action: KeyAction.backSpace, flex: 1),
   ],
   [
-    VirtualKey.action(action: KeyAction.symbols, flex: 2),
+    VirtualKey.action(
+        action: KeyAction.symbols, label: '১২৩', altLabel: 'কখ', flex: 2),
     VirtualKey.character(text: ','),
     VirtualKey.action(action: KeyAction.space, flex: 4),
     VirtualKey.character(text: '।'),

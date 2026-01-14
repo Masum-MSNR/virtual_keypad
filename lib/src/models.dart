@@ -16,16 +16,22 @@ class VirtualKey {
     this.flex = 1,
   })  : capsText = capsText ?? text?.toUpperCase(),
         keyType = KeyType.character,
-        action = null;
+        action = null,
+        label = null,
+        altLabel = null;
 
   /// Creates an action key that performs a keyboard function.
   ///
   /// - [action]: The action this key performs.
   /// - [text]: Optional display text for the key.
+  /// - [label]: Label shown when on primary layout (e.g., "123" for symbols).
+  /// - [altLabel]: Label shown when on secondary layout (e.g., "কখ" for Bengali).
   /// - [flex]: Relative width of the key. Default is 1.
   VirtualKey.action({
     required KeyAction this.action,
     this.text,
+    this.label,
+    this.altLabel,
     this.flex = 1,
   })  : capsText = null,
         keyType = KeyType.action;
@@ -41,6 +47,14 @@ class VirtualKey {
 
   /// The action for action keys, null for character keys.
   final KeyAction? action;
+
+  /// Label for action keys when on primary layout.
+  /// For example, "123" on the symbols button.
+  final String? label;
+
+  /// Alternate label for action keys when on non-primary layout.
+  /// For example, "কখ" for Bengali, "ABC" for English.
+  final String? altLabel;
 
   /// Relative width multiplier for the key. A flex of 2 means twice the width.
   final int flex;

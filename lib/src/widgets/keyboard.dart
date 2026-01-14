@@ -492,7 +492,7 @@ class _KeyWidgetState extends State<_KeyWidget> {
 
       case KeyAction.space:
         return Text(
-          'space',
+          widget.virtualKey.label ?? 'space',
           style: TextStyle(
             fontSize: widget.theme.keyTextSize * 0.7,
             color: widget.theme.keyTextColor,
@@ -502,8 +502,8 @@ class _KeyWidgetState extends State<_KeyWidget> {
       case KeyAction.symbols:
         return Text(
           widget.layoutStage == LayoutStage.primary
-              ? '123'
-              : _getLettersLabel(),
+              ? (widget.virtualKey.label ?? '123')
+              : (widget.virtualKey.altLabel ?? _getLettersLabel()),
           style: TextStyle(
             fontSize: widget.theme.keyTextSize * 0.8,
             color: widget.theme.keyTextColor,
@@ -512,7 +512,9 @@ class _KeyWidgetState extends State<_KeyWidget> {
 
       case KeyAction.symbolsAlt:
         return Text(
-          widget.layoutStage == LayoutStage.secondary ? '#+=' : '123',
+          widget.layoutStage == LayoutStage.secondary
+              ? (widget.virtualKey.label ?? '#+=')
+              : (widget.virtualKey.altLabel ?? '123'),
           style: TextStyle(
             fontSize: widget.theme.keyTextSize * 0.8,
             color: widget.theme.keyTextColor,
