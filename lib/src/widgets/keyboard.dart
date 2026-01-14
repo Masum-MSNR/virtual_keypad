@@ -443,11 +443,6 @@ class _KeyWidgetState extends State<_KeyWidget> {
       );
     }
 
-    if (key.action == KeyAction.symbols &&
-        widget.layoutStage != LayoutStage.primary) {
-      return base.copyWith(color: widget.theme.keyColor);
-    }
-
     return base;
   }
 
