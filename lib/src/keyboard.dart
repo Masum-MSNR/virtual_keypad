@@ -36,6 +36,8 @@ class VirtualKeypad extends StatefulWidget {
     this.onKeyPressed,
     this.customLayout,
     this.hideWhenUnfocused = false,
+    this.animationDuration = const Duration(milliseconds: 200),
+    this.animationCurve = Curves.easeInOut,
   });
 
   /// The type of keyboard layout.
@@ -59,6 +61,14 @@ class VirtualKeypad extends StatefulWidget {
   /// When true, the keyboard is hidden when no text field is focused.
   /// When false (default), the keyboard is always visible.
   final bool hideWhenUnfocused;
+
+  /// Duration for the show/hide animation when [hideWhenUnfocused] is true.
+  /// Defaults to 200 milliseconds.
+  final Duration animationDuration;
+
+  /// Curve for the show/hide animation.
+  /// Defaults to [Curves.easeInOut].
+  final Curve animationCurve;
 
   @override
   State<VirtualKeypad> createState() => _VirtualKeypadState();
@@ -211,11 +221,8 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
   @override
   Widget build(BuildContext context) {
-    // Hide keyboard if hideWhenUnfocused is true and no text field is focused
-    if (widget.hideWhenUnfocused && !(_scope?.hasActiveController ?? false)) {
-      return const SizedBox.shrink();
-    }
-
+    final isVisible = !widget.hideWhenUnfocused || (_scope?.hasActiveController ?? false);
+    
     final width = widget.width ?? MediaQuery.of(context).size.width;
     final layout = _currentLayout;
     final rows = layout.length;
@@ -227,10 +234,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     final usedWidth = (maxColumns + 1) * widget.theme.horizontalGap;
     final baseKeyWidth = (width - usedWidth) / maxColumns;
 
-    // TextFieldTapRegion tells Flutter that tapping on the keyboard
-    // is "part of" the text field group, so it won't unfocus the text field.
-    // This is Flutter's official solution for virtual keyboards.
-    return TextFieldTapRegion(
+    final keyboardContent = TextFieldTapRegion(
       child: ExcludeFocus(
         child: Container(
           width: width,
@@ -262,6 +266,24 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
             }).toList(),
           ),
         ),
+      ),
+    );
+
+    // If hideWhenUnfocused is false, just show the keyboard without animation
+    if (!widget.hideWhenUnfocused) {
+      return keyboardContent;
+    }
+
+    // Animated show/hide
+    return AnimatedSlide(
+      duration: widget.animationDuration,
+      curve: widget.animationCurve,
+      offset: isVisible ? Offset.zero : const Offset(0, 1),
+      child: AnimatedOpacity(
+        duration: widget.animationDuration,
+        curve: widget.animationCurve,
+        opacity: isVisible ? 1.0 : 0.0,
+        child: keyboardContent,
       ),
     );
   }
