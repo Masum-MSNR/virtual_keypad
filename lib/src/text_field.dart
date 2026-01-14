@@ -55,6 +55,7 @@ class VirtualKeypadTextField extends StatefulWidget {
     this.obscureText = false,
     this.obscuringCharacter = '•',
     this.enabled = true,
+    this.readOnly = false,
     this.autofocus = false,
     this.textAlign = TextAlign.start,
     this.textAlignVertical,
@@ -87,6 +88,11 @@ class VirtualKeypadTextField extends StatefulWidget {
 
   /// Whether the text field is enabled.
   final bool enabled;
+
+  /// Whether the text field is read-only (display only, no editing).
+  /// This is different from blocking the system keyboard - this makes
+  /// the field completely non-editable.
+  final bool readOnly;
 
   /// Whether to autofocus on mount.
   final bool autofocus;
@@ -203,6 +209,12 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
   void _onFocusChanged() {
     if (_focusNode.hasFocus) {
       _registerWithScope();
+    } else {
+      // Clear the active controller when focus is lost
+      _clearScopeCallbacks();
+      _scope?.clearActiveController();
+      _focusNode.setProtectFocus(false);
+      _isActiveInScope = false;
     }
     setState(() {});
   }
@@ -247,7 +259,8 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
   }
 
   void _registerWithScope() {
-    if (_scope != null && widget.enabled) {
+    // Don't register if disabled or readOnly (no keyboard input allowed)
+    if (_scope != null && widget.enabled && !widget.readOnly) {
       _scope!
           .setActiveController(widget.controller, maxLength: widget.maxLength);
       _scope!.setDeleteSelectionCallback(_deleteSelection);
@@ -388,9 +401,9 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
       obscureText: widget.obscureText,
       obscuringCharacter: widget.obscuringCharacter,
       enabled: widget.enabled,
-      // Use readOnly to prevent system keyboard when not allowing physical keyboard
-      readOnly: !widget.allowPhysicalKeyboard,
-      showCursor: true,
+      // readOnly if user set it OR if blocking system keyboard
+      readOnly: widget.readOnly || !widget.allowPhysicalKeyboard,
+      showCursor: !widget.readOnly,  // Hide cursor if truly readOnly
       autofocus: widget.autofocus,
       textAlign: widget.textAlign,
       textAlignVertical: widget.textAlignVertical,

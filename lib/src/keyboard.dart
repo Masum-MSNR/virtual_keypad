@@ -35,6 +35,7 @@ class VirtualKeypad extends StatefulWidget {
     this.theme = VirtualKeypadTheme.light,
     this.onKeyPressed,
     this.customLayout,
+    this.hideWhenUnfocused = false,
   });
 
   /// The type of keyboard layout.
@@ -55,6 +56,10 @@ class VirtualKeypad extends StatefulWidget {
   /// Custom keyboard layout (used when type is [KeyboardType.custom]).
   final KeyboardLayout? customLayout;
 
+  /// When true, the keyboard is hidden when no text field is focused.
+  /// When false (default), the keyboard is always visible.
+  final bool hideWhenUnfocused;
+
   @override
   State<VirtualKeypad> createState() => _VirtualKeypadState();
 }
@@ -63,8 +68,44 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   LayoutStage _layoutStage = LayoutStage.primary;
   bool _shift = false;
   bool _capsLock = false;
+  VirtualKeypadScopeState? _scope;
 
-  VirtualKeypadScopeState? get _scope => VirtualKeypadScope.of(context);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Listen to scope changes for hideWhenUnfocused
+    final newScope = VirtualKeypadScope.of(context);
+    if (_scope != newScope) {
+      _scope?.removeActiveControllerListener(_onActiveControllerChanged);
+      _scope = newScope;
+      if (widget.hideWhenUnfocused) {
+        _scope?.addActiveControllerListener(_onActiveControllerChanged);
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(VirtualKeypad oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Update listener if hideWhenUnfocused changed
+    if (widget.hideWhenUnfocused != oldWidget.hideWhenUnfocused) {
+      if (widget.hideWhenUnfocused) {
+        _scope?.addActiveControllerListener(_onActiveControllerChanged);
+      } else {
+        _scope?.removeActiveControllerListener(_onActiveControllerChanged);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _scope?.removeActiveControllerListener(_onActiveControllerChanged);
+    super.dispose();
+  }
+
+  void _onActiveControllerChanged() {
+    if (mounted) setState(() {});
+  }
 
   KeyboardLayout get _currentLayout {
     if (widget.type == KeyboardType.custom && widget.customLayout != null) {
@@ -170,6 +211,11 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
   @override
   Widget build(BuildContext context) {
+    // Hide keyboard if hideWhenUnfocused is true and no text field is focused
+    if (widget.hideWhenUnfocused && !(_scope?.hasActiveController ?? false)) {
+      return const SizedBox.shrink();
+    }
+
     final width = widget.width ?? MediaQuery.of(context).size.width;
     final layout = _currentLayout;
     final rows = layout.length;
