@@ -209,17 +209,27 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
 
   void _onControllerChanged() {
     widget.onChanged?.call(widget.controller.text);
-    // Ensure cursor is visible by scrolling to end when text changes
-    _scrollToCursor();
+    // Only auto-scroll if cursor is at the end (text was just inserted)
+    // and there's no active selection (not dragging to select)
+    _maybeScrollToCursor();
   }
 
-  void _scrollToCursor() {
+  void _maybeScrollToCursor() {
     // Schedule scroll after the frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_scrollController.hasClients) return;
+
+      final selection = widget.controller.selection;
       
-      // For single-line text fields, scroll to show the cursor
-      // For multi-line, the TextField handles vertical scrolling
+      // Don't scroll if there's an active selection range (user is selecting text)
+      if (!selection.isCollapsed) return;
+      
+      final cursorPos = selection.baseOffset;
+      final textLength = widget.controller.text.length;
+      
+      // Only scroll if cursor is at the very end (text was just inserted)
+      if (cursorPos != textLength) return;
+
       if (widget.maxLines == 1) {
         // Scroll to the end to show the cursor
         _scrollController.animateTo(
@@ -228,18 +238,12 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
           curve: Curves.easeOut,
         );
       } else {
-        // For multiline, scroll to max extent if cursor is at or near end
-        final cursorPos = widget.controller.cursorPosition;
-        final textLength = widget.controller.text.length;
-        
-        // If cursor is within last 10% of text or at the end, scroll to bottom
-        if (cursorPos >= textLength * 0.9) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 50),
-            curve: Curves.easeOut,
-          );
-        }
+        // For multiline, scroll to bottom when cursor is at end
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 50),
+          curve: Curves.easeOut,
+        );
       }
     });
   }
