@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:virtual_keypad/virtual_keypad.dart';
 import 'screens/password_entry_example.dart';
 import 'screens/numeric_input_example.dart';
 import 'screens/multi_field_example.dart';
@@ -7,6 +8,10 @@ import 'screens/multiline_text_example.dart';
 import 'screens/auto_hide_keyboard_example.dart';
 
 void main() {
+  initializeKeyboardLayouts();
+
+  KeyboardLayoutProvider.instance.setLanguage('bn');
+
   runApp(const ExampleApp());
 }
 

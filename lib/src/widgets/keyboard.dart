@@ -308,6 +308,8 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
                     capsLock: _capsLock,
                     layoutStage: _layoutStage,
                     inputAction: _effectiveInputAction,
+                    languageCode:
+                        KeyboardLayoutProvider.instance.currentLanguageCode,
                     onPressed: _onKeyPressed,
                   );
                 }).toList(),
@@ -345,6 +347,7 @@ class _KeyWidget extends StatefulWidget {
     required this.capsLock,
     required this.layoutStage,
     required this.inputAction,
+    required this.languageCode,
     required this.onPressed,
   });
 
@@ -356,6 +359,7 @@ class _KeyWidget extends StatefulWidget {
   final bool capsLock;
   final LayoutStage layoutStage;
   final TextInputAction inputAction;
+  final String languageCode;
   final void Function(VirtualKey) onPressed;
 
   @override
@@ -497,7 +501,9 @@ class _KeyWidgetState extends State<_KeyWidget> {
 
       case KeyAction.symbols:
         return Text(
-          widget.layoutStage == LayoutStage.primary ? '123' : 'ABC',
+          widget.layoutStage == LayoutStage.primary
+              ? '123'
+              : _getLettersLabel(),
           style: TextStyle(
             fontSize: widget.theme.keyTextSize * 0.8,
             color: widget.theme.keyTextColor,
@@ -591,6 +597,29 @@ class _KeyWidgetState extends State<_KeyWidget> {
         return 'Prev';
       default:
         return 'Done';
+    }
+  }
+
+  String _getLettersLabel() {
+    switch (widget.languageCode) {
+      case 'bn':
+        return 'কখ';
+      case 'hi':
+        return 'अआ';
+      case 'ar':
+        return 'أب';
+      case 'ru':
+        return 'АБВ';
+      case 'ja':
+        return 'あ';
+      case 'ko':
+        return '가나';
+      case 'zh':
+        return '中';
+      case 'th':
+        return 'กข';
+      default:
+        return 'ABC';
     }
   }
 }
