@@ -138,10 +138,12 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       case KeyboardType.url:
         return KeyboardInputType.url;
       case KeyboardType.number:
-      case KeyboardType.numberDecimal:
-      case KeyboardType.numberSigned:
-      case KeyboardType.datetime:
         return KeyboardInputType.number;
+      case KeyboardType.numberSigned:
+        return KeyboardInputType.numberSigned;
+      case KeyboardType.numberDecimal:
+      case KeyboardType.datetime:
+        return KeyboardInputType.numberDecimal;
       case KeyboardType.phone:
         return KeyboardInputType.phone;
       case KeyboardType.text:

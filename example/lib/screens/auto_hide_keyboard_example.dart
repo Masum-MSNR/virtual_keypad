@@ -83,7 +83,7 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                       const SizedBox(height: 16),
                       VirtualKeypadTextField(
                         controller: _field2,
-                        keyboardType: KeyboardType.emailAddress,
+                        keyboardType: KeyboardType.numberSigned,
                         decoration: const InputDecoration(
                           labelText: 'Field 2',
                           hintText: 'Tap to show keyboard',

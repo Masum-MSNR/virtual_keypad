@@ -64,6 +64,8 @@ class KeyboardLanguage {
     this.emailLayouts,
     this.urlLayouts,
     this.numberLayouts,
+    this.numberSignedLayouts,
+    this.numberDecimalLayouts,
     this.phoneLayouts,
     this.isRTL = false,
   });
@@ -92,6 +94,12 @@ class KeyboardLanguage {
   /// Layouts for number input. Falls back to a standard number pad.
   final KeyboardLayoutSet? numberLayouts;
 
+  /// Layouts for signed number input (with - key). Falls back to [numberLayouts].
+  final KeyboardLayoutSet? numberSignedLayouts;
+
+  /// Layouts for decimal number input (with . key). Falls back to [numberLayouts].
+  final KeyboardLayoutSet? numberDecimalLayouts;
+
   /// Layouts for phone input. Falls back to a standard phone dialer.
   final KeyboardLayoutSet? phoneLayouts;
 
@@ -106,6 +114,10 @@ class KeyboardLanguage {
         return urlLayouts ?? textLayouts;
       case KeyboardInputType.number:
         return numberLayouts ?? textLayouts;
+      case KeyboardInputType.numberSigned:
+        return numberSignedLayouts ?? numberLayouts ?? textLayouts;
+      case KeyboardInputType.numberDecimal:
+        return numberDecimalLayouts ?? numberLayouts ?? textLayouts;
       case KeyboardInputType.phone:
         return phoneLayouts ?? textLayouts;
       case KeyboardInputType.text:
@@ -141,8 +153,14 @@ enum KeyboardInputType {
   /// URL input.
   url,
 
-  /// Numeric input (number, signed, decimal, datetime).
+  /// Numeric input (0-9 and .).
   number,
+
+  /// Signed numeric input (0-9, -, .).
+  numberSigned,
+
+  /// Decimal numeric input (0-9, .).
+  numberDecimal,
 
   /// Phone number input.
   phone,
