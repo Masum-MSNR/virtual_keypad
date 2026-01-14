@@ -8,10 +8,6 @@ import 'screens/multiline_text_example.dart';
 import 'screens/auto_hide_keyboard_example.dart';
 
 void main() {
-  initializeKeyboardLayouts();
-
-  KeyboardLayoutProvider.instance.setLanguage('bn');
-
   runApp(const ExampleApp());
 }
 

@@ -537,6 +537,7 @@ final KeyboardLayout _phoneLayout = [
 /// - Email: QWERTY with @ on primary row
 /// - URL: QWERTY with /, :, . on primary row
 /// - Number: Standard number pad
+/// - NumberSigned: Number pad with - key
 /// - Phone: Phone dialer
 final KeyboardLanguage englishLanguage = KeyboardLanguage(
   code: 'en',
@@ -558,6 +559,8 @@ final KeyboardLanguage englishLanguage = KeyboardLanguage(
     tertiary: _urlLayoutTertiary,
   ),
   numberLayouts: KeyboardLayoutSet.single(_numberLayout),
+  numberSignedLayouts: KeyboardLayoutSet.single(_signedNumberLayout),
+  numberDecimalLayouts: KeyboardLayoutSet.single(_numberLayout),
   phoneLayouts: KeyboardLayoutSet.single(_phoneLayout),
 );
 
