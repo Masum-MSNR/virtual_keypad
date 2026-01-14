@@ -78,7 +78,7 @@ final KeyboardLayout _textLayoutSecondary = [
     VirtualKey.character(text: '"'),
   ],
   [
-    VirtualKey.action(action: KeyAction.symbolsAlt, flex: 2),
+    VirtualKey.action(action: KeyAction.symbolsAlt, flex: 1),
     VirtualKey.character(text: '.'),
     VirtualKey.character(text: ','),
     VirtualKey.character(text: '?'),

@@ -1,4 +1,5 @@
 import 'keyboard_language.dart';
+import 'languages/bengali.dart';
 import 'languages/english.dart';
 
 /// Manages keyboard languages and provides access to layouts.
@@ -96,7 +97,9 @@ class KeyboardLayoutProvider {
 /// Initialize the provider with default languages.
 ///
 /// Call this at app startup to register built-in languages.
+/// Registers English ('en') and Bengali ('bn').
 void initializeKeyboardLayouts() {
   final provider = KeyboardLayoutProvider.instance;
   provider.registerLanguage(englishLanguage);
+  provider.registerLanguage(bengaliLanguage);
 }
