@@ -6,7 +6,28 @@ import 'models.dart';
 import 'scope.dart';
 import 'theme.dart';
 
+/// A customizable virtual on-screen keyboard widget.
+///
+/// Automatically integrates with [VirtualKeypadScope] to send input to
+/// the focused [VirtualKeypadTextField]. Supports multiple layouts
+/// (text, number, phone) and custom themes.
+///
+/// ```dart
+/// VirtualKeypadScope(
+///   child: Column(
+///     children: [
+///       VirtualKeypadTextField(controller: controller),
+///       VirtualKeypad(
+///         type: KeyboardType.text,
+///         theme: VirtualKeypadTheme.dark,
+///         hideWhenUnfocused: true,
+///       ),
+///     ],
+///   ),
+/// )
+/// ```
 class VirtualKeypad extends StatefulWidget {
+  /// Creates a virtual keyboard.
   const VirtualKeypad({
     super.key,
     this.type = KeyboardType.text,
@@ -20,14 +41,31 @@ class VirtualKeypad extends StatefulWidget {
     this.animationCurve = Curves.easeInOut,
   });
 
+  /// The type of keyboard layout to display.
   final KeyboardType type;
+
+  /// Height of the keyboard in logical pixels.
   final double height;
+
+  /// Width of the keyboard. Defaults to screen width if null.
   final double? width;
+
+  /// Visual theme for the keyboard.
   final VirtualKeypadTheme theme;
+
+  /// Optional callback invoked when any key is pressed.
   final void Function(VirtualKey key)? onKeyPressed;
+
+  /// Custom layout when [type] is [KeyboardType.custom].
   final KeyboardLayout? customLayout;
+
+  /// When true, hides the keyboard with animation when no text field is focused.
   final bool hideWhenUnfocused;
+
+  /// Duration for show/hide animation when [hideWhenUnfocused] is true.
   final Duration animationDuration;
+
+  /// Animation curve for show/hide transitions.
   final Curve animationCurve;
 
   @override

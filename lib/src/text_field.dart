@@ -3,7 +3,28 @@ import 'package:flutter/services.dart';
 import 'controller.dart';
 import 'scope.dart';
 
+/// A text field that integrates with [VirtualKeypad] through [VirtualKeypadScope].
+///
+/// By default, prevents the system keyboard from appearing while maintaining
+/// full cursor and selection functionality. Use [allowPhysicalKeyboard] to
+/// enable both physical and virtual keyboard input.
+///
+/// ```dart
+/// VirtualKeypadScope(
+///   child: Column(
+///     children: [
+///       VirtualKeypadTextField(
+///         controller: controller,
+///         decoration: InputDecoration(labelText: 'Password'),
+///         obscureText: true,
+///       ),
+///       VirtualKeypad(),
+///     ],
+///   ),
+/// )
+/// ```
 class VirtualKeypadTextField extends StatefulWidget {
+  /// Creates a text field optimized for virtual keyboard input.
   const VirtualKeypadTextField({
     super.key,
     required this.controller,
@@ -26,23 +47,66 @@ class VirtualKeypadTextField extends StatefulWidget {
     this.keyboardType,
   });
 
+  /// Controller for the text field's content and selection.
   final VirtualKeypadController controller;
+
+  /// Decoration for the text field (border, label, hint, etc.).
   final InputDecoration? decoration;
+
+  /// Text style for the input text.
   final TextStyle? style;
+
+  /// Maximum number of characters allowed.
   final int? maxLength;
+
+  /// Whether to hide the text (for passwords).
   final bool obscureText;
+
+  /// Character used when [obscureText] is true.
   final String obscuringCharacter;
+
+  /// Whether the text field accepts input.
   final bool enabled;
+
+  /// Whether the text field is read-only.
+  ///
+  /// When true, the field displays text but doesn't accept any input.
+  /// The cursor is also hidden.
   final bool readOnly;
+
+  /// Whether to automatically focus when the widget is created.
   final bool autofocus;
+
+  /// How to align the text horizontally.
   final TextAlign textAlign;
+
+  /// How to align the text vertically within the field.
   final TextAlignVertical? textAlignVertical;
+
+  /// Maximum number of lines for the text field.
+  ///
+  /// Set to null for unlimited lines.
   final int? maxLines;
+
+  /// Minimum number of lines for the text field.
   final int? minLines;
+
+  /// Called when the text content changes.
   final ValueChanged<String>? onChanged;
+
+  /// Called when the text field is tapped.
   final VoidCallback? onTap;
+
+  /// Called when the user submits (e.g., presses enter).
   final ValueChanged<String>? onSubmitted;
+
+  /// Whether to allow physical keyboard input alongside virtual keyboard.
+  ///
+  /// When false (default), the system keyboard is suppressed.
+  /// When true, both keyboards work together.
   final bool allowPhysicalKeyboard;
+
+  /// The type of keyboard to show when [allowPhysicalKeyboard] is true.
   final TextInputType? keyboardType;
 
   @override
