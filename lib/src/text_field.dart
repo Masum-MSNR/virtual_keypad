@@ -130,6 +130,7 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
   late ScrollController _scrollController;
   bool _isActiveInScope = false;
   VirtualKeypadScopeState? _scope;
+  String _previousText = '';
 
   @override
   void initState() {
@@ -138,6 +139,7 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
     _scrollController = ScrollController();
     _focusNode.addListener(_onFocusChanged);
     widget.controller.addListener(_onControllerChanged);
+    _previousText = widget.controller.text;
   }
 
   @override
@@ -208,42 +210,57 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
   }
 
   void _onControllerChanged() {
-    widget.onChanged?.call(widget.controller.text);
-    // Only auto-scroll if cursor is at the end (text was just inserted)
-    // and there's no active selection (not dragging to select)
-    _maybeScrollToCursor();
+    final currentText = widget.controller.text;
+    final textChanged = currentText != _previousText;
+    _previousText = currentText;
+    
+    widget.onChanged?.call(currentText);
+    
+    // Only scroll to cursor if text content actually changed (typing/deleting)
+    // Not when selection changes (user dragging to select)
+    if (textChanged) {
+      _scrollToCursor();
+    }
   }
 
-  void _maybeScrollToCursor() {
+  void _scrollToCursor() {
     // Schedule scroll after the frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || !_scrollController.hasClients) return;
 
       final selection = widget.controller.selection;
+      if (!selection.isValid) return;
       
-      // Don't scroll if there's an active selection range (user is selecting text)
-      if (!selection.isCollapsed) return;
+      // For TextField, we need to ensure the cursor position is visible
+      // The TextField's internal EditableText handles this when focused,
+      // but we need to help when using virtual keyboard
       
-      final cursorPos = selection.baseOffset;
-      final textLength = widget.controller.text.length;
-      
-      // Only scroll if cursor is at the very end (text was just inserted)
-      if (cursorPos != textLength) return;
-
       if (widget.maxLines == 1) {
-        // Scroll to the end to show the cursor
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 50),
-          curve: Curves.easeOut,
-        );
+        // For single line, scroll to show cursor
+        // We'll scroll to max if cursor is at end, otherwise let Flutter handle it
+        final cursorPos = selection.baseOffset;
+        final textLength = widget.controller.text.length;
+        
+        if (cursorPos >= textLength) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 50),
+            curve: Curves.easeOut,
+          );
+        }
       } else {
-        // For multiline, scroll to bottom when cursor is at end
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 50),
-          curve: Curves.easeOut,
-        );
+        // For multiline, scroll to show the cursor line
+        final cursorPos = selection.baseOffset;
+        final textLength = widget.controller.text.length;
+        
+        // If cursor is at or near the end, scroll to bottom
+        if (cursorPos >= textLength * 0.9 || cursorPos >= textLength) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 50),
+            curve: Curves.easeOut,
+          );
+        }
       }
     });
   }
