@@ -1,0 +1,13 @@
+/// Language-specific keyboard layouts.
+///
+/// Each language file exports a [KeyboardLanguage] instance that can be
+/// registered with [KeyboardLayoutProvider].
+///
+/// To add a new language:
+/// 1. Create a new file in this folder (e.g., `bengali.dart`)
+/// 2. Define your layouts following the pattern in `english.dart`
+/// 3. Export your language file here
+/// 4. Register it with `KeyboardLayoutProvider.instance.registerLanguage()`
+library;
+
+export 'english.dart';

@@ -2,14 +2,11 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../enums.dart';
+import '../layouts/keyboard_language.dart';
+import '../layouts/keyboard_layout_provider.dart';
 import '../models.dart';
 import '../scope.dart';
 import '../theme.dart';
-import '../layouts/text_layouts.dart';
-import '../layouts/email_layouts.dart';
-import '../layouts/url_layouts.dart';
-import '../layouts/number_layouts.dart';
-import '../layouts/phone_layouts.dart';
 
 /// A customizable virtual on-screen keyboard widget.
 ///
@@ -128,60 +125,44 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       return widget.customLayout!;
     }
 
+    final inputType = _toInputType(type);
+    final layoutSet = KeyboardLayoutProvider.instance.getLayouts(inputType);
+
+    return _getLayoutForStage(layoutSet);
+  }
+
+  KeyboardInputType _toInputType(KeyboardType type) {
     switch (type) {
+      case KeyboardType.emailAddress:
+        return KeyboardInputType.email;
+      case KeyboardType.url:
+        return KeyboardInputType.url;
       case KeyboardType.number:
       case KeyboardType.numberDecimal:
-        return numberLayout;
       case KeyboardType.numberSigned:
-        return signedNumberLayout;
+      case KeyboardType.datetime:
+        return KeyboardInputType.number;
       case KeyboardType.phone:
-        return phoneLayout;
-      case KeyboardType.emailAddress:
-        return _getEmailLayout();
-      case KeyboardType.url:
-        return _getUrlLayout();
+        return KeyboardInputType.phone;
       case KeyboardType.text:
       case KeyboardType.multiline:
       case KeyboardType.visiblePassword:
       case KeyboardType.name:
       case KeyboardType.streetAddress:
-      case KeyboardType.datetime:
       case KeyboardType.none:
       case KeyboardType.custom:
-        return _getTextLayout();
+        return KeyboardInputType.text;
     }
   }
 
-  KeyboardLayout _getTextLayout() {
+  KeyboardLayout _getLayoutForStage(KeyboardLayoutSet layoutSet) {
     switch (_layoutStage) {
       case LayoutStage.primary:
-        return textLayoutPrimary;
+        return layoutSet.primary;
       case LayoutStage.secondary:
-        return textLayoutSecondary;
+        return layoutSet.secondary ?? layoutSet.primary;
       case LayoutStage.tertiary:
-        return textLayoutTertiary;
-    }
-  }
-
-  KeyboardLayout _getEmailLayout() {
-    switch (_layoutStage) {
-      case LayoutStage.primary:
-        return emailLayoutPrimary;
-      case LayoutStage.secondary:
-        return emailLayoutSecondary;
-      case LayoutStage.tertiary:
-        return emailLayoutTertiary;
-    }
-  }
-
-  KeyboardLayout _getUrlLayout() {
-    switch (_layoutStage) {
-      case LayoutStage.primary:
-        return urlLayoutPrimary;
-      case LayoutStage.secondary:
-        return urlLayoutSecondary;
-      case LayoutStage.tertiary:
-        return urlLayoutTertiary;
+        return layoutSet.tertiary ?? layoutSet.secondary ?? layoutSet.primary;
     }
   }
 
