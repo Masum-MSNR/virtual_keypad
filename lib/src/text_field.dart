@@ -127,7 +127,7 @@ class VirtualKeypadTextField extends StatefulWidget {
 
 class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
   late _ProtectedFocusNode _focusNode;
-  late ScrollController _scrollController;
+  final GlobalKey _textFieldKey = GlobalKey();
   bool _isActiveInScope = false;
   VirtualKeypadScopeState? _scope;
   String _previousText = '';
@@ -136,7 +136,6 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
   void initState() {
     super.initState();
     _focusNode = _ProtectedFocusNode();
-    _scrollController = ScrollController();
     _focusNode.addListener(_onFocusChanged);
     widget.controller.addListener(_onControllerChanged);
     _previousText = widget.controller.text;
@@ -171,7 +170,6 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
     _scope?.removeActiveControllerListener(_onScopeChanged);
     _focusNode.removeListener(_onFocusChanged);
     _focusNode.dispose();
-    _scrollController.dispose();
     widget.controller.removeListener(_onControllerChanged);
     super.dispose();
   }
@@ -216,52 +214,35 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
     
     widget.onChanged?.call(currentText);
     
-    // Only scroll to cursor if text content actually changed (typing/deleting)
-    // Not when selection changes (user dragging to select)
+    // Scroll to cursor when text changes (typing/deleting)
     if (textChanged) {
-      _scrollToCursor();
+      _ensureCursorVisible();
     }
   }
 
-  void _scrollToCursor() {
-    // Schedule scroll after the frame is rendered
+  void _ensureCursorVisible() {
+    // Schedule after frame to ensure layout is complete
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_scrollController.hasClients) return;
-
+      if (!mounted) return;
+      
       final selection = widget.controller.selection;
-      if (!selection.isValid) return;
+      if (!selection.isValid || !selection.isCollapsed) return;
       
-      // For TextField, we need to ensure the cursor position is visible
-      // The TextField's internal EditableText handles this when focused,
-      // but we need to help when using virtual keyboard
+      // Find the RenderEditable inside the TextField
+      final textFieldContext = _textFieldKey.currentContext;
+      if (textFieldContext == null) return;
       
-      if (widget.maxLines == 1) {
-        // For single line, scroll to show cursor
-        // We'll scroll to max if cursor is at end, otherwise let Flutter handle it
-        final cursorPos = selection.baseOffset;
-        final textLength = widget.controller.text.length;
-        
-        if (cursorPos >= textLength) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 50),
-            curve: Curves.easeOut,
-          );
+      // Walk down the tree to find the EditableText
+      void visitChildren(Element element) {
+        if (element.widget is EditableText) {
+          final editableTextState = (element as StatefulElement).state as EditableTextState;
+          editableTextState.bringIntoView(TextPosition(offset: selection.baseOffset));
+          return;
         }
-      } else {
-        // For multiline, scroll to show the cursor line
-        final cursorPos = selection.baseOffset;
-        final textLength = widget.controller.text.length;
-        
-        // If cursor is at or near the end, scroll to bottom
-        if (cursorPos >= textLength * 0.9 || cursorPos >= textLength) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 50),
-            curve: Curves.easeOut,
-          );
-        }
+        element.visitChildren(visitChildren);
       }
+      
+      (textFieldContext as Element).visitChildren(visitChildren);
     });
   }
 
@@ -327,16 +308,15 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      key: _textFieldKey,
       controller: widget.controller,
       focusNode: _focusNode,
-      scrollController: _scrollController,
       decoration: widget.decoration,
       style: widget.style,
       obscureText: widget.obscureText,
       obscuringCharacter: widget.obscuringCharacter,
       enabled: widget.enabled,
-      // When allowPhysicalKeyboard is false, use readOnly to prevent system keyboard
-      // When true, allow normal editing
+      // Use readOnly to prevent system keyboard when not allowing physical keyboard
       readOnly: !widget.allowPhysicalKeyboard,
       showCursor: true,
       autofocus: widget.autofocus,
@@ -348,8 +328,6 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
       maxLengthEnforcement: widget.maxLength != null
           ? MaxLengthEnforcement.enforced
           : MaxLengthEnforcement.none,
-      // When allowPhysicalKeyboard is false, use TextInputType.none to suppress keyboard
-      // When true, use the specified keyboardType or default
       keyboardType: widget.allowPhysicalKeyboard
           ? widget.keyboardType
           : TextInputType.none,
