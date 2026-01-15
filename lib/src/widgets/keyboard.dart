@@ -79,7 +79,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   bool _capsLock = false;
   VirtualKeypadScopeState? _scope;
   KeyboardType? _lastKeyboardType;
-  
+
   // Cache the layout when keyboard is visible for smooth close animation
   KeyboardLayout? _cachedLayout;
   bool _wasVisible = false;
@@ -106,7 +106,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       final hasController = _scope?.hasActiveController ?? false;
       final allowPhysical = _scope?.allowPhysicalKeyboard ?? false;
       final isVisible = hasController && !allowPhysical;
-      
+
       // Only reset layout when a new field gains focus (not when losing focus)
       if (isVisible) {
         final newType = _effectiveKeyboardType;
@@ -120,7 +120,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         _cachedLayout = _currentLayout;
         _wasVisible = true;
       }
-      
+
       setState(() {});
     }
   }
@@ -278,7 +278,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   Widget build(BuildContext context) {
     final hasController = _scope?.hasActiveController ?? false;
     final allowPhysical = _scope?.allowPhysicalKeyboard ?? false;
-    
+
     // Hide virtual keyboard when physical keyboard is allowed for the active field
     final shouldShowKeyboard = hasController && !allowPhysical;
     final isVisible = !widget.hideWhenUnfocused || shouldShowKeyboard;
@@ -286,18 +286,20 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     if (_effectiveKeyboardType == KeyboardType.none) {
       return const SizedBox.shrink();
     }
-    
+
     // Update cache when visible
     if (shouldShowKeyboard) {
       _cachedLayout = _currentLayout;
       _wasVisible = true;
     }
-    
+
     // Use cached layout during close animation, or current layout when visible
-    final layout = shouldShowKeyboard 
-        ? _currentLayout 
-        : (_wasVisible && _cachedLayout != null ? _cachedLayout! : _currentLayout);
-    
+    final layout = shouldShowKeyboard
+        ? _currentLayout
+        : (_wasVisible && _cachedLayout != null
+            ? _cachedLayout!
+            : _currentLayout);
+
     // Reset cache after animation would complete
     if (!shouldShowKeyboard && _wasVisible && !widget.hideWhenUnfocused) {
       _wasVisible = false;

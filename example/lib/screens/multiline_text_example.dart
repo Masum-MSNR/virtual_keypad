@@ -61,7 +61,10 @@ class _MultilineTextExampleState extends State<MultilineTextExample> {
                       builder: (context, _) {
                         return Text(
                           '${_controller.text.length} characters',
-                          style: const TextStyle(color: Colors.grey, fontSize: 12),
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
                           textAlign: TextAlign.end,
                         );
                       },

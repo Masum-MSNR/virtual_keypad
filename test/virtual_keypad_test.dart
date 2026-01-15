@@ -45,7 +45,8 @@ void main() {
     test('insertText replaces selection', () {
       final controller = VirtualKeypadController(text: 'Hello World');
       // Select "World"
-      controller.selection = const TextSelection(baseOffset: 6, extentOffset: 11);
+      controller.selection =
+          const TextSelection(baseOffset: 6, extentOffset: 11);
       controller.insertText('Flutter');
       expect(controller.text, 'Hello Flutter');
       expect(controller.cursorPosition, 13);
@@ -54,7 +55,8 @@ void main() {
     test('deleteBackward removes selection', () {
       final controller = VirtualKeypadController(text: 'Hello World');
       // Select "World"
-      controller.selection = const TextSelection(baseOffset: 6, extentOffset: 11);
+      controller.selection =
+          const TextSelection(baseOffset: 6, extentOffset: 11);
       controller.deleteBackward();
       expect(controller.text, 'Hello ');
       expect(controller.cursorPosition, 6);
