@@ -134,7 +134,7 @@ class VirtualKeypadController extends TextEditingController {
 
   /// Moves the cursor to the beginning of the text.
   void moveCursorToStart() {
-    selection = TextSelection.collapsed(offset: 0);
+    selection = const TextSelection.collapsed(offset: 0);
   }
 
   /// Selects all text in the field.
