@@ -9,12 +9,10 @@ on:
 
 jobs:
   release:
-#    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
-      id-token: write
+      id-token: write # Required for authentication using OIDC
 
     steps:
       - name: Checkout
@@ -56,5 +54,11 @@ jobs:
           git tag v${{ steps.version.outputs.version }}
           git push origin v${{ steps.version.outputs.version }}
 
+      # --- CHANGED SECTION START ---
+      - name: Setup Pub Credentials
+        uses: dart-lang/setup-dart@v1
+        # No 'with' needed; it detects the id-token permission automatically
+
       - name: Publish to pub.dev
-        uses: dart-lang/setup-dart/publish@main
+        run: flutter pub publish --force
+      # --- CHANGED SECTION END ---
