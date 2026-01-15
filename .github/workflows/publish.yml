@@ -55,4 +55,4 @@ jobs:
           git push origin v${{ steps.version.outputs.version }}
 
       - name: Publish to pub.dev
-        uses: dart-lang/setup-dart/publish@v1
+        uses: dart-lang/setup-dart/publish@main
