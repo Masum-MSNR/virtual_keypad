@@ -206,4 +206,3 @@ class _VirtualKeypadScopeInherited extends InheritedWidget {
         state.activeInputAction != oldWidget.state.activeInputAction;
   }
 }
-

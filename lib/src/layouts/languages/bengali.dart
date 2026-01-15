@@ -2,17 +2,8 @@ import '../../enums.dart';
 import '../../models.dart';
 import '../keyboard_language.dart';
 
-// =============================================================================
-// BENGALI (বাংলা) KEYBOARD LAYOUTS
-// =============================================================================
-// Uses a phonetic-style layout optimized for touch typing.
-// Primary layout contains common consonants and vowels.
-// Secondary layout contains conjuncts, rare characters, and numbers.
-
 /// Bengali text layout - primary (common letters).
-/// Layout designed for natural Bengali typing with most used characters.
 final KeyboardLayout _textLayoutPrimary = [
-  // Row 1: Vowels and common consonants
   [
     VirtualKey.character(text: 'অ'),
     VirtualKey.character(text: 'আ', capsText: 'া'),
@@ -25,7 +16,6 @@ final KeyboardLayout _textLayoutPrimary = [
     VirtualKey.character(text: 'ও', capsText: 'ো'),
     VirtualKey.character(text: 'ঔ', capsText: 'ৌ'),
   ],
-  // Row 2: Common consonants
   [
     VirtualKey.character(text: 'ক'),
     VirtualKey.character(text: 'খ'),
@@ -38,7 +28,6 @@ final KeyboardLayout _textLayoutPrimary = [
     VirtualKey.character(text: 'ট'),
     VirtualKey.character(text: 'ঠ'),
   ],
-  // Row 3: More consonants
   [
     VirtualKey.character(text: 'ড'),
     VirtualKey.character(text: 'ঢ'),
@@ -51,7 +40,6 @@ final KeyboardLayout _textLayoutPrimary = [
     VirtualKey.character(text: 'প'),
     VirtualKey.character(text: 'ফ'),
   ],
-  // Row 4: More consonants with shift and backspace
   [
     VirtualKey.action(action: KeyAction.shift, flex: 1),
     VirtualKey.character(text: 'ব'),
@@ -63,23 +51,21 @@ final KeyboardLayout _textLayoutPrimary = [
     VirtualKey.character(text: 'শ'),
     VirtualKey.action(action: KeyAction.backSpace, flex: 1),
   ],
-  // Row 5: Special keys and modifiers
   [
     VirtualKey.action(
         action: KeyAction.symbols, label: '১২৩', altLabel: 'কখগ', flex: 1),
     VirtualKey.character(text: 'স'),
     VirtualKey.character(text: 'হ'),
-    VirtualKey.character(text: '্'), // Hasanta (virama)
+    VirtualKey.character(text: '্'),
     VirtualKey.action(action: KeyAction.space, flex: 3),
-    VirtualKey.character(text: 'ং'), // Anusvara
-    VirtualKey.character(text: '।'), // Bengali danda
+    VirtualKey.character(text: 'ং'),
+    VirtualKey.character(text: '।'),
     VirtualKey.action(action: KeyAction.enter, flex: 1),
   ],
 ];
 
-/// Bengali text layout - secondary (more characters, numbers, conjuncts).
+/// Bengali text layout - secondary (numbers, conjuncts).
 final KeyboardLayout _textLayoutSecondary = [
-  // Row 1: Bengali numerals
   [
     VirtualKey.character(text: '১', capsText: '1'),
     VirtualKey.character(text: '২', capsText: '2'),
@@ -92,20 +78,18 @@ final KeyboardLayout _textLayoutSecondary = [
     VirtualKey.character(text: '৯', capsText: '9'),
     VirtualKey.character(text: '০', capsText: '0'),
   ],
-  // Row 2: Additional consonants and special characters
   [
     VirtualKey.character(text: 'ঙ'),
     VirtualKey.character(text: 'ঞ'),
     VirtualKey.character(text: 'ড়'),
     VirtualKey.character(text: 'ঢ়'),
     VirtualKey.character(text: 'য়'),
-    VirtualKey.character(text: 'ৎ'), // Khanda ta
-    VirtualKey.character(text: 'ঃ'), // Visarga
-    VirtualKey.character(text: 'ঁ'), // Chandrabindu
-    VirtualKey.character(text: 'ৃ'), // Vowel sign vocalic r
-    VirtualKey.character(text: 'ঋ'), // Vowel vocalic r
+    VirtualKey.character(text: 'ৎ'),
+    VirtualKey.character(text: 'ঃ'),
+    VirtualKey.character(text: 'ঁ'),
+    VirtualKey.character(text: 'ৃ'),
+    VirtualKey.character(text: 'ঋ'),
   ],
-  // Row 3: Punctuation and symbols
   [
     VirtualKey.action(
         action: KeyAction.symbolsAlt, label: '#+=', altLabel: '১২৩', flex: 1),
@@ -118,15 +102,14 @@ final KeyboardLayout _textLayoutSecondary = [
     VirtualKey.character(text: "'"),
     VirtualKey.action(action: KeyAction.backSpace, flex: 1),
   ],
-  // Row 4: Space and navigation
   [
     VirtualKey.action(
         action: KeyAction.symbols, label: '১২৩', altLabel: 'কখগ', flex: 1),
     VirtualKey.character(text: ','),
-    VirtualKey.character(text: '্'), // Hasanta
+    VirtualKey.character(text: '্'),
     VirtualKey.action(action: KeyAction.space, flex: 3),
-    VirtualKey.character(text: '।'), // Danda
-    VirtualKey.character(text: '॥'), // Double danda
+    VirtualKey.character(text: '।'),
+    VirtualKey.character(text: '॥'),
     VirtualKey.action(action: KeyAction.enter, flex: 1),
   ],
 ];
@@ -152,8 +135,8 @@ final KeyboardLayout _textLayoutTertiary = [
     VirtualKey.character(text: '~'),
     VirtualKey.character(text: '<'),
     VirtualKey.character(text: '>'),
-    VirtualKey.character(text: '৳'), // Bengali Rupee
-    VirtualKey.character(text: '₹'), // Indian Rupee
+    VirtualKey.character(text: '৳'),
+    VirtualKey.character(text: '₹'),
     VirtualKey.character(text: '\$'),
     VirtualKey.character(text: '•'),
   ],
@@ -178,10 +161,6 @@ final KeyboardLayout _textLayoutTertiary = [
     VirtualKey.action(action: KeyAction.enter, flex: 2),
   ],
 ];
-
-// =============================================================================
-// EMAIL LAYOUTS (Bengali with @ and common email characters)
-// =============================================================================
 
 /// Bengali email keyboard - primary layout.
 final KeyboardLayout _emailLayoutPrimary = [
@@ -279,11 +258,7 @@ final KeyboardLayout _emailLayoutSecondary = [
   ],
 ];
 
-// =============================================================================
-// NUMBER LAYOUTS (Bengali numerals)
-// =============================================================================
-
-/// Bengali number pad layout (Bengali numerals with option for Arabic).
+/// Bengali number pad layout.
 final KeyboardLayout _numberLayout = [
   [
     VirtualKey.character(text: '১', capsText: '1'),
@@ -335,10 +310,6 @@ final KeyboardLayout _signedNumberLayout = [
   ],
 ];
 
-// =============================================================================
-// PHONE LAYOUTS
-// =============================================================================
-
 /// Bengali phone dialer layout.
 final KeyboardLayout _phoneLayout = [
   [
@@ -368,17 +339,7 @@ final KeyboardLayout _phoneLayout = [
   ],
 ];
 
-// =============================================================================
-// BENGALI LANGUAGE DEFINITION
-// =============================================================================
-
 /// Bengali (বাংলা) keyboard language.
-///
-/// This provides layouts for:
-/// - Text: Bengali script with vowels and consonants
-/// - Email: Bengali with @ on primary row
-/// - Number: Bengali numerals (১২৩...) with shift for Arabic (123...)
-/// - Phone: Bengali numeral dialer
 final KeyboardLanguage bengaliLanguage = KeyboardLanguage(
   code: 'bn',
   name: 'Bengali',

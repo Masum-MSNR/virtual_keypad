@@ -30,15 +30,9 @@
 /// ```
 library;
 
-// Core layout types
 export 'keyboard_language.dart';
 export 'keyboard_layout_provider.dart';
-
-// Built-in languages
 export 'languages/languages.dart';
-
-// Legacy exports for backward compatibility
-// These will be deprecated in future versions
 export 'text_layouts.dart';
 export 'number_layouts.dart';
 export 'email_layouts.dart';

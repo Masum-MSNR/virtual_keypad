@@ -41,16 +41,11 @@
 /// - [KeyboardType] - Input types that determine keyboard layout
 library;
 
-// Core
 export 'src/controller.dart';
 export 'src/enums.dart';
 export 'src/models.dart';
 export 'src/scope.dart';
 export 'src/theme.dart';
-
-// Widgets
 export 'src/widgets/keyboard.dart';
 export 'src/widgets/text_field.dart';
-
-// Layouts (for custom keyboard building)
 export 'src/layouts/layouts.dart';

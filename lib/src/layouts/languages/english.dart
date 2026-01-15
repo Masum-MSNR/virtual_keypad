@@ -2,10 +2,6 @@ import '../../enums.dart';
 import '../../models.dart';
 import '../keyboard_language.dart';
 
-// =============================================================================
-// ENGLISH QWERTY LAYOUTS
-// =============================================================================
-
 /// Standard QWERTY text layout - primary (letters).
 final KeyboardLayout _textLayoutPrimary = [
   [
@@ -142,10 +138,6 @@ final KeyboardLayout _textLayoutTertiary = [
     VirtualKey.action(action: KeyAction.enter, flex: 2),
   ],
 ];
-
-// =============================================================================
-// EMAIL LAYOUTS
-// =============================================================================
 
 /// Email keyboard - primary layout with @ readily accessible.
 final KeyboardLayout _emailLayoutPrimary = [
@@ -290,10 +282,6 @@ final KeyboardLayout _emailLayoutTertiary = [
   ],
 ];
 
-// =============================================================================
-// URL LAYOUTS
-// =============================================================================
-
 /// URL keyboard - primary layout with common URL characters accessible.
 final KeyboardLayout _urlLayoutPrimary = [
   [
@@ -437,11 +425,7 @@ final KeyboardLayout _urlLayoutTertiary = [
   ],
 ];
 
-// =============================================================================
-// NUMBER LAYOUTS
-// =============================================================================
-
-/// Standard number pad layout (0-9 with decimal).
+/// Standard number pad layout.
 final KeyboardLayout _numberLayout = [
   [
     VirtualKey.character(text: '1'),
@@ -493,11 +477,7 @@ final KeyboardLayout _signedNumberLayout = [
   ],
 ];
 
-// =============================================================================
-// PHONE LAYOUTS
-// =============================================================================
-
-/// Phone dialer layout with standard phone pad characters.
+/// Phone dialer layout.
 final KeyboardLayout _phoneLayout = [
   [
     VirtualKey.character(text: '1'),
@@ -526,19 +506,7 @@ final KeyboardLayout _phoneLayout = [
   ],
 ];
 
-// =============================================================================
-// ENGLISH LANGUAGE DEFINITION
-// =============================================================================
-
 /// English (QWERTY) keyboard language.
-///
-/// This is the default language and provides layouts for:
-/// - Text: Standard QWERTY with symbols
-/// - Email: QWERTY with @ on primary row
-/// - URL: QWERTY with /, :, . on primary row
-/// - Number: Standard number pad
-/// - NumberSigned: Number pad with - key
-/// - Phone: Phone dialer
 final KeyboardLanguage englishLanguage = KeyboardLanguage(
   code: 'en',
   name: 'English',
@@ -562,9 +530,4 @@ final KeyboardLanguage englishLanguage = KeyboardLanguage(
   numberSignedLayouts: KeyboardLayoutSet.single(_signedNumberLayout),
   numberDecimalLayouts: KeyboardLayoutSet.single(_numberLayout),
   phoneLayouts: KeyboardLayoutSet.single(_phoneLayout),
-);
-
-/// Signed number layout set for special use cases.
-final KeyboardLayoutSet englishSignedNumberLayouts = KeyboardLayoutSet.single(
-  _signedNumberLayout,
 );
