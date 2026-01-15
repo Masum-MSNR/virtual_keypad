@@ -1,40 +1,56 @@
-name: Publish to pub.dev
+name: Release & Publish
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'pubspec.yaml'
+  pull_request:
+    types: [ closed ]
+    branches: [ main ]
 
 jobs:
-  publish:
+  release:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    
+
     permissions:
-      id-token: write # Required for authentication with pub.dev
-    
+      contents: write
+      id-token: write
+
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
-          channel: 'stable'
+          channel: stable
+
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Ensure tag does not already exist
+        run: |
+          if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "❌ Version already published"
+            exit 1
+          fi
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Analyze code
-        run: dart analyze --fatal-infos
+      - name: Analyze
+        run: flutter analyze
 
-      - name: Run tests
-        run: flutter test
+      - name: Dry run publish
+        run: flutter pub publish --dry-run
 
-      - name: Check publish warnings
-        run: dart pub publish --dry-run
+      - name: Create tag
+        run: |
+          git tag v${{ steps.version.outputs.version }}
+          git push origin v${{ steps.version.outputs.version }}
 
       - name: Publish to pub.dev
-        run: dart pub publish --force
+        run: flutter pub publish --force

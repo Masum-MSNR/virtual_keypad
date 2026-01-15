@@ -3,7 +3,6 @@ name: CI
 on:
   push:
     branches:
-      - main
       - dev
   pull_request:
     branches:
@@ -21,7 +20,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable  # Always uses latest stable Flutter
+          channel: stable
 
       - name: Install dependencies
         run: flutter pub get
