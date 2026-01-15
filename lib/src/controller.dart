@@ -37,8 +37,17 @@ class VirtualKeypadController extends TextEditingController {
 
   /// Inserts text at the current cursor position.
   ///
+  /// If text is selected, replaces the selection with the new text.
   /// The cursor moves to the end of the inserted text.
   void insertText(String newText) {
+    final sel = selection;
+
+    // If there's a valid selection, replace it
+    if (sel.isValid && !sel.isCollapsed) {
+      replaceRange(sel.start, sel.end, newText);
+      return;
+    }
+
     final pos = cursorPosition;
     final before = text.substring(0, pos);
     final after = text.substring(pos);
@@ -52,8 +61,18 @@ class VirtualKeypadController extends TextEditingController {
 
   /// Deletes the character before the cursor (backspace).
   ///
-  /// Does nothing if the cursor is at position 0.
+  /// If text is selected, deletes the entire selection.
+  /// Otherwise, deletes the character before the cursor.
+  /// Does nothing if the cursor is at position 0 and no selection.
   void deleteBackward() {
+    final sel = selection;
+
+    // If there's a valid selection, delete it
+    if (sel.isValid && !sel.isCollapsed) {
+      deleteRange(sel.start, sel.end);
+      return;
+    }
+
     final pos = cursorPosition;
     if (pos > 0 && text.isNotEmpty) {
       final before = text.substring(0, pos - 1);
@@ -116,6 +135,15 @@ class VirtualKeypadController extends TextEditingController {
   /// Moves the cursor to the beginning of the text.
   void moveCursorToStart() {
     selection = TextSelection.collapsed(offset: 0);
+  }
+
+  /// Selects all text in the field.
+  ///
+  /// Does nothing if the text is empty.
+  void selectAll() {
+    if (text.isNotEmpty) {
+      selection = TextSelection(baseOffset: 0, extentOffset: text.length);
+    }
   }
 
   /// Deletes text in the specified range [start, end).

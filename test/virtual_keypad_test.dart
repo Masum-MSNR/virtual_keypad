@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
@@ -31,6 +32,32 @@ void main() {
       controller.insertText('l');
       expect(controller.text, 'Hello');
       expect(controller.cursorPosition, 4);
+    });
+
+    test('selectAll selects entire text', () {
+      final controller = VirtualKeypadController(text: 'Hello');
+      controller.selectAll();
+      expect(controller.selection.start, 0);
+      expect(controller.selection.end, 5);
+      expect(controller.selection.isCollapsed, false);
+    });
+
+    test('insertText replaces selection', () {
+      final controller = VirtualKeypadController(text: 'Hello World');
+      // Select "World"
+      controller.selection = const TextSelection(baseOffset: 6, extentOffset: 11);
+      controller.insertText('Flutter');
+      expect(controller.text, 'Hello Flutter');
+      expect(controller.cursorPosition, 13);
+    });
+
+    test('deleteBackward removes selection', () {
+      final controller = VirtualKeypadController(text: 'Hello World');
+      // Select "World"
+      controller.selection = const TextSelection(baseOffset: 6, extentOffset: 11);
+      controller.deleteBackward();
+      expect(controller.text, 'Hello ');
+      expect(controller.cursorPosition, 6);
     });
   });
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:virtual_keypad/virtual_keypad.dart';
 import 'screens/password_entry_example.dart';
 import 'screens/numeric_input_example.dart';
 import 'screens/multi_field_example.dart';
