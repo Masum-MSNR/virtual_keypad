@@ -1,9 +1,16 @@
 name: virtual_keypad
 description: "A customizable virtual on-screen keyboard for Flutter with TextField integration. Supports multiple layouts, themes, and works on all platforms."
 version: 0.1.0
-homepage: https://github.com/user/virtual_keypad
-repository: https://github.com/user/virtual_keypad
-issue_tracker: https://github.com/user/virtual_keypad/issues
+homepage: https://github.com/Masum-MSNR/virtual_keypad
+repository: https://github.com/Masum-MSNR/virtual_keypad
+issue_tracker: https://github.com/Masum-MSNR/virtual_keypad/issues
+
+topics:
+  - keyboard
+  - virtual-keyboard
+  - text-field
+  - input
+  - kiosk
 
 environment:
   sdk: ^3.0.0

@@ -436,10 +436,10 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Contributing
 
-Contributions are welcome! Please read our contributing guidelines and submit pull requests to our repository.
+Contributions are welcome! Please submit pull requests to the [repository](https://github.com/Masum-MSNR/virtual_keypad).
 
 ## Support
 
 - 📖 [Documentation](https://pub.dev/packages/virtual_keypad)
-- 🐛 [Issue Tracker](https://github.com/user/virtual_keypad/issues)
-- 💬 [Discussions](https://github.com/user/virtual_keypad/discussions)
+- 🐛 [Issue Tracker](https://github.com/Masum-MSNR/virtual_keypad/issues)
+- 💬 [Discussions](https://github.com/Masum-MSNR/virtual_keypad/discussions)
