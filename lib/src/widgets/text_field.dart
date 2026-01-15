@@ -280,6 +280,7 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
         maxLength: widget.maxLength,
         keyboardType: widget.keyboardType,
         inputAction: inputAction,
+        allowPhysicalKeyboard: widget.allowPhysicalKeyboard,
       );
       _scope!.setDeleteSelectionCallback(_deleteSelection);
       _scope!.setGetSelectionCallback(_getSelection);

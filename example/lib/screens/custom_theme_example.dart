@@ -65,11 +65,16 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFF0F3460)),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF0F3460),
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Colors.blue, width: 2),
+                            borderSide: const BorderSide(
+                              color: Colors.blue,
+                              width: 2,
+                            ),
                           ),
                           filled: true,
                           fillColor: const Color(0xFF16213E),

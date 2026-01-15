@@ -49,6 +49,7 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
   int? _activeMaxLength;
   KeyboardType _activeKeyboardType = KeyboardType.text;
   TextInputAction _activeInputAction = TextInputAction.done;
+  bool _allowPhysicalKeyboard = false;
   final List<VoidCallback> _listeners = [];
 
   bool Function()? _deleteSelectionCallback;
@@ -67,6 +68,10 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
 
   /// The input action for the active text field (done, next, search, etc.).
   TextInputAction get activeInputAction => _activeInputAction;
+
+  /// Whether the active text field allows physical keyboard input.
+  /// When true, the virtual keyboard should be hidden.
+  bool get allowPhysicalKeyboard => _allowPhysicalKeyboard;
 
   /// Whether a text field is currently focused.
   bool get hasActiveController => _activeController != null;
@@ -113,10 +118,12 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
     int? maxLength,
     KeyboardType keyboardType = KeyboardType.text,
     TextInputAction inputAction = TextInputAction.done,
+    bool allowPhysicalKeyboard = false,
   }) {
     final changed = _activeController != controller ||
         _activeKeyboardType != keyboardType ||
-        _activeInputAction != inputAction;
+        _activeInputAction != inputAction ||
+        _allowPhysicalKeyboard != allowPhysicalKeyboard;
 
     if (changed) {
       setState(() {
@@ -124,6 +131,7 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
         _activeMaxLength = maxLength;
         _activeKeyboardType = keyboardType;
         _activeInputAction = inputAction;
+        _allowPhysicalKeyboard = allowPhysicalKeyboard;
       });
       _notifyListeners();
     }
@@ -137,6 +145,7 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
         _activeMaxLength = null;
         _activeKeyboardType = KeyboardType.text;
         _activeInputAction = TextInputAction.done;
+        _allowPhysicalKeyboard = false;
       });
       _notifyListeners();
     }
@@ -203,6 +212,7 @@ class _VirtualKeypadScopeInherited extends InheritedWidget {
   bool updateShouldNotify(_VirtualKeypadScopeInherited oldWidget) {
     return state.activeController != oldWidget.state.activeController ||
         state.activeKeyboardType != oldWidget.state.activeKeyboardType ||
-        state.activeInputAction != oldWidget.state.activeInputAction;
+        state.activeInputAction != oldWidget.state.activeInputAction ||
+        state.allowPhysicalKeyboard != oldWidget.state.allowPhysicalKeyboard;
   }
 }

@@ -2,3 +2,22 @@ include: package:flutter_lints/flutter.yaml
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+
+linter:
+  rules:
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_final_locals
+    - prefer_final_in_for_each
+    - avoid_print
+    - unawaited_futures
+    - always_declare_return_types
+    - avoid_unused_constructor_parameters
+    - use_super_parameters
+
+analyzer:
+  errors:
+    # Treat these as info/ignore for existing codebase compatibility
+    prefer_const_constructors: info
+    prefer_single_quotes: ignore
+    require_trailing_commas: ignore

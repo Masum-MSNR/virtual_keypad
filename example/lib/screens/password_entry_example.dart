@@ -64,7 +64,9 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                         child: FilledButton(
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Password: ${_controller.text}')),
+                              SnackBar(
+                                content: Text('Password: ${_controller.text}'),
+                              ),
                             );
                           },
                           child: const Text('Submit'),

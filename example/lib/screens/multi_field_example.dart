@@ -54,6 +54,7 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
                       const SizedBox(height: 16),
                       VirtualKeypadTextField(
                         controller: _emailController,
+                        allowPhysicalKeyboard: true,
                         decoration: const InputDecoration(
                           labelText: 'Email',
                           border: OutlineInputBorder(),
