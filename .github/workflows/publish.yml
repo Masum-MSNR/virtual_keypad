@@ -2,28 +2,21 @@ name: Release & Publish
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    types: [ closed ]
-    branches: [ main ]
+    branches: [ main ]  # Triggers the "Tagging" job
+    tags: [ 'v*' ]      # Triggers the "Publishing" job
 
 jobs:
-  release:
+  # JOB 1: Create the tag (Runs only on branch push)
+  create-tag:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      id-token: write # Required for authentication using OIDC
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
+          token: ${{ secrets.RELEASE_PAT }} # <--- IMPORTANT: Use PAT here to checkout
           fetch-depth: 0
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
 
       - name: Read version
         id: version
@@ -31,34 +24,37 @@ jobs:
           VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Ensure tag does not already exist
-        run: |
-          if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
-            echo "❌ Version already published"
-            exit 1
-          fi
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Analyze
-        run: flutter analyze
-
-      - name: Dry run publish
-        run: flutter pub publish --dry-run
-
-      - name: Create tag
+      - name: Create and Push Tag
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag v${{ steps.version.outputs.version }}
-          git push origin v${{ steps.version.outputs.version }}
+          
+          TAG="v${{ steps.version.outputs.version }}"
+          
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists. Skipping."
+          else
+            git tag $TAG
+            git push origin $TAG
+          fi
+          # Because we used RELEASE_PAT in checkout, this push will trigger the job below automatically.
 
-      # --- CHANGED SECTION START ---
+  # JOB 2: Publish to Pub.dev (Runs only on tag push)
+  publish:
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Required for Pub.dev OIDC
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
       - name: Setup Pub Credentials
         uses: dart-lang/setup-dart@v1
-        # No 'with' needed; it detects the id-token permission automatically
 
-      - name: Publish to pub.dev
+      - name: Publish
         run: flutter pub publish --force
-      # --- CHANGED SECTION END ---
