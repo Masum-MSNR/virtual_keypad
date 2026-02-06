@@ -1,61 +1,47 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/doc/assets/logo.png" alt="Virtual Keypad" width="120"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/logo.png" alt="Virtual Keypad" width="120"/>
 </p>
 
 <h1 align="center">Virtual Keypad</h1>
 
 <p align="center">
-  <strong>A fully customizable virtual on-screen keyboard for Flutter</strong>
-</p>
-
-<p align="center">
   <a href="https://pub.dev/packages/virtual_keypad"><img src="https://img.shields.io/pub/v/virtual_keypad.svg" alt="pub package"></a>
   <a href="https://github.com/Masum-MSNR/virtual_keypad/actions"><img src="https://img.shields.io/github/actions/workflow/status/Masum-MSNR/virtual_keypad/dart.yml?branch=main" alt="build status"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
-  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Platform-Flutter-02569B?logo=flutter" alt="Platform"></a>
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.0+-02569B?logo=flutter" alt="Platform"></a>
 </p>
 
 <p align="center">
-  Perfect for kiosk applications, password entry UIs, custom input interfaces, and any application requiring system keyboard suppression.
+A fully customizable virtual on-screen keyboard for Flutter.<br/>
+Perfect for kiosk apps, password UIs, and custom input interfaces.
 </p>
 
 ---
 
-## ✨ Features
+- **Multiple Layouts** — Text, numeric, phone, email, URL, or fully custom
+- **Multi-Language** — Built-in English & Bengali, easily extensible
+- **Smart TextField** — Auto-adapts keyboard layout based on input type
+- **Themeable** — Light, dark, or fully custom themes
+- **Cross-Platform** — Mobile, web, and desktop
+- **Full Editing** — Selection, copy/paste, cursor control
+- **Auto-Hide** — Animated show/hide on focus change
 
-| Feature | Description |
-|---------|-------------|
-| 🎹 **Multiple Layouts** | Text, numeric, phone, email, URL, or fully custom layouts |
-| 🌍 **Multi-Language** | Built-in English & Bengali, easily extensible |
-| 📝 **Smart TextField** | Auto-adapts keyboard based on input type |
-| ⌨️ **Physical Keyboard** | Optional dual input mode (virtual + physical) |
-| 🎨 **Themeable** | Light, dark, or custom themes |
-| 📱 **Cross-Platform** | Mobile, web, and desktop support |
-| ⚡ **Full Editing** | Selection, copy/paste, cursor control |
-| 🔒 **Password Mode** | Secure text obscuring |
-| 🔄 **Auto-Hide** | Animated show/hide on focus change |
-
----
-
-## 📦 Installation
-
-Add to your `pubspec.yaml`:
+## Installation
 
 ```yaml
 dependencies:
-  virtual_keypad: ^0.1.1
+  virtual_keypad: ^latest
 ```
 
-```bash
-flutter pub get
-```
-
----
-
-## 🚀 Quick Start
+## Quick Start
 
 ```dart
 import 'package:virtual_keypad/virtual_keypad.dart';
+
+void main() {
+  initializeKeyboardLayouts(); // Required: registers built-in languages
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -64,12 +50,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final controller = VirtualKeypadController();
-
-  @override
-  void initState() {
-    super.initState();
-    initializeKeyboardLayouts();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,204 +68,28 @@ class _MyAppState extends State<MyApp> {
 }
 ```
 
-> 💡 **Three components work together:** `VirtualKeypadScope` → `VirtualKeypadTextField` → `VirtualKeypad`
+> Three components work together: `VirtualKeypadScope` → `VirtualKeypadTextField` → `VirtualKeypad`
 
----
-
-## 📖 Core Components
-
-### VirtualKeypadScope
-
-**Required wrapper** connecting text fields to the keyboard.
-
-```dart
-VirtualKeypadScope(
-  child: Column(
-    children: [
-      VirtualKeypadTextField(controller: controller1),
-      VirtualKeypadTextField(controller: controller2),
-      VirtualKeypad(), // Auto-connects to focused field
-    ],
-  ),
-)
-```
-
-### VirtualKeypadTextField
-
-Drop-in `TextField` replacement with virtual keyboard integration.
+## Keyboard Types
 
 ```dart
 VirtualKeypadTextField(
   controller: controller,
-  keyboardType: KeyboardType.emailAddress,
-  obscureText: false,
-  allowPhysicalKeyboard: false,  // Block system keyboard
-  onSubmitted: (value) => print(value),
+  keyboardType: KeyboardType.emailAddress, // Auto-shows @ and .
 )
 ```
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `controller` | `VirtualKeypadController` | *required* | Text controller |
-| `keyboardType` | `KeyboardType` | `text` | Keyboard layout type |
-| `obscureText` | `bool` | `false` | Password mode |
-| `allowPhysicalKeyboard` | `bool` | `false` | Enable system keyboard |
-| `maxLength` | `int?` | `null` | Character limit |
-| `maxLines` | `int` | `1` | Line count |
+| Type | Use Case |
+|------|----------|
+| `text` | General text input (QWERTY) |
+| `emailAddress` | Email fields (QWERTY + `@` `.`) |
+| `url` | URL fields (QWERTY + `/` `:` `.`) |
+| `number` | Numeric input (0-9) |
+| `phone` | Phone dialer |
+| `multiline` | Text areas with newline |
+| `custom` | User-defined layouts |
 
-### VirtualKeypad
-
-The on-screen keyboard widget.
-
-```dart
-VirtualKeypad(
-  height: 280,
-  theme: VirtualKeypadTheme.dark,
-  hideWhenUnfocused: true,
-)
-```
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `type` | `KeyboardType?` | `null` | Override layout (auto if null) |
-| `height` | `double` | `280` | Keyboard height |
-| `theme` | `VirtualKeypadTheme` | `light` | Visual theme |
-| `hideWhenUnfocused` | `bool` | `false` | Auto-hide animation |
-| `customLayout` | `KeyboardLayout?` | `null` | Custom key arrangement |
-
-### VirtualKeypadController
-
-Extended `TextEditingController` with additional methods.
-
-```dart
-final controller = VirtualKeypadController();
-
-controller.insertText('Hello');
-controller.deleteBackward();
-controller.selectAll();
-controller.clear();
-controller.cursorPosition = 5;
-```
-
----
-
-## ⌨️ Keyboard Types
-
-| Type | Layout | Use Case |
-|------|--------|----------|
-| `text` | Full QWERTY | General text input |
-| `emailAddress` | QWERTY + `@` `.` | Email fields |
-| `url` | QWERTY + `/` `:` `.` | URL fields |
-| `number` | 0-9, decimal | Numeric input |
-| `numberSigned` | 0-9, `-`, decimal | Signed numbers |
-| `phone` | Phone dialer | Phone numbers |
-| `multiline` | QWERTY + newline | Text areas |
-| `custom` | User-defined | Custom layouts |
-
----
-
-## 🎨 Theming
-
-### Built-in Themes
-
-```dart
-VirtualKeypad(theme: VirtualKeypadTheme.light)
-VirtualKeypad(theme: VirtualKeypadTheme.dark)
-```
-
-### Custom Theme
-
-```dart
-VirtualKeypad(
-  theme: VirtualKeypadTheme(
-    backgroundColor: Colors.grey[900]!,
-    keyColor: Colors.grey[800]!,
-    actionKeyColor: Colors.grey[700]!,
-    keyTextColor: Colors.white,
-    keyTextSize: 20,
-    keyBorderRadius: 8,
-  ),
-)
-```
-
----
-
-## 🌍 Multi-Language Support
-
-### Built-in Languages
-
-| Code | Language | Layout |
-|------|----------|--------|
-| `en` | English | QWERTY |
-| `bn` | Bengali | বাংলা |
-
-### Switch Language
-
-```dart
-initializeKeyboardLayouts();
-
-KeyboardLayoutProvider.instance.setLanguage('bn');  // Bengali
-KeyboardLayoutProvider.instance.setLanguage('en');  // English
-```
-
-### Add Custom Language
-
-See [Adding Languages Guide](doc/adding-languages.md) for detailed instructions.
-
----
-
-## 🔧 Common Use Cases
-
-<details>
-<summary><b>Password Entry</b></summary>
-
-```dart
-VirtualKeypadTextField(
-  controller: passwordController,
-  obscureText: true,
-  decoration: InputDecoration(
-    labelText: 'Password',
-    prefixIcon: Icon(Icons.lock),
-  ),
-)
-```
-</details>
-
-<details>
-<summary><b>Kiosk Mode (No System Keyboard)</b></summary>
-
-```dart
-VirtualKeypadTextField(
-  controller: controller,
-  allowPhysicalKeyboard: false,
-)
-```
-</details>
-
-<details>
-<summary><b>Multi-Field Form</b></summary>
-
-```dart
-VirtualKeypadScope(
-  child: Column(
-    children: [
-      VirtualKeypadTextField(
-        controller: emailController,
-        keyboardType: KeyboardType.emailAddress,
-      ),
-      VirtualKeypadTextField(
-        controller: phoneController,
-        keyboardType: KeyboardType.phone,
-      ),
-      VirtualKeypad(), // Auto-switches layout
-    ],
-  ),
-)
-```
-</details>
-
-<details>
-<summary><b>Custom Layout</b></summary>
+## Custom Layout
 
 ```dart
 final pinLayout = [
@@ -316,31 +120,142 @@ VirtualKeypad(
   customLayout: pinLayout,
 )
 ```
-</details>
 
----
+## Theming
 
-## 📚 Documentation
+```dart
+// Built-in themes
+VirtualKeypad(theme: VirtualKeypadTheme.light)
+VirtualKeypad(theme: VirtualKeypadTheme.dark)
 
-| Document | Description |
-|----------|-------------|
+// Custom theme
+VirtualKeypad(
+  theme: VirtualKeypadTheme(
+    backgroundColor: Colors.grey[900]!,
+    keyColor: Colors.grey[800]!,
+    actionKeyColor: Colors.grey[700]!,
+    keyTextColor: Colors.white,
+    keyBorderRadius: 12,
+  ),
+)
+
+// Modify existing theme
+VirtualKeypad(
+  theme: VirtualKeypadTheme.dark.copyWith(
+    keyBorderRadius: 12,
+    keyTextSize: 24,
+  ),
+)
+```
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `backgroundColor` | `Color` | `#D1D3D9` | Keyboard background |
+| `keyColor` | `Color` | `#FFFFFF` | Character key background |
+| `actionKeyColor` | `Color` | `#ADB3BC` | Action key background |
+| `keyTextColor` | `Color` | `#1C1C1E` | Text/icon color |
+| `keyTextSize` | `double` | `22.0` | Font size |
+| `keyBorderRadius` | `double` | `6.0` | Corner radius |
+| `keyShadow` | `bool` | `true` | Show key shadows |
+| `splashColor` | `Color?` | `null` | Tap ripple color |
+
+## Multi-Language
+
+```dart
+initializeKeyboardLayouts(); // Registers English & Bengali
+
+// Switch language
+KeyboardLayoutProvider.instance.setLanguage('bn'); // Bengali
+KeyboardLayoutProvider.instance.setLanguage('en'); // English
+```
+
+| Code | Language | Layout |
+|------|----------|--------|
+| `en` | English | QWERTY |
+| `bn` | Bengali | বাংলা |
+
+### Adding a Custom Language
+
+```dart
+final spanishLanguage = KeyboardLanguage(
+  code: 'es',
+  name: 'Spanish',
+  nativeName: 'Español',
+  textLayouts: KeyboardLayoutSet(
+    primary: textPrimaryLayout,
+    secondary: symbolsLayout,
+    tertiary: moreSymbolsLayout,
+  ),
+);
+
+KeyboardLayoutProvider.instance.registerLanguage(spanishLanguage);
+KeyboardLayoutProvider.instance.setLanguage('es');
+```
+
+## API Reference
+
+### VirtualKeypadTextField
+
+```dart
+VirtualKeypadTextField(
+  controller: controller,           // Required
+  keyboardType: KeyboardType.text,   // Layout type
+  obscureText: false,                // Password mode
+  allowPhysicalKeyboard: false,      // Block system keyboard
+  maxLength: null,                   // Character limit
+  maxLines: 1,                       // Line count (null = unlimited)
+  onChanged: (value) {},             // Text change callback
+  onSubmitted: (value) {},           // Submit callback
+)
+```
+
+### VirtualKeypad
+
+```dart
+VirtualKeypad(
+  type: null,                        // Override layout (auto if null)
+  height: 280,                       // Keyboard height
+  theme: VirtualKeypadTheme.light,   // Visual theme
+  hideWhenUnfocused: false,          // Auto-hide animation
+  customLayout: null,                // Custom key arrangement
+  onKeyPressed: (key) {},            // Key press callback
+)
+```
+
+### VirtualKeypadController
+
+```dart
+final controller = VirtualKeypadController();
+
+controller.insertText('Hello');    // Insert at cursor
+controller.deleteBackward();       // Delete before cursor
+controller.selectAll();            // Select all text
+controller.clear();                // Clear all
+controller.cursorPosition = 5;     // Set cursor position
+controller.moveCursorLeft();       // Move cursor
+controller.moveCursorRight();
+```
+
+## Examples
+
+Check out the [example](example/) directory for a complete demo app with 9 screens showcasing all features.
+
+## Documentation
+
+| Guide | Description |
+|-------|-------------|
 | [API Reference](doc/api-reference.md) | Complete API documentation |
-| [Custom Layouts](doc/custom-layouts.md) | Creating custom keyboard layouts |
-| [Adding Languages](doc/adding-languages.md) | Multi-language implementation guide |
-| [Theming Guide](doc/theming.md) | Customizing keyboard appearance |
-| [Examples](example/) | Full example applications |
+| [Custom Layouts](doc/custom-layouts.md) | Build custom keyboard layouts |
+| [Adding Languages](doc/adding-languages.md) | Add new language support |
+| [Theming](doc/theming.md) | Customize keyboard appearance |
 
----
+## Contributing
 
-## 📄 License
+Contributions welcome! See the [Contributing Guide](CONTRIBUTING.md).
+
+## License
 
 MIT License - see [LICENSE](LICENSE) for details.
-
----
-
-## 🤝 Contributing
-
-Contributions welcome! Please read our [Contributing Guide](CONTRIBUTING.md) and submit PRs to the [repository](https://github.com/Masum-MSNR/virtual_keypad).
 
 ---
 
