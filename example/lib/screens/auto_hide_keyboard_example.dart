@@ -43,6 +43,16 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
           centerTitle: true,
           elevation: 0,
           scrolledUnderElevation: 0,
+          foregroundColor: Colors.white,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF30cfd0), Color(0xFF330867)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
         ),
         body: Column(
           children: [
@@ -55,125 +65,124 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Feature explanation card
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              colorScheme.primaryContainer
-                                  .withValues(alpha: 0.25),
-                              colorScheme.tertiaryContainer
-                                  .withValues(alpha: 0.15),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: colorScheme.outlineVariant
-                                .withValues(alpha: 0.4),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: colorScheme.primary
-                                    .withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Icon(
-                                Icons.keyboard_hide_rounded,
-                                size: 20,
-                                color: colorScheme.primary,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'hideWhenUnfocused: true',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: 'monospace',
-                                      fontSize: 13,
-                                      color: colorScheme.primary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    'Keyboard auto-hides when no field is focused',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: colorScheme.onSurface
-                                          .withValues(alpha: 0.5),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Live status indicator
+                      // Live status indicator — card with gradient left border
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
+                        curve: Curves.easeInOut,
                         decoration: BoxDecoration(
-                          color: _isAnyFocused
-                              ? const Color(0xFF43A047)
-                                  .withValues(alpha: 0.1)
-                              : colorScheme.surfaceContainerHigh
-                                  .withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: _isAnyFocused
-                                ? const Color(0xFF43A047)
-                                    .withValues(alpha: 0.3)
-                                : colorScheme.outlineVariant
-                                    .withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _isAnyFocused
-                                    ? const Color(0xFF43A047)
-                                    : colorScheme.outline
-                                        .withValues(alpha: 0.4),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              _isAnyFocused
-                                  ? 'Keyboard visible — tap outside to dismiss'
-                                  : 'Keyboard hidden — tap a field to show',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: _isAnyFocused
-                                    ? const Color(0xFF43A047)
-                                    : colorScheme.onSurface
-                                        .withValues(alpha: 0.5),
-                              ),
+                          color: colorScheme.surface,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: (_isAnyFocused
+                                      ? const Color(0xFF30cfd0)
+                                      : colorScheme.shadow)
+                                  .withValues(alpha: 0.1),
+                              blurRadius: 12,
+                              offset: const Offset(0, 3),
                             ),
                           ],
+                          border: Border.all(
+                            color: colorScheme.outlineVariant
+                                .withValues(alpha: 0.1),
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(14),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(
+                                  color: _isAnyFocused
+                                      ? const Color(0xFF30cfd0)
+                                      : colorScheme.outlineVariant
+                                          .withValues(alpha: 0.4),
+                                  width: 4,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                AnimatedContainer(
+                                  duration:
+                                      const Duration(milliseconds: 300),
+                                  width: 10,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: _isAnyFocused
+                                        ? const Color(0xFF30cfd0)
+                                        : colorScheme.outline
+                                            .withValues(alpha: 0.35),
+                                    boxShadow: _isAnyFocused
+                                        ? [
+                                            BoxShadow(
+                                              color: const Color(0xFF30cfd0)
+                                                  .withValues(alpha: 0.5),
+                                              blurRadius: 8,
+                                              spreadRadius: 1,
+                                            ),
+                                          ]
+                                        : [],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        _isAnyFocused
+                                            ? 'Keyboard Visible'
+                                            : 'Keyboard Hidden',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          color: _isAnyFocused
+                                              ? const Color(0xFF30cfd0)
+                                              : colorScheme.onSurface,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        _isAnyFocused
+                                            ? 'Tap outside to dismiss'
+                                            : 'Tap a field to show',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: colorScheme.onSurface
+                                              .withValues(alpha: 0.45),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                AnimatedSwitcher(
+                                  duration:
+                                      const Duration(milliseconds: 300),
+                                  child: Icon(
+                                    _isAnyFocused
+                                        ? Icons.keyboard_rounded
+                                        : Icons.keyboard_hide_rounded,
+                                    key: ValueKey(_isAnyFocused),
+                                    color: _isAnyFocused
+                                        ? const Color(0xFF30cfd0)
+                                        : colorScheme.outline
+                                            .withValues(alpha: 0.35),
+                                    size: 22,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 28),
 
                       // Editable fields section
                       _SectionLabel(
@@ -181,7 +190,7 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                         label: 'Editable Fields',
                         colorScheme: colorScheme,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 14),
                       VirtualKeypadTextField(
                         controller: _field1,
                         onTap: _onFieldTapped,
@@ -189,12 +198,13 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                           labelText: 'Text Field',
                           hintText: 'Tap to show keyboard',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide.none,
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide(
-                              color: colorScheme.primary,
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF30cfd0),
                               width: 2,
                             ),
                           ),
@@ -202,6 +212,10 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                               const Icon(Icons.text_fields_rounded),
                           filled: true,
                           fillColor: colorScheme.surfaceContainerLowest,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 14),
@@ -213,21 +227,26 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                           labelText: 'Number Field',
                           hintText: 'Shows number pad',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide.none,
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            borderSide: BorderSide(
-                              color: colorScheme.primary,
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF30cfd0),
                               width: 2,
                             ),
                           ),
                           prefixIcon: const Icon(Icons.numbers_rounded),
                           filled: true,
                           fillColor: colorScheme.surfaceContainerLowest,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 28),
 
                       // Read-only section
                       _SectionLabel(
@@ -235,29 +254,25 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                         label: 'Read-Only Field',
                         colorScheme: colorScheme,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Tapping this field does not show the keyboard',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color:
-                              colorScheme.onSurface.withValues(alpha: 0.45),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 14),
                       VirtualKeypadTextField(
                         controller: _readOnlyField,
                         readOnly: true,
                         decoration: InputDecoration(
                           labelText: 'Read-Only',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide.none,
                           ),
                           prefixIcon:
                               const Icon(Icons.lock_outline_rounded),
                           filled: true,
                           fillColor: colorScheme.surfaceContainerHighest
                               .withValues(alpha: 0.5),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 100),
@@ -287,16 +302,35 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16,
-            color: colorScheme.onSurface.withValues(alpha: 0.6)),
-        const SizedBox(width: 8),
-        Text(
-          label,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: colorScheme.onSurface,
+        Row(
+          children: [
+            Icon(icon, size: 18,
+                color: colorScheme.onSurface.withValues(alpha: 0.7)),
+            const SizedBox(width: 8),
+            Text(
+              label.toUpperCase(),
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 13,
+                letterSpacing: 0.8,
+                color: colorScheme.onSurface.withValues(alpha: 0.8),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Container(
+          width: 32,
+          height: 3,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(2),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF30cfd0), Color(0xFF330867)],
+            ),
           ),
         ),
       ],

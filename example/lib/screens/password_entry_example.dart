@@ -57,6 +57,13 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    const gradientColors = [Color(0xFF4facfe), Color(0xFF00f2fe)];
+    const gradient = LinearGradient(
+      colors: gradientColors,
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+    final strength = _passwordStrength;
 
     return VirtualKeypadScope(
       child: Scaffold(
@@ -65,6 +72,10 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
           centerTitle: true,
           elevation: 0,
           scrolledUnderElevation: 0,
+          foregroundColor: Colors.white,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(gradient: gradient),
+          ),
         ),
         body: Column(
           children: [
@@ -78,42 +89,47 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Icon
+                        const SizedBox(height: 24),
+
+                        // Profile avatar
                         Container(
-                          padding: const EdgeInsets.all(18),
-                          decoration: BoxDecoration(
+                          width: 80,
+                          height: 80,
+                          decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                const Color(0xFF4facfe).withValues(alpha: 0.2),
-                                const Color(0xFF00f2fe).withValues(alpha: 0.12),
-                              ],
-                            ),
+                            gradient: gradient,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0x404facfe),
+                                blurRadius: 20,
+                                offset: Offset(0, 8),
+                              ),
+                            ],
                           ),
                           child: const Icon(
-                            Icons.shield_rounded,
-                            size: 36,
-                            color: Color(0xFF4facfe),
+                            Icons.person_rounded,
+                            size: 40,
+                            color: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
+
                         Text(
                           'Welcome Back',
                           style: Theme.of(context)
                               .textTheme
-                              .titleLarge
+                              .headlineSmall
                               ?.copyWith(fontWeight: FontWeight.w700),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         Text(
-                          'Sign in to your account',
-                          style: TextStyle(
-                            color:
-                                colorScheme.onSurface.withValues(alpha: 0.5),
-                            fontSize: 14,
-                          ),
+                          'Sign in to continue',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
                         ),
                         const SizedBox(height: 28),
 
@@ -126,11 +142,12 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                             hintText: 'john@example.com',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide.none,
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(
-                                color: colorScheme.primary,
+                              borderSide: const BorderSide(
+                                color: Color(0xFF4facfe),
                                 width: 2,
                               ),
                             ),
@@ -152,11 +169,12 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                             hintText: 'Enter your password',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide.none,
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(
-                                color: colorScheme.primary,
+                              borderSide: const BorderSide(
+                                color: Color(0xFF4facfe),
                                 width: 2,
                               ),
                             ),
@@ -177,32 +195,36 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                           ),
                         ),
 
-                        // Strength indicator
+                        // Strength indicator (5 rounded bars)
                         if (_passwordController.text.isNotEmpty) ...[
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 12),
                           Row(
                             children: [
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(4),
-                                  child: LinearProgressIndicator(
-                                    value: _passwordStrength / 5,
-                                    backgroundColor: colorScheme.outlineVariant
-                                        .withValues(alpha: 0.3),
-                                    color:
-                                        _strengthColor(_passwordStrength),
-                                    minHeight: 4,
+                              ...List.generate(5, (i) {
+                                final active = i < strength;
+                                return Expanded(
+                                  child: Container(
+                                    height: 5,
+                                    margin: EdgeInsets.only(
+                                      right: i < 4 ? 6 : 0,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(3),
+                                      color: active
+                                          ? _strengthColor(strength)
+                                          : colorScheme.outlineVariant
+                                              .withValues(alpha: 0.3),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                );
+                              }),
                               const SizedBox(width: 12),
                               Text(
-                                _strengthLabel(_passwordStrength),
+                                _strengthLabel(strength),
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color:
-                                      _strengthColor(_passwordStrength),
+                                  color: _strengthColor(strength),
                                 ),
                               ),
                             ],
@@ -216,7 +238,7 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                           child: TextButton(
                             onPressed: () {},
                             style: TextButton.styleFrom(
-                              foregroundColor: colorScheme.primary,
+                              foregroundColor: const Color(0xFF4facfe),
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 4),
                             ),
@@ -228,35 +250,51 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                         ),
                         const SizedBox(height: 12),
 
-                        // Sign in button
+                        // Sign in button with gradient
                         SizedBox(
                           width: double.infinity,
                           height: 52,
-                          child: FilledButton(
-                            onPressed: () {
-                              FocusScope.of(context).unfocus();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Signed in as ${_usernameController.text.isEmpty ? 'user' : _usernameController.text}',
-                                  ),
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: gradient,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x404facfe),
+                                  blurRadius: 12,
+                                  offset: Offset(0, 6),
                                 ),
-                              );
-                            },
-                            style: FilledButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
+                              ],
                             ),
-                            child: const Text(
-                              'Sign In',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                            child: FilledButton(
+                              onPressed: () {
+                                FocusScope.of(context).unfocus();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Signed in as ${_usernameController.text.isEmpty ? 'user' : _usernameController.text}',
+                                    ),
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                );
+                              },
+                              style: FilledButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: const Text(
+                                'Sign In',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),

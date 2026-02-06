@@ -109,17 +109,17 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
               children: [
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                     child: Column(
                       children: [
-                        // Theme selector
+                        // Theme selector — bigger, more polished pills
                         SizedBox(
-                          height: 44,
+                          height: 52,
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
                             itemCount: _themes.length,
                             separatorBuilder: (_, _) =>
-                                const SizedBox(width: 8),
+                                const SizedBox(width: 10),
                             itemBuilder: (context, index) {
                               final theme = _themes[index];
                               final isSelected = index == _selectedTheme;
@@ -127,44 +127,58 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                                 onTap: () =>
                                     setState(() => _selectedTheme = index),
                                 child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 250),
+                                  duration:
+                                      const Duration(milliseconds: 250),
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
+                                    horizontal: 20,
+                                    vertical: 10,
                                   ),
                                   decoration: BoxDecoration(
                                     color: isSelected
-                                        ? theme.accent.withValues(alpha: 0.2)
+                                        ? theme.accent
+                                            .withValues(alpha: 0.2)
                                         : current.appBarBg
                                             .withValues(alpha: 0.6),
-                                    borderRadius: BorderRadius.circular(22),
+                                    borderRadius: BorderRadius.circular(26),
                                     border: Border.all(
                                       color: isSelected
                                           ? theme.accent
-                                              .withValues(alpha: 0.5)
-                                          : Colors.transparent,
-                                      width: 1.5,
+                                              .withValues(alpha: 0.6)
+                                          : current.textColor
+                                              .withValues(alpha: 0.08),
+                                      width: isSelected ? 2 : 1,
                                     ),
+                                    boxShadow: isSelected
+                                        ? [
+                                            BoxShadow(
+                                              color: theme.accent
+                                                  .withValues(alpha: 0.25),
+                                              blurRadius: 12,
+                                              offset: const Offset(0, 3),
+                                            ),
+                                          ]
+                                        : [],
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
                                         theme.emoji,
-                                        style: const TextStyle(fontSize: 16),
+                                        style:
+                                            const TextStyle(fontSize: 18),
                                       ),
-                                      const SizedBox(width: 6),
+                                      const SizedBox(width: 8),
                                       Text(
                                         theme.name,
                                         style: TextStyle(
-                                          fontSize: 13,
+                                          fontSize: 14,
                                           fontWeight: isSelected
-                                              ? FontWeight.w600
+                                              ? FontWeight.w700
                                               : FontWeight.w400,
                                           color: isSelected
                                               ? theme.accent
                                               : current.textColor
-                                                  .withValues(alpha: 0.6),
+                                                  .withValues(alpha: 0.55),
                                         ),
                                       ),
                                     ],
@@ -174,9 +188,27 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                             },
                           ),
                         ),
+
+                        // Divider between selector and content
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Container(
+                            height: 1,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  current.accent.withValues(alpha: 0.2),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
                         const Spacer(),
 
-                        // Theme name + color swatches
+                        // Theme name
                         AnimatedSwitcher(
                           duration: const Duration(milliseconds: 300),
                           child: Column(
@@ -185,60 +217,25 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                               Text(
                                 '${current.emoji} ${current.name}',
                                 style: TextStyle(
-                                  fontSize: 26,
+                                  fontSize: 28,
                                   fontWeight: FontWeight.w700,
                                   color: current.textColor,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                'Theme Preview',
-                                style: TextStyle(
-                                  color: current.textColor
-                                      .withValues(alpha: 0.35),
-                                  fontSize: 13,
+                                  letterSpacing: -0.5,
                                 ),
                               ),
                               const SizedBox(height: 14),
-
-                              // Color palette swatches
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _ColorSwatch(
-                                    color: current.theme.backgroundColor,
-                                    label: 'BG',
-                                    textColor: current.textColor,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _ColorSwatch(
-                                    color: current.theme.keyColor,
-                                    label: 'Key',
-                                    textColor: current.textColor,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _ColorSwatch(
-                                    color: current.theme.keyTextColor,
-                                    label: 'Text',
-                                    textColor: current.textColor,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  _ColorSwatch(
-                                    color: current.theme.actionKeyColor,
-                                    label: 'Action',
-                                    textColor: current.textColor,
-                                  ),
-                                ],
-                              ),
                             ],
                           ),
                         ),
                         const SizedBox(height: 24),
 
-                        // Text field
+                        // Cleaner text field
                         VirtualKeypadTextField(
                           controller: _controller,
-                          style: TextStyle(color: current.textColor),
+                          style: TextStyle(
+                            color: current.textColor,
+                            fontSize: 15,
+                          ),
                           decoration: InputDecoration(
                             labelText: 'Type here',
                             labelStyle: TextStyle(
@@ -248,19 +245,21 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                             hintText: 'Try the themed keyboard',
                             hintStyle: TextStyle(
                               color:
-                                  current.textColor.withValues(alpha: 0.25),
+                                  current.textColor.withValues(alpha: 0.2),
                             ),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide.none,
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(
-                                color: current.accent.withValues(alpha: 0.3),
+                                color:
+                                    current.accent.withValues(alpha: 0.15),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(
                                 color: current.accent,
                                 width: 2,
@@ -271,7 +270,11 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                             prefixIcon: Icon(
                               Icons.palette_outlined,
                               color:
-                                  current.textColor.withValues(alpha: 0.4),
+                                  current.textColor.withValues(alpha: 0.35),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 16,
                             ),
                           ),
                         ),
@@ -286,47 +289,6 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _ColorSwatch extends StatelessWidget {
-  const _ColorSwatch({
-    required this.color,
-    required this.label,
-    required this.textColor,
-  });
-
-  final Color color;
-  final String label;
-  final Color textColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: textColor.withValues(alpha: 0.2),
-            ),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
-            color: textColor.withValues(alpha: 0.4),
-          ),
-        ),
-      ],
     );
   }
 }

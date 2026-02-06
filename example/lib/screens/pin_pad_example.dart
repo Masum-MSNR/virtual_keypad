@@ -9,12 +9,21 @@ class PinPadExample extends StatefulWidget {
 }
 
 class _PinPadExampleState extends State<PinPadExample>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final _controller = VirtualKeypadController();
   static const _pinLength = 4;
   bool _showSuccess = false;
   late final AnimationController _shakeController;
   late final Animation<double> _shakeAnimation;
+  late final AnimationController _pulseController;
+  late final Animation<double> _pulseAnimation;
+  late final AnimationController _lockController;
+
+  static const _gradient = LinearGradient(
+    colors: [Color(0xFFf093fb), Color(0xFFf5576c)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 
   static final KeyboardLayout _pinLayout = [
     [
@@ -53,6 +62,20 @@ class _PinPadExampleState extends State<PinPadExample>
       TweenSequenceItem(tween: Tween(begin: -6, end: 4), weight: 2),
       TweenSequenceItem(tween: Tween(begin: 4, end: 0), weight: 1),
     ]).animate(_shakeController);
+
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    )..repeat(reverse: true);
+    _pulseAnimation = Tween<double>(begin: 0.3, end: 0.8).animate(
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
+    );
+
+    _lockController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
     _controller.addListener(_onPinChanged);
   }
 
@@ -61,6 +84,8 @@ class _PinPadExampleState extends State<PinPadExample>
     _controller.removeListener(_onPinChanged);
     _controller.dispose();
     _shakeController.dispose();
+    _pulseController.dispose();
+    _lockController.dispose();
     super.dispose();
   }
 
@@ -74,9 +99,11 @@ class _PinPadExampleState extends State<PinPadExample>
 
         // Simulate: "1234" is correct, anything else shakes
         if (pin == '1234') {
+          _lockController.forward(from: 0);
           setState(() => _showSuccess = true);
           Future.delayed(const Duration(seconds: 2), () {
             if (!mounted) return;
+            _lockController.reverse();
             setState(() => _showSuccess = false);
             _controller.clear();
           });
@@ -120,6 +147,10 @@ class _PinPadExampleState extends State<PinPadExample>
           centerTitle: true,
           elevation: 0,
           scrolledUnderElevation: 0,
+          foregroundColor: Colors.white,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(gradient: _gradient),
+          ),
         ),
         body: Column(
           children: [
@@ -130,49 +161,59 @@ class _PinPadExampleState extends State<PinPadExample>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Icon
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: _showSuccess
-                            ? Container(
-                                key: const ValueKey('success'),
-                                padding: const EdgeInsets.all(18),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: const Color(0xFF43A047)
-                                      .withValues(alpha: 0.15),
+                      // Lock icon in gradient circle
+                      AnimatedBuilder(
+                        animation: _lockController,
+                        builder: (context, _) {
+                          return Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: _showSuccess
+                                  ? const LinearGradient(
+                                      colors: [
+                                        Color(0xFF43A047),
+                                        Color(0xFF66BB6A),
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    )
+                                  : _gradient,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: (_showSuccess
+                                          ? const Color(0xFF43A047)
+                                          : const Color(0xFFf5576c))
+                                      .withValues(alpha: 0.45),
+                                  blurRadius: 24,
+                                  spreadRadius: 2,
                                 ),
-                                child: const Icon(
-                                  Icons.check_circle_rounded,
-                                  size: 40,
-                                  color: Color(0xFF43A047),
-                                ),
-                              )
-                            : Container(
-                                key: const ValueKey('lock'),
-                                padding: const EdgeInsets.all(18),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      const Color(0xFFf093fb)
-                                          .withValues(alpha: 0.2),
-                                      const Color(0xFFf5576c)
-                                          .withValues(alpha: 0.12),
-                                    ],
-                                  ),
-                                ),
-                                child: const Icon(
-                                  Icons.lock_rounded,
-                                  size: 36,
-                                  color: Color(0xFFf093fb),
-                                ),
+                              ],
+                            ),
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 350),
+                              transitionBuilder: (child, animation) {
+                                return ScaleTransition(
+                                  scale: animation,
+                                  child: child,
+                                );
+                              },
+                              child: Icon(
+                                _showSuccess
+                                    ? Icons.lock_open_rounded
+                                    : Icons.lock_rounded,
+                                key: ValueKey(_showSuccess),
+                                color: Colors.white,
+                                size: 36,
                               ),
+                            ),
+                          );
+                        },
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
 
+                      // Title
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 200),
                         child: Text(
@@ -190,13 +231,20 @@ class _PinPadExampleState extends State<PinPadExample>
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        _showSuccess
-                            ? 'Access granted'
-                            : 'Enter your $_pinLength-digit PIN (hint: 1234)',
-                        style: TextStyle(
-                          color: colorScheme.onSurface.withValues(alpha: 0.45),
-                          fontSize: 13,
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        child: Text(
+                          _showSuccess
+                              ? 'Access granted'
+                              : 'Enter your $_pinLength-digit PIN',
+                          key: ValueKey<String>(
+                            _showSuccess ? 'granted' : 'enter',
+                          ),
+                          style: TextStyle(
+                            color:
+                                colorScheme.onSurface.withValues(alpha: 0.45),
+                            fontSize: 13,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 32),
@@ -214,40 +262,15 @@ class _PinPadExampleState extends State<PinPadExample>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(_pinLength, (index) {
                             final isFilled = index < enteredLength;
-                            return AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeOut,
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 12),
-                              width: isFilled ? 20 : 16,
-                              height: isFilled ? 20 : 16,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _showSuccess
-                                    ? const Color(0xFF43A047)
-                                    : isFilled
-                                        ? colorScheme.primary
-                                        : Colors.transparent,
-                                border: Border.all(
-                                  color: _showSuccess
-                                      ? const Color(0xFF43A047)
-                                      : isFilled
-                                          ? colorScheme.primary
-                                          : colorScheme.outline
-                                              .withValues(alpha: 0.35),
-                                  width: 2,
-                                ),
-                                boxShadow: isFilled && !_showSuccess
-                                    ? [
-                                        BoxShadow(
-                                          color: colorScheme.primary
-                                              .withValues(alpha: 0.3),
-                                          blurRadius: 8,
-                                          spreadRadius: 1,
-                                        ),
-                                      ]
-                                    : null,
-                              ),
+                            final isActive =
+                                index == enteredLength && !_showSuccess;
+                            return _PinDot(
+                              isFilled: isFilled,
+                              isActive: isActive,
+                              isSuccess: _showSuccess,
+                              pulseAnimation: _pulseAnimation,
+                              outlineColor:
+                                  colorScheme.outline.withValues(alpha: 0.35),
                             );
                           }),
                         ),
@@ -266,15 +289,6 @@ class _PinPadExampleState extends State<PinPadExample>
                           ),
                         ),
                       ),
-
-                      TextButton(
-                        onPressed: () => _controller.clear(),
-                        style: TextButton.styleFrom(
-                          foregroundColor:
-                              colorScheme.onSurface.withValues(alpha: 0.45),
-                        ),
-                        child: const Text('Reset'),
-                      ),
                     ],
                   ),
                 ),
@@ -287,6 +301,96 @@ class _PinPadExampleState extends State<PinPadExample>
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _PinDot extends StatelessWidget {
+  const _PinDot({
+    required this.isFilled,
+    required this.isActive,
+    required this.isSuccess,
+    required this.pulseAnimation,
+    required this.outlineColor,
+  });
+
+  final bool isFilled;
+  final bool isActive;
+  final bool isSuccess;
+  final Animation<double> pulseAnimation;
+  final Color outlineColor;
+
+  static const _dotGradient = LinearGradient(
+    colors: [Color(0xFFf093fb), Color(0xFFf5576c)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    if (isActive) {
+      return AnimatedBuilder(
+        animation: pulseAnimation,
+        builder: (context, child) {
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 14),
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFFf5576c), width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      const Color(0xFFf093fb).withValues(
+                        alpha: pulseAnimation.value,
+                      ),
+                  blurRadius: 14,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+          );
+        },
+      );
+    }
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+      margin: const EdgeInsets.symmetric(horizontal: 14),
+      width: isFilled ? 22 : 18,
+      height: isFilled ? 22 : 18,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: isSuccess
+            ? const LinearGradient(
+                colors: [Color(0xFF43A047), Color(0xFF66BB6A)],
+              )
+            : isFilled
+                ? _dotGradient
+                : null,
+        border: isFilled || isSuccess
+            ? null
+            : Border.all(color: outlineColor, width: 2),
+        boxShadow: isFilled && !isSuccess
+            ? [
+                BoxShadow(
+                  color: const Color(0xFFf5576c).withValues(alpha: 0.4),
+                  blurRadius: 10,
+                  spreadRadius: 1,
+                ),
+              ]
+            : isSuccess
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF43A047).withValues(alpha: 0.4),
+                      blurRadius: 10,
+                      spreadRadius: 1,
+                    ),
+                  ]
+                : null,
       ),
     );
   }

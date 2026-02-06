@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
+const _kGradientStart = Color(0xFFfa709a);
+const _kGradientEnd = Color(0xFFfee140);
+const _kGreenComplete = Color(0xFF43A047);
+
 class MultiFieldExample extends StatefulWidget {
   const MultiFieldExample({super.key});
 
@@ -29,10 +33,14 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
     return count;
   }
 
+  List<bool> get _stepsDone => [
+        _nameController.text.isNotEmpty,
+        _emailController.text.isNotEmpty,
+        _passwordController.text.isNotEmpty,
+      ];
+
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return VirtualKeypadScope(
       child: Scaffold(
         appBar: AppBar(
@@ -40,6 +48,16 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
           centerTitle: true,
           elevation: 0,
           scrolledUnderElevation: 0,
+          foregroundColor: Colors.white,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [_kGradientStart, _kGradientEnd],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
         ),
         body: Column(
           children: [
@@ -47,170 +65,120 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
               child: GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
                 behavior: HitTestBehavior.opaque,
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Progress bar
-                      ListenableBuilder(
-                        listenable: Listenable.merge([
-                          _nameController,
-                          _emailController,
-                          _passwordController,
-                        ]),
-                        builder: (context, _) {
-                          final filled = _filledCount;
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Step $filled of 3',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: colorScheme.primary,
-                                    ),
-                                  ),
-                                  Text(
-                                    filled == 3 ? '✓ Ready' : 'In Progress',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: filled == 3
-                                          ? const Color(0xFF43A047)
-                                          : colorScheme.onSurface
-                                              .withValues(alpha: 0.4),
-                                    ),
-                                  ),
-                                ],
+                child: ListenableBuilder(
+                  listenable: Listenable.merge([
+                    _nameController,
+                    _emailController,
+                    _passwordController,
+                  ]),
+                  builder: (context, _) {
+                    final filled = _filledCount;
+                    final done = _stepsDone;
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // ── Progress dots ──
+                          _ProgressDots(filled: filled),
+                          const SizedBox(height: 28),
+
+                          // ── Header ──
+                          Text(
+                            'Create Account',
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Fill in your details to get started',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.55),
+                                ),
+                          ),
+                          const SizedBox(height: 28),
+
+                          // ── Stepper fields ──
+                          _StepperColumn(
+                            steps: [
+                              _StepItem(
+                                done: done[0],
+                                stepNumber: '1',
+                                isLast: false,
+                                child: _buildField(
+                                  controller: _nameController,
+                                  label: 'Full Name',
+                                  hint: 'John Doe',
+                                  icon: Icons.person_outline_rounded,
+                                  keyboardType: KeyboardType.name,
+                                ),
                               ),
-                              const SizedBox(height: 8),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: LinearProgressIndicator(
-                                  value: filled / 3,
-                                  backgroundColor: colorScheme.outlineVariant
-                                      .withValues(alpha: 0.25),
-                                  color: filled == 3
-                                      ? const Color(0xFF43A047)
-                                      : colorScheme.primary,
-                                  minHeight: 4,
+                              _StepItem(
+                                done: done[1],
+                                stepNumber: '2',
+                                isLast: false,
+                                child: _buildField(
+                                  controller: _emailController,
+                                  label: 'Email',
+                                  hint: 'john@example.com',
+                                  icon: Icons.email_outlined,
+                                  keyboardType: KeyboardType.emailAddress,
+                                ),
+                              ),
+                              _StepItem(
+                                done: done[2],
+                                stepNumber: '3',
+                                isLast: true,
+                                child: _buildField(
+                                  controller: _passwordController,
+                                  label: 'Password',
+                                  hint: 'Create a password',
+                                  icon: Icons.lock_outline_rounded,
+                                  keyboardType: KeyboardType.visiblePassword,
+                                  isPassword: true,
                                 ),
                               ),
                             ],
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 24),
+                          ),
+                          const SizedBox(height: 28),
 
-                      Text(
-                        'Create Account',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Fill in your details to get started',
-                        style: TextStyle(
-                          color: colorScheme.onSurface.withValues(alpha: 0.5),
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      _buildField(
-                        controller: _nameController,
-                        stepNumber: '1',
-                        label: 'Full Name',
-                        hint: 'John Doe',
-                        icon: Icons.person_outline_rounded,
-                        keyboardType: KeyboardType.name,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildField(
-                        controller: _emailController,
-                        stepNumber: '2',
-                        label: 'Email',
-                        hint: 'john@example.com',
-                        icon: Icons.email_outlined,
-                        keyboardType: KeyboardType.emailAddress,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildField(
-                        controller: _passwordController,
-                        stepNumber: '3',
-                        label: 'Password',
-                        hint: 'Create a password',
-                        icon: Icons.lock_outline_rounded,
-                        keyboardType: KeyboardType.visiblePassword,
-                        isPassword: true,
-                      ),
-                      const SizedBox(height: 28),
-
-                      SizedBox(
-                        height: 52,
-                        child: ListenableBuilder(
-                          listenable: Listenable.merge([
-                            _nameController,
-                            _emailController,
-                            _passwordController,
-                          ]),
-                          builder: (context, _) {
-                            final ready = _filledCount == 3;
-                            return FilledButton(
-                              onPressed: ready
-                                  ? () {
-                                      FocusScope.of(context).unfocus();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Row(
-                                            children: [
-                                              const Icon(Icons.check_circle,
-                                                  color: Colors.white,
-                                                  size: 18),
-                                              const SizedBox(width: 10),
-                                              Text(
-                                                'Welcome, ${_nameController.text}!',
-                                              ),
-                                            ],
-                                          ),
-                                          behavior: SnackBarBehavior.floating,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          backgroundColor:
-                                              const Color(0xFF43A047),
-                                        ),
-                                      );
-                                    }
-                                  : null,
-                              style: FilledButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
+                          // ── Create Account button ──
+                          _GradientButton(
+                            enabled: filled == 3,
+                            onPressed: () {
+                              FocusScope.of(context).unfocus();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Row(
+                                    children: [
+                                      const Icon(Icons.check_circle,
+                                          color: Colors.white, size: 18),
+                                      const SizedBox(width: 10),
+                                      Text(
+                                          'Welcome, ${_nameController.text}!'),
+                                    ],
+                                  ),
+                                  behavior: SnackBarBehavior.floating,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  backgroundColor: _kGreenComplete,
                                 ),
-                              ),
-                              child: const Text(
-                                'Create Account',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -223,7 +191,6 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
 
   Widget _buildField({
     required VirtualKeypadController controller,
-    required String stepNumber,
     required String label,
     required String hint,
     required IconData icon,
@@ -232,71 +199,312 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
   }) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 14),
-          child: ListenableBuilder(
-            listenable: controller,
-            builder: (context, _) {
-              final done = controller.text.isNotEmpty;
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: done
-                      ? const Color(0xFF43A047)
-                      : colorScheme.surfaceContainerHigh,
-                  border: done
-                      ? null
-                      : Border.all(
-                          color:
-                              colorScheme.outlineVariant.withValues(alpha: 0.6),
-                        ),
-                ),
-                child: Center(
-                  child: done
-                      ? const Icon(Icons.check, size: 14, color: Colors.white)
-                      : Text(
-                          stepNumber,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color:
-                                colorScheme.onSurface.withValues(alpha: 0.5),
-                          ),
-                        ),
-                ),
-              );
-            },
+    return VirtualKeypadTextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.35),
           ),
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: VirtualKeypadTextField(
-            controller: controller,
-            keyboardType: keyboardType,
-            obscureText: isPassword,
-            decoration: InputDecoration(
-              labelText: label,
-              hintText: hint,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: _kGradientStart, width: 2),
+        ),
+        prefixIcon: Icon(icon),
+        filled: true,
+        fillColor: colorScheme.surfaceContainerLowest,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+    );
+  }
+}
+
+// ─── Progress dots (3 circles connected by lines) ────────────────────────────
+
+class _ProgressDots extends StatelessWidget {
+  const _ProgressDots({required this.filled});
+  final int filled;
+
+  @override
+  Widget build(BuildContext context) {
+    final muted =
+        Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.4);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (int i = 0; i < 3; i++) ...[
+          _Dot(active: i < filled),
+          if (i < 2)
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              width: 36,
+              height: 3,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(2),
+                color: i < filled - 1
+                    ? _kGreenComplete
+                    : (i < filled ? _kGradientStart.withValues(alpha: 0.5) : muted),
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(14),
-                borderSide: BorderSide(color: colorScheme.primary, width: 2),
+            ),
+        ],
+      ],
+    );
+  }
+}
+
+class _Dot extends StatelessWidget {
+  const _Dot({required this.active});
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    final muted =
+        Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.4);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      width: active ? 18 : 14,
+      height: active ? 18 : 14,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: active ? _kGreenComplete : Colors.transparent,
+        border: active ? null : Border.all(color: muted, width: 2),
+        boxShadow: active
+            ? [
+                BoxShadow(
+                  color: _kGreenComplete.withValues(alpha: 0.35),
+                  blurRadius: 8,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
+      ),
+      child: active
+          ? const Center(
+              child: Icon(Icons.check, size: 11, color: Colors.white),
+            )
+          : null,
+    );
+  }
+}
+
+// ─── Vertical stepper column ─────────────────────────────────────────────────
+
+class _StepperColumn extends StatelessWidget {
+  const _StepperColumn({required this.steps});
+  final List<_StepItem> steps;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: steps,
+    );
+  }
+}
+
+class _StepItem extends StatelessWidget {
+  const _StepItem({
+    required this.done,
+    required this.stepNumber,
+    required this.isLast,
+    required this.child,
+  });
+
+  final bool done;
+  final String stepNumber;
+  final bool isLast;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Circle + connector line
+          SizedBox(
+            width: 32,
+            child: Column(
+              children: [
+                const SizedBox(height: 14),
+                // Step circle
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: done
+                        ? _kGreenComplete
+                        : colorScheme.surfaceContainerHigh,
+                    border: done
+                        ? null
+                        : Border.all(
+                            color: colorScheme.outlineVariant
+                                .withValues(alpha: 0.6),
+                          ),
+                    boxShadow: done
+                        ? [
+                            BoxShadow(
+                              color: _kGreenComplete.withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              spreadRadius: 1,
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Center(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      child: done
+                          ? const Icon(Icons.check,
+                              key: ValueKey('check'),
+                              size: 14,
+                              color: Colors.white)
+                          : Text(
+                              stepNumber,
+                              key: ValueKey('num$stepNumber'),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface
+                                    .withValues(alpha: 0.5),
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+                // Connector line
+                if (!isLast)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: CustomPaint(
+                        painter: _DottedLinePainter(
+                          color: done
+                              ? _kGreenComplete.withValues(alpha: 0.5)
+                              : colorScheme.outlineVariant
+                                  .withValues(alpha: 0.35),
+                        ),
+                        child: const SizedBox(width: 2),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Field
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: child,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Dotted line painter ─────────────────────────────────────────────────────
+
+class _DottedLinePainter extends CustomPainter {
+  _DottedLinePainter({required this.color});
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+
+    const dashHeight = 4.0;
+    const gap = 4.0;
+    final centerX = size.width / 2;
+    var y = 0.0;
+
+    while (y < size.height) {
+      canvas.drawLine(Offset(centerX, y), Offset(centerX, y + dashHeight), paint);
+      y += dashHeight + gap;
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DottedLinePainter old) => old.color != color;
+}
+
+// ─── Gradient "Create Account" button ────────────────────────────────────────
+
+class _GradientButton extends StatelessWidget {
+  const _GradientButton({required this.enabled, required this.onPressed});
+  final bool enabled;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 250),
+      opacity: enabled ? 1.0 : 0.45,
+      child: SizedBox(
+        height: 52,
+        width: double.infinity,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            gradient: const LinearGradient(
+              colors: [_kGradientStart, _kGradientEnd],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: enabled
+                ? [
+                    BoxShadow(
+                      color: _kGradientStart.withValues(alpha: 0.35),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : null,
+          ),
+          child: MaterialButton(
+            onPressed: enabled ? onPressed : null,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+            splashColor: Colors.white24,
+            highlightColor: Colors.white10,
+            child: const Text(
+              'Create Account',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                letterSpacing: 0.3,
               ),
-              prefixIcon: Icon(icon),
-              filled: true,
-              fillColor: colorScheme.surfaceContainerLowest,
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }
