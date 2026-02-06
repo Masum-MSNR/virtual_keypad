@@ -54,7 +54,7 @@ class HomePage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Image.asset(
-                    'packages/virtual_keypad/images/logo.png',
+                    'assets/logo.png',
                     width: 32,
                     height: 32,
                   ),

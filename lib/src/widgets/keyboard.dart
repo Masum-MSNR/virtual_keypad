@@ -406,10 +406,14 @@ class _KeyWidget extends StatefulWidget {
 class _KeyWidgetState extends State<_KeyWidget> {
   Timer? _repeatTimer;
   bool _isLongPressing = false;
+  final LayerLink _layerLink = LayerLink();
+  OverlayEntry? _popupEntry;
+  Timer? _popupTimer;
 
   @override
   void dispose() {
     _repeatTimer?.cancel();
+    _removePopup();
     super.dispose();
   }
 
@@ -431,6 +435,51 @@ class _KeyWidgetState extends State<_KeyWidget> {
     _repeatTimer?.cancel();
   }
 
+  void _showKeyPreview() {
+    if (!widget.virtualKey.isCharacter) return;
+
+    _removePopup();
+
+    final keyWidth = widget.baseWidth * widget.virtualKey.flex +
+        (widget.virtualKey.flex - 1) * widget.theme.horizontalGap;
+    final popupWidth = keyWidth + 14;
+    final popupHeight = widget.height + 12;
+    const gap = 6.0;
+
+    _popupEntry = OverlayEntry(
+      builder: (context) => UnconstrainedBox(
+        child: CompositedTransformFollower(
+          link: _layerLink,
+          showWhenUnlinked: false,
+          offset: Offset(
+            -(popupWidth - keyWidth) / 2,
+            -popupHeight - gap,
+          ),
+          child: _KeyPreviewBubble(
+            text: widget.virtualKey.getDisplayText(
+              shift: widget.shift,
+              capsLock: widget.capsLock,
+            ),
+            width: popupWidth,
+            height: popupHeight,
+            theme: widget.theme,
+          ),
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_popupEntry!);
+
+    _popupTimer = Timer(const Duration(milliseconds: 120), _removePopup);
+  }
+
+  void _removePopup() {
+    _popupTimer?.cancel();
+    _popupTimer = null;
+    _popupEntry?.remove();
+    _popupEntry = null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final key = widget.virtualKey;
@@ -442,26 +491,32 @@ class _KeyWidgetState extends State<_KeyWidget> {
     final width = widget.baseWidth * key.flex +
         (key.flex - 1) * widget.theme.horizontalGap;
 
-    return Container(
-      margin: EdgeInsets.symmetric(
-        vertical: widget.theme.verticalGap / 2,
-        horizontal: widget.theme.horizontalGap / 2,
-      ),
-      height: widget.height,
-      width: width,
-      decoration: _getDecoration(decoration),
-      clipBehavior: Clip.antiAlias,
-      child: Material(
-        color: Colors.transparent,
-        child: GestureDetector(
-          onLongPressStart: (_) => _startRepeat(),
-          onLongPressEnd: (_) => _stopRepeat(),
-          onLongPressCancel: _stopRepeat,
-          child: InkWell(
-            splashColor: widget.theme.splashColor ?? VkpColors.splashColor,
-            onTap: () => widget.onPressed(key),
-            child: Center(
-              child: _buildKeyContent(),
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: Container(
+        margin: EdgeInsets.symmetric(
+          vertical: widget.theme.verticalGap / 2,
+          horizontal: widget.theme.horizontalGap / 2,
+        ),
+        height: widget.height,
+        width: width,
+        decoration: _getDecoration(decoration),
+        clipBehavior: Clip.antiAlias,
+        child: Material(
+          color: Colors.transparent,
+          child: GestureDetector(
+            onLongPressStart: (_) => _startRepeat(),
+            onLongPressEnd: (_) => _stopRepeat(),
+            onLongPressCancel: _stopRepeat,
+            child: InkWell(
+              splashColor: widget.theme.splashColor ?? VkpColors.splashColor,
+              onTap: () {
+                _showKeyPreview();
+                widget.onPressed(key);
+              },
+              child: Center(
+                child: _buildKeyContent(),
+              ),
             ),
           ),
         ),
@@ -655,5 +710,50 @@ class _KeyWidgetState extends State<_KeyWidget> {
       default:
         return 'ABC';
     }
+  }
+}
+
+class _KeyPreviewBubble extends StatelessWidget {
+  const _KeyPreviewBubble({
+    required this.text,
+    required this.width,
+    required this.height,
+    required this.theme,
+  });
+
+  final String text;
+  final double width;
+  final double height;
+  final VirtualKeypadTheme theme;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: theme.keyColor,
+          borderRadius: BorderRadius.circular(theme.keyBorderRadius + 2),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: theme.keyTextSize * 1.4,
+            fontWeight: FontWeight.w500,
+            color: theme.keyTextColor,
+            decoration: TextDecoration.none,
+          ),
+        ),
+      ),
+    );
   }
 }
