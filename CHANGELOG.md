@@ -1,3 +1,17 @@
+## 0.2.0
+
+### Added
+* **Key press preview popup** - Native-style key preview bubble appears above typed key
+* Premium example app with 9 fully designed demo screens
+* Preview GIFs in README
+
+### Improved
+* Redesigned example app UI for all screens with gradient themes and animations
+* Simplified and restructured documentation for clarity
+* Reorganized project assets
+
+---
+
 ## 0.1.1
 
 ### Fixed
