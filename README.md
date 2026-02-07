@@ -26,6 +26,16 @@ Perfect for kiosk apps, password UIs, and custom input interfaces.
 - **Full Editing** — Selection, copy/paste, cursor control
 - **Auto-Hide** — Animated show/hide on focus change
 
+## Preview
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif1.gif" width="270" alt="Demo 1"/>
+  &nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif2.gif" width="270" alt="Demo 2"/>
+  &nbsp;&nbsp;
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif3.gif" width="270" alt="Demo 3"/>
+</p>
+
 ## Installation
 
 ```yaml
