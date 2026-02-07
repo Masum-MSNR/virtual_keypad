@@ -2,11 +2,8 @@
   <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/logo.png" alt="Virtual Keypad" width="120"/>
 </p>
 
-<h1 align="center">Virtual Keypad</h1>
-
 <p align="center">
   <a href="https://pub.dev/packages/virtual_keypad"><img src="https://img.shields.io/pub/v/virtual_keypad.svg" alt="pub package"></a>
-  <a href="https://github.com/Masum-MSNR/virtual_keypad/actions"><img src="https://img.shields.io/github/actions/workflow/status/Masum-MSNR/virtual_keypad/dart.yml?branch=main" alt="build status"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.0+-02569B?logo=flutter" alt="Platform"></a>
 </p>
@@ -16,24 +13,22 @@ A fully customizable virtual on-screen keyboard for Flutter.<br/>
 Perfect for kiosk apps, password UIs, and custom input interfaces.
 </p>
 
----
 
-- **Multiple Layouts** — Text, numeric, phone, email, URL, or fully custom
-- **Multi-Language** — Built-in English & Bengali, easily extensible
-- **Smart TextField** — Auto-adapts keyboard layout based on input type
-- **Themeable** — Light, dark, or fully custom themes
-- **Cross-Platform** — Mobile, web, and desktop
-- **Full Editing** — Selection, copy/paste, cursor control
-- **Auto-Hide** — Animated show/hide on focus change
+## Features
 
-## Preview
+- 🎹 **Multiple Layouts** - Text, numeric, phone, email, URL, or fully custom
+- 🌍 **Multi-Language** - Built-in English & Bengali, easily extensible
+- 🔤 **Smart TextField** - Auto-adapts keyboard layout based on input type
+- 🎨 **Fully Customizable** - Light, dark, or fully custom themes
+- 📱 **Cross-Platform** - Works on iOS, Android, Web, macOS, Windows, Linux
+- ✂️ **Full Editing** - Selection, copy/paste, cursor control
+- 👆 **Key Preview** - Native-style key press popup feedback
+- 🫥 **Auto-Hide** - Animated show/hide on focus change
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif1.gif" width="270" alt="Demo 1"/>
-  &nbsp;&nbsp;
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif2.gif" width="270" alt="Demo 2"/>
-  &nbsp;&nbsp;
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif3.gif" width="270" alt="Demo 3"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif1.gif" width="32%" style="border-radius:12px" alt="Demo 1"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif2.gif" width="32%" style="border-radius:12px" alt="Demo 2"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif3.gif" width="32%" style="border-radius:12px" alt="Demo 3"/>
 </p>
 
 ## Installation
