@@ -14,11 +14,9 @@ Perfect for kiosk apps, password UIs, and custom input interfaces.
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif1.gif" height="500" alt="Demo 1"/>
-  &nbsp;
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif2.gif" height="500" alt="Demo 2"/>
-  &nbsp;
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif3.gif" height="500" alt="Demo 3"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif1.gif" width="30%" alt="Demo 1"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif2.gif" width="30%" alt="Demo 2"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif3.gif" width="30%" alt="Demo 3"/>
 </p>
 
 ## Features
