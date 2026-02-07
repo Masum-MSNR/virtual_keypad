@@ -13,6 +13,11 @@ A fully customizable virtual on-screen keyboard for Flutter.<br/>
 Perfect for kiosk apps, password UIs, and custom input interfaces.
 </p>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif1.gif" width="32%" style="border-radius:12px" alt="Demo 1"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif2.gif" width="32%" style="border-radius:12px" alt="Demo 2"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif3.gif" width="32%" style="border-radius:12px" alt="Demo 3"/>
+</p>
 
 ## Features
 
@@ -24,12 +29,6 @@ Perfect for kiosk apps, password UIs, and custom input interfaces.
 - ✂️ **Full Editing** - Selection, copy/paste, cursor control
 - 👆 **Key Preview** - Native-style key press popup feedback
 - 🫥 **Auto-Hide** - Animated show/hide on focus change
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif1.gif" width="32%" style="border-radius:12px" alt="Demo 1"/>
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif2.gif" width="32%" style="border-radius:12px" alt="Demo 2"/>
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif3.gif" width="32%" style="border-radius:12px" alt="Demo 3"/>
-</p>
 
 ## Installation
 
