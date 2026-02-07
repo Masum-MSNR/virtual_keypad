@@ -1,3 +1,11 @@
+## 0.2.1
+
+### Improved
+* Optimized package topics for better pub.dev discoverability
+* Added preview GIFs to README
+
+---
+
 ## 0.2.0
 
 ### Added
