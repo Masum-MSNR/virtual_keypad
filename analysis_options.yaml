@@ -15,6 +15,9 @@ linter:
     - avoid_unused_constructor_parameters
     - use_super_parameters
 
+formatter:
+  page_width: 80
+
 analyzer:
   errors:
     # Treat these as info/ignore for existing codebase compatibility

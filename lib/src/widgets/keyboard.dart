@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+
 import '../enums.dart';
 import '../layouts/keyboard_language.dart';
 import '../layouts/keyboard_layout_provider.dart';
@@ -32,6 +34,7 @@ class VirtualKeypad extends StatefulWidget {
   const VirtualKeypad({
     super.key,
     this.type,
+    this.inputAction,
     this.height = 280,
     this.width,
     this.theme = VirtualKeypadTheme.light,
@@ -45,6 +48,9 @@ class VirtualKeypad extends StatefulWidget {
   /// Override keyboard type. If null, uses the type from the focused text field.
   final KeyboardType? type;
 
+  /// Override input action. If null, uses the action from the focused text field.
+  final TextInputAction? inputAction;
+
   /// Height of the keyboard in logical pixels.
   final double height;
 
@@ -55,7 +61,7 @@ class VirtualKeypad extends StatefulWidget {
   final VirtualKeypadTheme theme;
 
   /// Optional callback invoked when any key is pressed.
-  final void Function(VirtualKey key)? onKeyPressed;
+  final void Function(VirtualKey key, String? text)? onKeyPressed;
 
   /// Custom layout when [type] is [KeyboardType.custom].
   final KeyboardLayout? customLayout;
@@ -130,7 +136,9 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   }
 
   TextInputAction get _effectiveInputAction {
-    return _scope?.activeInputAction ?? TextInputAction.done;
+    return widget.inputAction ??
+        _scope?.activeInputAction ??
+        TextInputAction.done;
   }
 
   KeyboardLayout get _currentLayout {
@@ -185,9 +193,10 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
   void _onKeyPressed(VirtualKey key) {
     final scope = _scope;
+    var text = key.text;
 
     if (key.isCharacter) {
-      final text = key.getInsertText(shift: _shift, capsLock: _capsLock);
+      text = key.getInsertText(shift: _shift, capsLock: _capsLock);
       scope?.insertText(text);
 
       if (_shift && !_capsLock) {
@@ -197,7 +206,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       _handleAction(key.action!, scope);
     }
 
-    widget.onKeyPressed?.call(key);
+    widget.onKeyPressed?.call(key, text);
   }
 
   void _handleAction(KeyAction action, VirtualKeypadScopeState? scope) {
@@ -338,6 +347,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
                   return _KeyWidget(
                     key: ValueKey('${key.text ?? key.action}'),
                     virtualKey: key,
+                    type: _effectiveKeyboardType,
                     height: keyHeight,
                     baseWidth: baseKeyWidth,
                     theme: widget.theme,
@@ -377,6 +387,7 @@ class _KeyWidget extends StatefulWidget {
   const _KeyWidget({
     super.key,
     required this.virtualKey,
+    required this.type,
     required this.height,
     required this.baseWidth,
     required this.theme,
@@ -389,6 +400,7 @@ class _KeyWidget extends StatefulWidget {
   });
 
   final VirtualKey virtualKey;
+  final KeyboardType type;
   final double height;
   final double baseWidth;
   final VirtualKeypadTheme theme;
@@ -560,10 +572,19 @@ class _KeyWidgetState extends State<_KeyWidget> {
         );
 
       case KeyAction.enter:
-        return Icon(
-          Icons.keyboard_return,
-          size: widget.theme.keyTextSize,
-          color: widget.theme.keyTextColor,
+        if (widget.type == KeyboardType.multiline) {
+          return Icon(
+            Icons.keyboard_return,
+            size: widget.theme.keyTextSize,
+            color: widget.theme.keyTextColor,
+          );
+        }
+        return Text(
+          _getActionLabel(),
+          style: TextStyle(
+            fontSize: widget.theme.keyTextSize * 0.7,
+            color: widget.theme.keyTextColor,
+          ),
         );
 
       case KeyAction.shift:
