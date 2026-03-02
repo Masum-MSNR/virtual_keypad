@@ -37,6 +37,7 @@ class VirtualKeypad extends StatefulWidget {
     this.width,
     this.theme = VirtualKeypadTheme.light,
     this.onKeyPressed,
+    this.onKeyPressedWithText,
     this.customLayout,
     this.hideWhenUnfocused = false,
     this.animationDuration = const Duration(milliseconds: 200),
@@ -61,6 +62,11 @@ class VirtualKeypad extends StatefulWidget {
 
   /// Optional callback invoked when any key is pressed.
   final void Function(VirtualKey key)? onKeyPressed;
+
+  /// Optional callback invoked when any key is pressed, including the
+  /// inserted text. [text] is the character inserted for character keys
+  /// (respecting shift/caps), or null for action keys.
+  final void Function(VirtualKey key, String? text)? onKeyPressedWithText;
 
   /// Custom layout when [type] is [KeyboardType.custom].
   final KeyboardLayout? customLayout;
@@ -192,10 +198,11 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
   void _onKeyPressed(VirtualKey key) {
     final scope = _scope;
+    String? insertedText;
 
     if (key.isCharacter) {
-      final text = key.getInsertText(shift: _shift, capsLock: _capsLock);
-      scope?.insertText(text);
+      insertedText = key.getInsertText(shift: _shift, capsLock: _capsLock);
+      scope?.insertText(insertedText);
 
       if (_shift && !_capsLock) {
         setState(() => _shift = false);
@@ -205,6 +212,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     }
 
     widget.onKeyPressed?.call(key);
+    widget.onKeyPressedWithText?.call(key, insertedText);
   }
 
   void _handleAction(KeyAction action, VirtualKeypadScopeState? scope) {

@@ -1,3 +1,10 @@
+## 0.2.3
+
+### Added
+* `onKeyPressedWithText` callback on `VirtualKeypad` — fires with `(VirtualKey key, String? text)`, where `text` is the actual inserted character (respecting shift/caps), or `null` for action keys. The original `onKeyPressed` remains unchanged.
+
+---
+
 ## 0.2.2
 
 ### Added
