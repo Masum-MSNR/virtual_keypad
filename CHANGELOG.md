@@ -1,3 +1,9 @@
+## 0.3.1
+
+* Re-release of 0.3.0 (publish fix)
+
+---
+
 ## 0.3.0
 
 ### Added
