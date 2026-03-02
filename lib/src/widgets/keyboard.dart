@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../enums.dart';
 import '../layouts/keyboard_language.dart';
 import '../layouts/keyboard_layout_provider.dart';
 import '../models.dart';
 import '../scope.dart';
+import '../standalone_input_control.dart';
 import '../theme.dart';
 
 /// A customizable virtual on-screen keyboard widget.
@@ -29,6 +31,11 @@ import '../theme.dart';
 /// ```
 class VirtualKeypad extends StatefulWidget {
   /// Creates a virtual keyboard.
+  ///
+  /// When [standalone] is true, the keyboard works with any standard Flutter
+  /// [TextField] or [TextFormField] without requiring [VirtualKeypadScope].
+  /// It intercepts Flutter's text input system to route key presses to the
+  /// currently focused text field.
   const VirtualKeypad({
     super.key,
     this.type,
@@ -40,6 +47,7 @@ class VirtualKeypad extends StatefulWidget {
     this.onKeyPressedWithText,
     this.customLayout,
     this.hideWhenUnfocused = false,
+    this.standalone = false,
     this.animationDuration = const Duration(milliseconds: 200),
     this.animationCurve = Curves.easeInOut,
   });
@@ -74,6 +82,22 @@ class VirtualKeypad extends StatefulWidget {
   /// When true, hides the keyboard with animation when no text field is focused.
   final bool hideWhenUnfocused;
 
+  /// When true, the keyboard works with any standard Flutter [TextField]
+  /// without requiring [VirtualKeypadScope] or [VirtualKeypadTextField].
+  ///
+  /// In standalone mode, the keyboard intercepts Flutter's text input system
+  /// and routes key presses to whichever [TextField] currently has focus.
+  ///
+  /// ```dart
+  /// Column(
+  ///   children: [
+  ///     TextField(controller: myController),
+  ///     VirtualKeypad(standalone: true),
+  ///   ],
+  /// )
+  /// ```
+  final bool standalone;
+
   /// Duration for show/hide animation when [hideWhenUnfocused] is true.
   final Duration animationDuration;
 
@@ -95,20 +119,104 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   KeyboardLayout? _cachedLayout;
   bool _wasVisible = false;
 
+  // Standalone mode state
+  StandaloneInputControl? _inputControl;
+  bool _standaloneVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.standalone) {
+      _initStandalone();
+    }
+  }
+
+  void _initStandalone() {
+    _inputControl = StandaloneInputControl(
+      onShow: () {
+        if (!mounted) return;
+        setState(() => _standaloneVisible = true);
+        _onStandaloneFieldChanged();
+      },
+      onHide: () {
+        if (!mounted) return;
+        setState(() => _standaloneVisible = false);
+      },
+    );
+    TextInput.setInputControl(_inputControl!);
+    FocusManager.instance.addListener(_onFocusChanged);
+  }
+
+  void _disposeStandalone() {
+    FocusManager.instance.removeListener(_onFocusChanged);
+    if (_inputControl != null) {
+      TextInput.restorePlatformInputControl();
+      _inputControl = null;
+    }
+  }
+
+  void _onFocusChanged() {
+    if (!widget.standalone || !mounted) return;
+    // If primary focus is lost entirely, hide keyboard
+    final focus = FocusManager.instance.primaryFocus;
+    if (focus == null || focus.context == null) {
+      if (_standaloneVisible) {
+        setState(() => _standaloneVisible = false);
+      }
+    }
+  }
+
+  void _onStandaloneFieldChanged() {
+    if (!mounted || _inputControl == null) return;
+    final newType = _inputControl!.keyboardType;
+    if (_lastKeyboardType != newType) {
+      _layoutStage = LayoutStage.primary;
+      _shift = false;
+      _capsLock = false;
+      _lastKeyboardType = newType;
+    }
+    _cachedLayout = _currentLayout;
+    _wasVisible = true;
+    setState(() {});
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final newScope = VirtualKeypadScope.of(context);
-    if (_scope != newScope) {
-      _scope?.removeActiveControllerListener(_onActiveControllerChanged);
-      _scope = newScope;
-      _scope?.addActiveControllerListener(_onActiveControllerChanged);
+    if (!widget.standalone) {
+      final newScope = VirtualKeypadScope.of(context);
+      if (_scope != newScope) {
+        _scope?.removeActiveControllerListener(_onActiveControllerChanged);
+        _scope = newScope;
+        _scope?.addActiveControllerListener(_onActiveControllerChanged);
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(VirtualKeypad oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.standalone != oldWidget.standalone) {
+      if (widget.standalone) {
+        // Switching to standalone
+        _scope?.removeActiveControllerListener(_onActiveControllerChanged);
+        _scope = null;
+        _initStandalone();
+      } else {
+        // Switching away from standalone
+        _disposeStandalone();
+        _standaloneVisible = false;
+      }
     }
   }
 
   @override
   void dispose() {
-    _scope?.removeActiveControllerListener(_onActiveControllerChanged);
+    if (widget.standalone) {
+      _disposeStandalone();
+    } else {
+      _scope?.removeActiveControllerListener(_onActiveControllerChanged);
+    }
     super.dispose();
   }
 
@@ -137,13 +245,19 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   }
 
   KeyboardType get _effectiveKeyboardType {
-    return widget.type ?? _scope?.activeKeyboardType ?? KeyboardType.text;
+    if (widget.type != null) return widget.type!;
+    if (widget.standalone && _inputControl != null) {
+      return _inputControl!.keyboardType;
+    }
+    return _scope?.activeKeyboardType ?? KeyboardType.text;
   }
 
   TextInputAction get _effectiveInputAction {
-    return widget.inputAction ??
-        _scope?.activeInputAction ??
-        TextInputAction.done;
+    if (widget.inputAction != null) return widget.inputAction!;
+    if (widget.standalone && _inputControl != null) {
+      return _inputControl!.inputAction;
+    }
+    return _scope?.activeInputAction ?? TextInputAction.done;
   }
 
   KeyboardLayout get _currentLayout {
@@ -197,46 +311,76 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   }
 
   void _onKeyPressed(VirtualKey key) {
-    final scope = _scope;
     String? insertedText;
 
     if (key.isCharacter) {
       insertedText = key.getInsertText(shift: _shift, capsLock: _capsLock);
-      scope?.insertText(insertedText);
+
+      if (widget.standalone) {
+        _inputControl?.insertText(insertedText);
+      } else {
+        _scope?.insertText(insertedText);
+      }
 
       if (_shift && !_capsLock) {
         setState(() => _shift = false);
       }
     } else if (key.isAction) {
-      _handleAction(key.action!, scope);
+      _handleAction(key.action!);
     }
 
     widget.onKeyPressed?.call(key);
     widget.onKeyPressedWithText?.call(key, insertedText);
   }
 
-  void _handleAction(KeyAction action, VirtualKeypadScopeState? scope) {
+  void _handleAction(KeyAction action) {
     switch (action) {
       case KeyAction.backSpace:
-        scope?.deleteBackward();
+        if (widget.standalone) {
+          _inputControl?.deleteBackward();
+        } else {
+          _scope?.deleteBackward();
+        }
         break;
 
       case KeyAction.enter:
         final inputAction = _effectiveInputAction;
         if (inputAction == TextInputAction.newline ||
             _effectiveKeyboardType == KeyboardType.multiline) {
-          scope?.insertText('\n');
+          if (widget.standalone) {
+            _inputControl?.insertText('\n');
+          } else {
+            _scope?.insertText('\n');
+          }
         } else {
-          scope?.submit();
+          if (widget.standalone) {
+            _inputControl?.submit();
+          } else {
+            _scope?.submit();
+          }
         }
         break;
 
       case KeyAction.space:
-        scope?.insertText(' ');
-        final text = scope?.activeController?.text ?? '';
-        if (text.endsWith('. ') || text.endsWith('? ') || text.endsWith('! ')) {
-          if (!_shift && !_capsLock) {
-            setState(() => _shift = true);
+        if (widget.standalone) {
+          _inputControl?.insertText(' ');
+          final text = _inputControl?.currentValue.text ?? '';
+          if (text.endsWith('. ') ||
+              text.endsWith('? ') ||
+              text.endsWith('! ')) {
+            if (!_shift && !_capsLock) {
+              setState(() => _shift = true);
+            }
+          }
+        } else {
+          _scope?.insertText(' ');
+          final text = _scope?.activeController?.text ?? '';
+          if (text.endsWith('. ') ||
+              text.endsWith('? ') ||
+              text.endsWith('! ')) {
+            if (!_shift && !_capsLock) {
+              setState(() => _shift = true);
+            }
           }
         }
         break;
@@ -279,7 +423,11 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       case KeyAction.search:
       case KeyAction.send:
       case KeyAction.call:
-        scope?.submit();
+        if (widget.standalone) {
+          _inputControl?.submit();
+        } else {
+          _scope?.submit();
+        }
         break;
 
       case KeyAction.next:
@@ -291,11 +439,15 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
   @override
   Widget build(BuildContext context) {
-    final hasController = _scope?.hasActiveController ?? false;
-    final allowPhysical = _scope?.allowPhysicalKeyboard ?? false;
+    final bool shouldShowKeyboard;
+    if (widget.standalone) {
+      shouldShowKeyboard = _standaloneVisible && (_inputControl?.isAttached ?? false);
+    } else {
+      final hasController = _scope?.hasActiveController ?? false;
+      final allowPhysical = _scope?.allowPhysicalKeyboard ?? false;
+      shouldShowKeyboard = hasController && !allowPhysical;
+    }
 
-    // Hide virtual keyboard when physical keyboard is allowed for the active field
-    final shouldShowKeyboard = hasController && !allowPhysical;
     final isVisible = !widget.hideWhenUnfocused || shouldShowKeyboard;
 
     if (_effectiveKeyboardType == KeyboardType.none) {

@@ -1,3 +1,12 @@
+## 0.3.0
+
+### Added
+* **Standalone mode** — `VirtualKeypad(standalone: true)` works with any standard Flutter `TextField` or `TextFormField` without requiring `VirtualKeypadScope` or `VirtualKeypadTextField`. The keyboard intercepts Flutter's text input system and routes key presses to whichever field has focus.
+* `StandaloneInputControl` class — the `TextInputControl` implementation that powers standalone mode, also exported for advanced use cases.
+* Auto-detects `TextInputType` from the focused field and adapts layout accordingly.
+
+---
+
 ## 0.2.3
 
 ### Added

@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('VirtualKeypadController', () {
     test('insertText adds text at cursor position', () {
       final controller = VirtualKeypadController();
@@ -60,6 +62,62 @@ void main() {
       controller.deleteBackward();
       expect(controller.text, 'Hello ');
       expect(controller.cursorPosition, 6);
+    });
+  });
+
+  group('StandaloneInputControl', () {
+    test('insertText modifies current value', () {
+      final control = StandaloneInputControl();
+      // Simulate attach with initial empty value
+      control.setEditingState(TextEditingValue.empty.copyWith(
+        selection: const TextSelection.collapsed(offset: 0),
+      ));
+      control.insertText('Hi');
+      expect(control.currentValue.text, 'Hi');
+      expect(control.currentValue.selection.baseOffset, 2);
+    });
+
+    test('deleteBackward removes character', () {
+      final control = StandaloneInputControl();
+      control.setEditingState(const TextEditingValue(
+        text: 'Hello',
+        selection: TextSelection.collapsed(offset: 5),
+      ));
+      control.deleteBackward();
+      expect(control.currentValue.text, 'Hell');
+      expect(control.currentValue.selection.baseOffset, 4);
+    });
+
+    test('deleteBackward removes selection', () {
+      final control = StandaloneInputControl();
+      control.setEditingState(const TextEditingValue(
+        text: 'Hello World',
+        selection: TextSelection(baseOffset: 5, extentOffset: 11),
+      ));
+      control.deleteBackward();
+      expect(control.currentValue.text, 'Hello');
+      expect(control.currentValue.selection.baseOffset, 5);
+    });
+
+    test('insertText replaces selection', () {
+      final control = StandaloneInputControl();
+      control.setEditingState(const TextEditingValue(
+        text: 'Hello World',
+        selection: TextSelection(baseOffset: 6, extentOffset: 11),
+      ));
+      control.insertText('Flutter');
+      expect(control.currentValue.text, 'Hello Flutter');
+      expect(control.currentValue.selection.baseOffset, 13);
+    });
+
+    test('keyboardType defaults to text', () {
+      final control = StandaloneInputControl();
+      expect(control.keyboardType, KeyboardType.text);
+    });
+
+    test('isAttached tracks attach/detach', () {
+      final control = StandaloneInputControl();
+      expect(control.isAttached, false);
     });
   });
 

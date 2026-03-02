@@ -6,6 +6,21 @@
 ///
 /// ## Getting Started
 ///
+/// ### Standalone Mode (simplest)
+///
+/// Use `VirtualKeypad(standalone: true)` with any standard Flutter [TextField]:
+///
+/// ```dart
+/// Column(
+///   children: [
+///     TextField(controller: myController),
+///     VirtualKeypad(standalone: true),
+///   ],
+/// )
+/// ```
+///
+/// ### Scope Mode (full control)
+///
 /// Wrap your widget tree with [VirtualKeypadScope], then use
 /// [VirtualKeypadTextField] and [VirtualKeypad] together:
 ///
@@ -22,29 +37,26 @@
 ///
 /// ## Input-Aware Layouts
 ///
-/// The keyboard automatically adapts based on the text field's [KeyboardType]:
-///
-/// ```dart
-/// VirtualKeypadTextField(
-///   controller: emailController,
-///   keyboardType: KeyboardType.emailAddress, // Shows @ on primary layout
-/// )
-/// ```
+/// The keyboard automatically adapts based on the text field's input type.
+/// In standalone mode, it reads the [TextInputType] from the focused field.
+/// In scope mode, set [KeyboardType] on [VirtualKeypadTextField].
 ///
 /// ## Key Components
 ///
-/// - [VirtualKeypadScope] - Manages keyboard-to-textfield connections
-/// - [VirtualKeypadTextField] - Text field optimized for virtual keyboard input
 /// - [VirtualKeypad] - Customizable on-screen keyboard widget
+/// - [VirtualKeypadScope] - Manages keyboard-to-textfield connections (scope mode)
+/// - [VirtualKeypadTextField] - Text field optimized for virtual keyboard input (scope mode)
 /// - [VirtualKeypadController] - Controller with text manipulation methods
 /// - [VirtualKeypadTheme] - Theming for keyboard appearance
 /// - [KeyboardType] - Input types that determine keyboard layout
+/// - [StandaloneInputControl] - Text input interceptor for standalone mode
 library;
 
 export 'src/controller.dart';
 export 'src/enums.dart';
 export 'src/models.dart';
 export 'src/scope.dart';
+export 'src/standalone_input_control.dart';
 export 'src/theme.dart';
 export 'src/widgets/keyboard.dart';
 export 'src/widgets/text_field.dart';

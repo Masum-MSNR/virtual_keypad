@@ -22,7 +22,8 @@ Perfect for kiosk apps, password UIs, and custom input interfaces.
 ## Features
 
 - 🎹 **Multiple Layouts** - Text, numeric, phone, email, URL, or fully custom
-- 🌍 **Multi-Language** - Built-in English & Bengali, easily extensible
+- 🌍 **Multi-Language** - Built-in English, Bengali & French, easily extensible
+- 🔌 **Standalone Mode** - Works with any standard Flutter TextField
 - 🔤 **Smart TextField** - Auto-adapts keyboard layout based on input type
 - 🎨 **Fully Customizable** - Light, dark, or fully custom themes
 - 📱 **Cross-Platform** - Works on iOS, Android, Web, macOS, Windows, Linux
@@ -39,17 +40,41 @@ dependencies:
 
 ## Quick Start
 
+### Standalone Mode (works with any TextField)
+
 ```dart
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 void main() {
-  initializeKeyboardLayouts(); // Required: registers built-in languages
+  initializeKeyboardLayouts();
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
+  final controller = TextEditingController();
+
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextField(controller: controller),
+        VirtualKeypad(standalone: true),
+      ],
+    );
+  }
+}
+```
+
+> Just add `standalone: true` — no wrapper widgets needed. The keyboard auto-detects focused fields and adapts layout based on `keyboardType`.
+
+### Scope Mode (full control)
+
+```dart
+import 'package:virtual_keypad/virtual_keypad.dart';
+
+void main() {
+  initializeKeyboardLayouts();
+  runApp(MyApp());
 }
 
 class _MyAppState extends State<MyApp> {
@@ -72,7 +97,7 @@ class _MyAppState extends State<MyApp> {
 }
 ```
 
-> Three components work together: `VirtualKeypadScope` → `VirtualKeypadTextField` → `VirtualKeypad`
+> Three components work together: `VirtualKeypadScope` → `VirtualKeypadTextField` → `VirtualKeypad`. Use this mode for selection callbacks, submit handling, and physical keyboard blocking.
 
 ## Keyboard Types
 
@@ -177,6 +202,7 @@ KeyboardLayoutProvider.instance.setLanguage('en'); // English
 |------|----------|--------|
 | `en` | English | QWERTY |
 | `bn` | Bengali | বাংলা |
+| `fr` | French | AZERTY |
 
 ### Adding a Custom Language
 
@@ -217,6 +243,7 @@ VirtualKeypadTextField(
 
 ```dart
 VirtualKeypad(
+  standalone: false,                 // true = works with any TextField
   type: null,                        // Override layout (auto if null)
   height: 280,                       // Keyboard height
   theme: VirtualKeypadTheme.light,   // Visual theme
