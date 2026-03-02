@@ -32,6 +32,7 @@ class VirtualKeypad extends StatefulWidget {
   const VirtualKeypad({
     super.key,
     this.type,
+    this.inputAction,
     this.height = 280,
     this.width,
     this.theme = VirtualKeypadTheme.light,
@@ -44,6 +45,10 @@ class VirtualKeypad extends StatefulWidget {
 
   /// Override keyboard type. If null, uses the type from the focused text field.
   final KeyboardType? type;
+
+  /// Override input action displayed on the enter/done key.
+  /// If null, uses the action from the focused text field.
+  final TextInputAction? inputAction;
 
   /// Height of the keyboard in logical pixels.
   final double height;
@@ -130,7 +135,9 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   }
 
   TextInputAction get _effectiveInputAction {
-    return _scope?.activeInputAction ?? TextInputAction.done;
+    return widget.inputAction ??
+        _scope?.activeInputAction ??
+        TextInputAction.done;
   }
 
   KeyboardLayout get _currentLayout {
@@ -338,6 +345,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
                   return _KeyWidget(
                     key: ValueKey('${key.text ?? key.action}'),
                     virtualKey: key,
+                    type: _effectiveKeyboardType,
                     height: keyHeight,
                     baseWidth: baseKeyWidth,
                     theme: widget.theme,
@@ -377,6 +385,7 @@ class _KeyWidget extends StatefulWidget {
   const _KeyWidget({
     super.key,
     required this.virtualKey,
+    required this.type,
     required this.height,
     required this.baseWidth,
     required this.theme,
@@ -389,6 +398,7 @@ class _KeyWidget extends StatefulWidget {
   });
 
   final VirtualKey virtualKey;
+  final KeyboardType type;
   final double height;
   final double baseWidth;
   final VirtualKeypadTheme theme;
@@ -560,10 +570,19 @@ class _KeyWidgetState extends State<_KeyWidget> {
         );
 
       case KeyAction.enter:
-        return Icon(
-          Icons.keyboard_return,
-          size: widget.theme.keyTextSize,
-          color: widget.theme.keyTextColor,
+        if (widget.type == KeyboardType.multiline) {
+          return Icon(
+            Icons.keyboard_return,
+            size: widget.theme.keyTextSize,
+            color: widget.theme.keyTextColor,
+          );
+        }
+        return Text(
+          _getActionLabel(),
+          style: TextStyle(
+            fontSize: widget.theme.keyTextSize * 0.7,
+            color: widget.theme.keyTextColor,
+          ),
         );
 
       case KeyAction.shift:

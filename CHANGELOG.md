@@ -1,3 +1,12 @@
+## 0.2.2
+
+### Added
+* **French (AZERTY) keyboard** — full text, email, URL, number, and phone layouts (`'fr'`)
+* **`inputAction` parameter** on `VirtualKeypad` — override the enter/done key action label directly
+* **Smart enter key** — shows action label (Done, Go, Search, Send, Next) for non-multiline keyboards; shows return icon for multiline
+
+---
+
 ## 0.2.1
 
 ### Improved
