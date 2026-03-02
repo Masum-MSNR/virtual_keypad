@@ -2,24 +2,14 @@
 
 ### Added
 * **Standalone mode** — `VirtualKeypad(standalone: true)` works with any standard Flutter `TextField` or `TextFormField` without requiring `VirtualKeypadScope` or `VirtualKeypadTextField`. The keyboard intercepts Flutter's text input system and routes key presses to whichever field has focus.
-* `StandaloneInputControl` class — the `TextInputControl` implementation that powers standalone mode, also exported for advanced use cases.
-* Auto-detects `TextInputType` from the focused field and adapts layout accordingly.
-
----
-
-## 0.2.3
-
-### Added
-* `onKeyPressedWithText` callback on `VirtualKeypad` — fires with `(VirtualKey key, String? text)`, where `text` is the actual inserted character (respecting shift/caps), or `null` for action keys. The original `onKeyPressed` remains unchanged.
-
----
-
-## 0.2.2
-
-### Added
-* **French (AZERTY) keyboard** — full text, email, URL, number, and phone layouts (`'fr'`)
-* **`inputAction` parameter** on `VirtualKeypad` — override the enter/done key action label directly
-* **Smart enter key** — shows action label (Done, Go, Search, Send, Next) for non-multiline keyboards; shows return icon for multiline
+* `StandaloneInputControl` — exported `TextInputControl` implementation that powers standalone mode.
+* Auto-detects `TextInputType` from the focused field and adapts keyboard layout accordingly.
+* **French (AZERTY) keyboard** — full text, email, URL, number, and phone layouts (`'fr'`).
+* **`inputAction` parameter** on `VirtualKeypad` — override the enter/done key action label directly.
+* **Smart enter key** — shows action label (Done, Go, Search, Send, Next) for non-multiline keyboards; shows return icon for multiline.
+* `onKeyPressedWithText` callback — fires with `(VirtualKey key, String? text)`, where `text` is the actual inserted character (respecting shift/caps), or `null` for action keys.
+* Standalone mode example screen in the example app.
+* French language added to the language switching example.
 
 ---
 

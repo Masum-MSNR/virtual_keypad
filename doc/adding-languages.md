@@ -90,6 +90,7 @@ KeyboardLayoutSet.single(numberLayout)
 |------|----------|--------|
 | `en` | English | QWERTY |
 | `bn` | Bengali | বাংলা |
+| `fr` | French | AZERTY |
 
 ## File Structure
 
@@ -99,6 +100,7 @@ To contribute a language to the package:
 lib/src/layouts/languages/
 ├── english.dart
 ├── bengali.dart
+├── french.dart
 ├── your_language.dart  ← Add here
 └── languages.dart      ← Export here
 ```

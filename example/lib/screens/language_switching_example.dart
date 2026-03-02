@@ -13,6 +13,12 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
   final _controller = VirtualKeypadController();
   String _currentLanguage = 'en';
 
+  final _languages = [
+    ('en', 'English', '🇺🇸', 'QWERTY', [const Color(0xFF89f7fe), const Color(0xFF66a6ff)]),
+    ('bn', 'বাংলা', '🇧🇩', 'Bengali', [const Color(0xFF43e97b), const Color(0xFF38f9d7)]),
+    ('fr', 'Français', '🇫🇷', 'AZERTY', [const Color(0xFFf093fb), const Color(0xFFf5576c)]),
+  ];
+
   @override
   void dispose() {
     _controller.dispose();
@@ -28,7 +34,16 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final isEnglish = _currentLanguage == 'en';
+
+    String hintText;
+    switch (_currentLanguage) {
+      case 'bn':
+        hintText = 'বাংলায় লিখুন...';
+      case 'fr':
+        hintText = 'Écrivez en français...';
+      default:
+        hintText = 'Type in English...';
+    }
 
     return VirtualKeypadScope(
       child: Scaffold(
@@ -56,37 +71,24 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Language toggle
                     Row(
-                      children: [
-                        Expanded(
-                          child: _LanguageCard(
-                            label: 'English',
-                            flag: '🇺🇸',
-                            subtitle: 'QWERTY',
-                            isSelected: isEnglish,
-                            gradientColors: const [
-                              Color(0xFF89f7fe),
-                              Color(0xFF66a6ff),
-                            ],
-                            onTap: () => _switchLanguage('en'),
+                      children: _languages.map((lang) {
+                        final (code, label, flag, subtitle, colors) = lang;
+                        final isFirst = code == _languages.first.$1;
+                        return Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(left: isFirst ? 0 : 8),
+                            child: _LanguageCard(
+                              label: label,
+                              flag: flag,
+                              subtitle: subtitle,
+                              isSelected: _currentLanguage == code,
+                              gradientColors: colors,
+                              onTap: () => _switchLanguage(code),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _LanguageCard(
-                            label: 'বাংলা',
-                            flag: '🇧🇩',
-                            subtitle: 'Bengali',
-                            isSelected: !isEnglish,
-                            gradientColors: const [
-                              Color(0xFF43e97b),
-                              Color(0xFF38f9d7),
-                            ],
-                            onTap: () => _switchLanguage('bn'),
-                          ),
-                        ),
-                      ],
+                        );
+                      }).toList(),
                     ),
                     const SizedBox(height: 18),
 
@@ -115,9 +117,7 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                             height: 1.6,
                           ),
                           decoration: InputDecoration(
-                            hintText: isEnglish
-                                ? 'Type in English...'
-                                : 'বাংলায় লিখুন...',
+                            hintText: hintText,
                             hintStyle: TextStyle(
                               color: colorScheme.onSurface
                                   .withValues(alpha: 0.2),
