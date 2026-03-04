@@ -64,34 +64,32 @@ class VirtualKeypadTheme {
   BoxDecoration get keyDecoration => BoxDecoration(
     color: keyColor,
     borderRadius: BorderRadius.circular(keyBorderRadius),
-    boxShadow:
-        keyShadow
-            ? [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 1,
-                spreadRadius: 0.5,
-                offset: const Offset(0, 1),
-              ),
-            ]
-            : null,
+    boxShadow: keyShadow
+        ? [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 1,
+              spreadRadius: 0.5,
+              offset: const Offset(0, 1),
+            ),
+          ]
+        : null,
   );
 
   /// Decoration for action keys.
   BoxDecoration get actionKeyDecoration => BoxDecoration(
     color: actionKeyColor,
     borderRadius: BorderRadius.circular(keyBorderRadius),
-    boxShadow:
-        keyShadow
-            ? [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 1,
-                spreadRadius: 0.5,
-                offset: const Offset(0, 1),
-              ),
-            ]
-            : null,
+    boxShadow: keyShadow
+        ? [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 1,
+              spreadRadius: 0.5,
+              offset: const Offset(0, 1),
+            ),
+          ]
+        : null,
   );
 
   /// Creates a copy of this theme with the given fields replaced.

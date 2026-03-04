@@ -435,14 +435,12 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
       maxLines: widget.maxLines,
       minLines: widget.minLines,
       maxLength: widget.maxLength,
-      maxLengthEnforcement:
-          widget.maxLength != null
-              ? MaxLengthEnforcement.enforced
-              : MaxLengthEnforcement.none,
-      keyboardType:
-          widget.allowPhysicalKeyboard
-              ? _toTextInputType(widget.keyboardType)
-              : TextInputType.none,
+      maxLengthEnforcement: widget.maxLength != null
+          ? MaxLengthEnforcement.enforced
+          : MaxLengthEnforcement.none,
+      keyboardType: widget.allowPhysicalKeyboard
+          ? _toTextInputType(widget.keyboardType)
+          : TextInputType.none,
       enableInteractiveSelection: true,
       onTap: _handleTap,
       onSubmitted: widget.onSubmitted,

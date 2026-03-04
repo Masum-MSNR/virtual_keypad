@@ -204,11 +204,10 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                                     ),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(3),
-                                      color:
-                                          active
-                                              ? _strengthColor(strength)
-                                              : colorScheme.outlineVariant
-                                                  .withValues(alpha: 0.3),
+                                      color: active
+                                          ? _strengthColor(strength)
+                                          : colorScheme.outlineVariant
+                                                .withValues(alpha: 0.3),
                                     ),
                                   ),
                                 );

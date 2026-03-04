@@ -98,10 +98,9 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
                               ),
                             ),
                             prefixIcon: const Icon(Icons.email_outlined),
-                            suffixIcon:
-                                _isValidEmail(_emailController.text)
-                                    ? const _AnimatedCheckmark()
-                                    : null,
+                            suffixIcon: _isValidEmail(_emailController.text)
+                                ? const _AnimatedCheckmark()
+                                : null,
                             filled: true,
                             fillColor: colorScheme.surfaceContainerLowest,
                           ),
@@ -194,10 +193,9 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
                               ),
                             ),
                             prefixIcon: const Icon(Icons.language_rounded),
-                            suffixIcon:
-                                _isValidUrl(_urlController.text)
-                                    ? const _AnimatedCheckmark()
-                                    : null,
+                            suffixIcon: _isValidUrl(_urlController.text)
+                                ? const _AnimatedCheckmark()
+                                : null,
                             filled: true,
                             fillColor: colorScheme.surfaceContainerLowest,
                           ),

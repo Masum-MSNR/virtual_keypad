@@ -90,24 +90,23 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
-                      children:
-                          _languages.map((lang) {
-                            final (code, label, flag, subtitle, colors) = lang;
-                            final isFirst = code == _languages.first.$1;
-                            return Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.only(left: isFirst ? 0 : 8),
-                                child: _LanguageCard(
-                                  label: label,
-                                  flag: flag,
-                                  subtitle: subtitle,
-                                  isSelected: _currentLanguage == code,
-                                  gradientColors: colors,
-                                  onTap: () => _switchLanguage(code),
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                      children: _languages.map((lang) {
+                        final (code, label, flag, subtitle, colors) = lang;
+                        final isFirst = code == _languages.first.$1;
+                        return Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(left: isFirst ? 0 : 8),
+                            child: _LanguageCard(
+                              label: label,
+                              flag: flag,
+                              subtitle: subtitle,
+                              isSelected: _currentLanguage == code,
+                              gradientColors: colors,
+                              onTap: () => _switchLanguage(code),
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
                     const SizedBox(height: 18),
 
@@ -284,38 +283,34 @@ class _LanguageCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          gradient:
-              isSelected
-                  ? LinearGradient(
-                    colors: [
-                      gradientColors.first.withValues(alpha: 0.15),
-                      gradientColors.last.withValues(alpha: 0.08),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                  : null,
-          color:
-              isSelected
-                  ? null
-                  : colorScheme.surfaceContainerHigh.withValues(alpha: 0.4),
+          gradient: isSelected
+              ? LinearGradient(
+                  colors: [
+                    gradientColors.first.withValues(alpha: 0.15),
+                    gradientColors.last.withValues(alpha: 0.08),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
+          color: isSelected
+              ? null
+              : colorScheme.surfaceContainerHigh.withValues(alpha: 0.4),
           border: Border.all(
-            color:
-                isSelected
-                    ? gradientColors.first.withValues(alpha: 0.5)
-                    : colorScheme.outlineVariant.withValues(alpha: 0.2),
+            color: isSelected
+                ? gradientColors.first.withValues(alpha: 0.5)
+                : colorScheme.outlineVariant.withValues(alpha: 0.2),
             width: isSelected ? 2 : 1,
           ),
-          boxShadow:
-              isSelected
-                  ? [
-                    BoxShadow(
-                      color: gradientColors.first.withValues(alpha: 0.15),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                  : [],
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: gradientColors.first.withValues(alpha: 0.15),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -327,10 +322,9 @@ class _LanguageCard extends StatelessWidget {
               style: TextStyle(
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 fontSize: 15,
-                color:
-                    isSelected
-                        ? colorScheme.onSurface
-                        : colorScheme.onSurface.withValues(alpha: 0.6),
+                color: isSelected
+                    ? colorScheme.onSurface
+                    : colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 2),
@@ -339,10 +333,9 @@ class _LanguageCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color:
-                    isSelected
-                        ? gradientColors.first.withValues(alpha: 0.8)
-                        : colorScheme.onSurface.withValues(alpha: 0.35),
+                color: isSelected
+                    ? gradientColors.first.withValues(alpha: 0.8)
+                    : colorScheme.onSurface.withValues(alpha: 0.35),
               ),
             ),
           ],

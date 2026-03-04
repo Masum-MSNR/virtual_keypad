@@ -133,8 +133,8 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                                 right: 4,
                               ),
                               child: ShaderMask(
-                                shaderCallback:
-                                    (bounds) => const LinearGradient(
+                                shaderCallback: (bounds) =>
+                                    const LinearGradient(
                                       colors: [
                                         Color(0xFF667eea),
                                         Color(0xFF764ba2),
@@ -187,29 +187,28 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                       spacing: 10,
                       runSpacing: 10,
                       alignment: WrapAlignment.center,
-                      children:
-                          _quickAmounts.map((amount) {
-                            return ActionChip(
-                              label: Text(
-                                '\$$amount',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                ),
-                              ),
-                              backgroundColor: const Color(0xFF667eea),
-                              side: BorderSide.none,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
-                              ),
-                              onPressed: () => _setAmount(amount),
-                            );
-                          }).toList(),
+                      children: _quickAmounts.map((amount) {
+                        return ActionChip(
+                          label: Text(
+                            '\$$amount',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                              fontSize: 13,
+                            ),
+                          ),
+                          backgroundColor: const Color(0xFF667eea),
+                          side: BorderSide.none,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          onPressed: () => _setAmount(amount),
+                        );
+                      }).toList(),
                     ),
                     const SizedBox(height: 20),
 
