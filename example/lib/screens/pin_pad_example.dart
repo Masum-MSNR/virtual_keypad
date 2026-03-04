@@ -342,10 +342,9 @@ class _PinDot extends StatelessWidget {
               border: Border.all(color: const Color(0xFFf5576c), width: 2),
               boxShadow: [
                 BoxShadow(
-                  color:
-                      const Color(0xFFf093fb).withValues(
-                        alpha: pulseAnimation.value,
-                      ),
+                  color: const Color(0xFFf093fb).withValues(
+                    alpha: pulseAnimation.value,
+                  ),
                   blurRadius: 14,
                   spreadRadius: 2,
                 ),
