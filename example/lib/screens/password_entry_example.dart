@@ -178,8 +178,7 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                                 width: 2,
                               ),
                             ),
-                            prefixIcon:
-                                const Icon(Icons.lock_outline_rounded),
+                            prefixIcon: const Icon(Icons.lock_outline_rounded),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _obscureText

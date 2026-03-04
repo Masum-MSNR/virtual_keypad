@@ -166,8 +166,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     // If wrapped in a scope, hide when focus moves outside that scope
     final myScope = VirtualKeypadStandaloneScope.maybeOf(context);
     if (myScope != null && _standaloneVisible) {
-      final focusedScope =
-          VirtualKeypadStandaloneScope.maybeOf(focus.context!);
+      final focusedScope = VirtualKeypadStandaloneScope.maybeOf(focus.context!);
       if (focusedScope != myScope) {
         setState(() => _standaloneVisible = false);
       }
@@ -477,7 +476,8 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   Widget build(BuildContext context) {
     final bool shouldShowKeyboard;
     if (widget.standalone) {
-      shouldShowKeyboard = _standaloneVisible && (_inputControl?.isAttached ?? false);
+      shouldShowKeyboard =
+          _standaloneVisible && (_inputControl?.isAttached ?? false);
     } else {
       final hasController = _scope?.hasActiveController ?? false;
       final allowPhysical = _scope?.allowPhysicalKeyboard ?? false;

@@ -160,8 +160,7 @@ class HomePage extends StatelessWidget {
             title: 'Auto-Hide Keyboard',
             subtitle: 'Focus-aware animated transitions',
             gradient: const [Color(0xFF30cfd0), Color(0xFF330867)],
-            onTap: () =>
-                _navigate(context, const AutoHideKeyboardExample()),
+            onTap: () => _navigate(context, const AutoHideKeyboardExample()),
           ),
           _ExampleCard(
             icon: Icons.palette_rounded,
@@ -175,8 +174,7 @@ class HomePage extends StatelessWidget {
             title: 'Language Switching',
             subtitle: 'Toggle English ↔ Bengali ↔ French',
             gradient: const [Color(0xFF89f7fe), Color(0xFF66a6ff)],
-            onTap: () =>
-                _navigate(context, const LanguageSwitchingExample()),
+            onTap: () => _navigate(context, const LanguageSwitchingExample()),
           ),
         ],
       ),

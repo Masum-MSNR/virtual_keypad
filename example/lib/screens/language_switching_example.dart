@@ -14,9 +14,27 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
   String _currentLanguage = 'en';
 
   final _languages = [
-    ('en', 'English', '🇺🇸', 'QWERTY', [const Color(0xFF89f7fe), const Color(0xFF66a6ff)]),
-    ('bn', 'বাংলা', '🇧🇩', 'Bengali', [const Color(0xFF43e97b), const Color(0xFF38f9d7)]),
-    ('fr', 'Français', '🇫🇷', 'AZERTY', [const Color(0xFFf093fb), const Color(0xFFf5576c)]),
+    (
+      'en',
+      'English',
+      '🇺🇸',
+      'QWERTY',
+      [const Color(0xFF89f7fe), const Color(0xFF66a6ff)],
+    ),
+    (
+      'bn',
+      'বাংলা',
+      '🇧🇩',
+      'Bengali',
+      [const Color(0xFF43e97b), const Color(0xFF38f9d7)],
+    ),
+    (
+      'fr',
+      'Français',
+      '🇫🇷',
+      'AZERTY',
+      [const Color(0xFFf093fb), const Color(0xFFf5576c)],
+    ),
   ];
 
   @override

@@ -34,8 +34,7 @@ class VirtualKeypadStandaloneScope extends StatefulWidget {
   /// Returns the nearest [VirtualKeypadStandaloneScopeState] ancestor, or
   /// null if there is none.
   static VirtualKeypadStandaloneScopeState? maybeOf(BuildContext context) {
-    return context
-        .findAncestorStateOfType<VirtualKeypadStandaloneScopeState>();
+    return context.findAncestorStateOfType<VirtualKeypadStandaloneScopeState>();
   }
 
   @override

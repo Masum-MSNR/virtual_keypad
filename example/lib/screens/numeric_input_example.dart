@@ -93,8 +93,7 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                     Text(
                       'How much would you like to send?',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color:
-                                colorScheme.onSurface.withValues(alpha: 0.5),
+                            color: colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                     ),
                     const SizedBox(height: 24),

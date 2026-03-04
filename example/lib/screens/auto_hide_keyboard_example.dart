@@ -108,8 +108,7 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                             child: Row(
                               children: [
                                 AnimatedContainer(
-                                  duration:
-                                      const Duration(milliseconds: 300),
+                                  duration: const Duration(milliseconds: 300),
                                   width: 10,
                                   height: 10,
                                   decoration: BoxDecoration(
@@ -163,8 +162,7 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                                   ),
                                 ),
                                 AnimatedSwitcher(
-                                  duration:
-                                      const Duration(milliseconds: 300),
+                                  duration: const Duration(milliseconds: 300),
                                   child: Icon(
                                     _isAnyFocused
                                         ? Icons.keyboard_rounded
@@ -208,8 +206,7 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                               width: 2,
                             ),
                           ),
-                          prefixIcon:
-                              const Icon(Icons.text_fields_rounded),
+                          prefixIcon: const Icon(Icons.text_fields_rounded),
                           filled: true,
                           fillColor: colorScheme.surfaceContainerLowest,
                           contentPadding: const EdgeInsets.symmetric(
@@ -264,8 +261,7 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                             borderRadius: BorderRadius.circular(16),
                             borderSide: BorderSide.none,
                           ),
-                          prefixIcon:
-                              const Icon(Icons.lock_outline_rounded),
+                          prefixIcon: const Icon(Icons.lock_outline_rounded),
                           filled: true,
                           fillColor: colorScheme.surfaceContainerHighest
                               .withValues(alpha: 0.5),
@@ -308,8 +304,11 @@ class _SectionLabel extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 18,
-                color: colorScheme.onSurface.withValues(alpha: 0.7)),
+            Icon(
+              icon,
+              size: 18,
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
             const SizedBox(width: 8),
             Text(
               label.toUpperCase(),

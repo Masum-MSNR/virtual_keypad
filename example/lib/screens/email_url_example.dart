@@ -187,8 +187,7 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
                                 width: 2,
                               ),
                             ),
-                            prefixIcon:
-                                const Icon(Icons.language_rounded),
+                            prefixIcon: const Icon(Icons.language_rounded),
                             suffixIcon: _isValidUrl(_urlController.text)
                                 ? const _AnimatedCheckmark()
                                 : null,
@@ -319,8 +318,7 @@ class _InputCard extends StatelessWidget {
                         description,
                         style: TextStyle(
                           fontSize: 12,
-                          color:
-                              colorScheme.onSurface.withValues(alpha: 0.45),
+                          color: colorScheme.onSurface.withValues(alpha: 0.45),
                         ),
                       ),
                     ],

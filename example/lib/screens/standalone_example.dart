@@ -161,8 +161,7 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     decoration: InputDecoration(
                       labelText: 'Email',
                       hintText: 'you@example.com',
-                      prefixIcon:
-                          const Icon(Icons.alternate_email_rounded),
+                      prefixIcon: const Icon(Icons.alternate_email_rounded),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide.none,
@@ -289,8 +288,11 @@ class _SectionLabel extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 18,
-                color: colorScheme.onSurface.withValues(alpha: 0.7)),
+            Icon(
+              icon,
+              size: 18,
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
             const SizedBox(width: 8),
             Text(
               label.toUpperCase(),

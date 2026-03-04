@@ -256,7 +256,9 @@ class _ProgressDots extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
                 color: i < filled - 1
                     ? _kGreenComplete
-                    : (i < filled ? _kGradientStart.withValues(alpha: 0.5) : muted),
+                    : (i < filled
+                        ? _kGradientStart.withValues(alpha: 0.5)
+                        : muted),
               ),
             ),
         ],
@@ -444,7 +446,11 @@ class _DottedLinePainter extends CustomPainter {
     var y = 0.0;
 
     while (y < size.height) {
-      canvas.drawLine(Offset(centerX, y), Offset(centerX, y + dashHeight), paint);
+      canvas.drawLine(
+        Offset(centerX, y),
+        Offset(centerX, y + dashHeight),
+        paint,
+      );
       y += dashHeight + gap;
     }
   }
