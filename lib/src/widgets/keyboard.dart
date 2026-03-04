@@ -187,9 +187,10 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     final myScope = VirtualKeypadStandaloneScope.maybeOf(context);
     if (myScope != null) {
       final focusedContext = FocusManager.instance.primaryFocus?.context;
-      final focusedScope = focusedContext != null
-          ? VirtualKeypadStandaloneScope.maybeOf(focusedContext)
-          : null;
+      final focusedScope =
+          focusedContext != null
+              ? VirtualKeypadStandaloneScope.maybeOf(focusedContext)
+              : null;
       if (focusedScope != myScope) {
         // The focused field is outside our scope – hide the keyboard.
         if (_standaloneVisible) setState(() => _standaloneVisible = false);
@@ -497,11 +498,12 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     }
 
     // Use cached layout during close animation, or current layout when visible
-    final layout = shouldShowKeyboard
-        ? _currentLayout
-        : (_wasVisible && _cachedLayout != null
-            ? _cachedLayout!
-            : _currentLayout);
+    final layout =
+        shouldShowKeyboard
+            ? _currentLayout
+            : (_wasVisible && _cachedLayout != null
+                ? _cachedLayout!
+                : _currentLayout);
 
     // Reset cache after animation would complete
     if (!shouldShowKeyboard && _wasVisible && !widget.hideWhenUnfocused) {
@@ -534,28 +536,32 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: layout.map((row) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: row.map((key) {
-                  return _KeyWidget(
-                    key: ValueKey('${key.text ?? key.action}'),
-                    virtualKey: key,
-                    type: _effectiveKeyboardType,
-                    height: keyHeight,
-                    baseWidth: baseKeyWidth,
-                    theme: widget.theme,
-                    shift: _shift,
-                    capsLock: _capsLock,
-                    layoutStage: _layoutStage,
-                    inputAction: _effectiveInputAction,
-                    languageCode:
-                        KeyboardLayoutProvider.instance.currentLanguageCode,
-                    onPressed: _onKeyPressed,
+            children:
+                layout.map((row) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children:
+                        row.map((key) {
+                          return _KeyWidget(
+                            key: ValueKey('${key.text ?? key.action}'),
+                            virtualKey: key,
+                            type: _effectiveKeyboardType,
+                            height: keyHeight,
+                            baseWidth: baseKeyWidth,
+                            theme: widget.theme,
+                            shift: _shift,
+                            capsLock: _capsLock,
+                            layoutStage: _layoutStage,
+                            inputAction: _effectiveInputAction,
+                            languageCode:
+                                KeyboardLayoutProvider
+                                    .instance
+                                    .currentLanguageCode,
+                            onPressed: _onKeyPressed,
+                          );
+                        }).toList(),
                   );
                 }).toList(),
-              );
-            }).toList(),
           ),
         ),
       ),
@@ -646,32 +652,31 @@ class _KeyWidgetState extends State<_KeyWidget> {
 
     _removePopup();
 
-    final keyWidth = widget.baseWidth * widget.virtualKey.flex +
+    final keyWidth =
+        widget.baseWidth * widget.virtualKey.flex +
         (widget.virtualKey.flex - 1) * widget.theme.horizontalGap;
     final popupWidth = keyWidth + 14;
     final popupHeight = widget.height + 12;
     const gap = 6.0;
 
     _popupEntry = OverlayEntry(
-      builder: (context) => UnconstrainedBox(
-        child: CompositedTransformFollower(
-          link: _layerLink,
-          showWhenUnlinked: false,
-          offset: Offset(
-            -(popupWidth - keyWidth) / 2,
-            -popupHeight - gap,
-          ),
-          child: _KeyPreviewBubble(
-            text: widget.virtualKey.getDisplayText(
-              shift: widget.shift,
-              capsLock: widget.capsLock,
+      builder:
+          (context) => UnconstrainedBox(
+            child: CompositedTransformFollower(
+              link: _layerLink,
+              showWhenUnlinked: false,
+              offset: Offset(-(popupWidth - keyWidth) / 2, -popupHeight - gap),
+              child: _KeyPreviewBubble(
+                text: widget.virtualKey.getDisplayText(
+                  shift: widget.shift,
+                  capsLock: widget.capsLock,
+                ),
+                width: popupWidth,
+                height: popupHeight,
+                theme: widget.theme,
+              ),
             ),
-            width: popupWidth,
-            height: popupHeight,
-            theme: widget.theme,
           ),
-        ),
-      ),
     );
 
     Overlay.of(context).insert(_popupEntry!);
@@ -690,11 +695,13 @@ class _KeyWidgetState extends State<_KeyWidget> {
   Widget build(BuildContext context) {
     final key = widget.virtualKey;
     final isAction = key.isAction;
-    final decoration = isAction
-        ? widget.theme.actionKeyDecoration
-        : widget.theme.keyDecoration;
+    final decoration =
+        isAction
+            ? widget.theme.actionKeyDecoration
+            : widget.theme.keyDecoration;
 
-    final width = widget.baseWidth * key.flex +
+    final width =
+        widget.baseWidth * key.flex +
         (key.flex - 1) * widget.theme.horizontalGap;
 
     return CompositedTransformTarget(
@@ -720,9 +727,7 @@ class _KeyWidgetState extends State<_KeyWidget> {
                 _showKeyPreview();
                 widget.onPressed(key);
               },
-              child: Center(
-                child: _buildKeyContent(),
-              ),
+              child: Center(child: _buildKeyContent()),
             ),
           ),
         ),
@@ -735,9 +740,10 @@ class _KeyWidgetState extends State<_KeyWidget> {
 
     if (key.action == KeyAction.shift && (widget.shift || widget.capsLock)) {
       return base.copyWith(
-        color: widget.capsLock
-            ? widget.theme.keyTextColor.withValues(alpha: 0.3)
-            : widget.theme.keyColor,
+        color:
+            widget.capsLock
+                ? widget.theme.keyTextColor.withValues(alpha: 0.3)
+                : widget.theme.keyColor,
       );
     }
 

@@ -92,13 +92,15 @@ class _MultilineTextExampleState extends State<MultilineTextExample> {
                           color: const Color(0xFFFDFCFF),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: colorScheme.outlineVariant
-                                .withValues(alpha: 0.25),
+                            color: colorScheme.outlineVariant.withValues(
+                              alpha: 0.25,
+                            ),
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFFa18cd1)
-                                  .withValues(alpha: 0.06),
+                              color: const Color(
+                                0xFFa18cd1,
+                              ).withValues(alpha: 0.06),
                               blurRadius: 24,
                               offset: const Offset(0, 6),
                             ),
@@ -120,8 +122,9 @@ class _MultilineTextExampleState extends State<MultilineTextExample> {
                                     Icon(
                                       Icons.edit_note_rounded,
                                       size: 48,
-                                      color: const Color(0xFFa18cd1)
-                                          .withValues(alpha: 0.25),
+                                      color: const Color(
+                                        0xFFa18cd1,
+                                      ).withValues(alpha: 0.25),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
@@ -129,8 +132,9 @@ class _MultilineTextExampleState extends State<MultilineTextExample> {
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w500,
-                                        color: colorScheme.onSurface
-                                            .withValues(alpha: 0.2),
+                                        color: colorScheme.onSurface.withValues(
+                                          alpha: 0.2,
+                                        ),
                                         letterSpacing: 0.2,
                                       ),
                                     ),
@@ -147,8 +151,9 @@ class _MultilineTextExampleState extends State<MultilineTextExample> {
                               style: TextStyle(
                                 fontSize: 15,
                                 height: 1.6,
-                                color: colorScheme.onSurface
-                                    .withValues(alpha: 0.85),
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.85,
+                                ),
                               ),
                               decoration: InputDecoration(
                                 hintText: '',
@@ -185,8 +190,9 @@ class _MultilineTextExampleState extends State<MultilineTextExample> {
                           icon: Icons.text_fields_rounded,
                           value: '${_controller.text.length}',
                           label: 'chars',
-                          backgroundColor:
-                              const Color(0xFFa18cd1).withValues(alpha: 0.10),
+                          backgroundColor: const Color(
+                            0xFFa18cd1,
+                          ).withValues(alpha: 0.10),
                           iconColor: const Color(0xFFa18cd1),
                         ),
                         const SizedBox(width: 10),
@@ -194,8 +200,9 @@ class _MultilineTextExampleState extends State<MultilineTextExample> {
                           icon: Icons.short_text_rounded,
                           value: '${_wordCount(_controller.text)}',
                           label: 'words',
-                          backgroundColor:
-                              const Color(0xFFfbc2eb).withValues(alpha: 0.18),
+                          backgroundColor: const Color(
+                            0xFFfbc2eb,
+                          ).withValues(alpha: 0.18),
                           iconColor: const Color(0xFFc97db8),
                         ),
                         const SizedBox(width: 10),
@@ -203,8 +210,9 @@ class _MultilineTextExampleState extends State<MultilineTextExample> {
                           icon: Icons.format_line_spacing_rounded,
                           value: '${_lineCount(_controller.text)}',
                           label: 'lines',
-                          backgroundColor:
-                              const Color(0xFF90CAF9).withValues(alpha: 0.18),
+                          backgroundColor: const Color(
+                            0xFF90CAF9,
+                          ).withValues(alpha: 0.18),
                           iconColor: const Color(0xFF5C9CE6),
                         ),
                       ],

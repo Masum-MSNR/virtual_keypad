@@ -59,11 +59,7 @@ class HomePage extends StatelessWidget {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
-              'assets/logo.png',
-              width: 24,
-              height: 24,
-            ),
+            Image.asset('assets/logo.png', width: 24, height: 24),
             const SizedBox(width: 10),
             Column(
               mainAxisSize: MainAxisSize.min,
@@ -71,10 +67,7 @@ class HomePage extends StatelessWidget {
               children: [
                 const Text(
                   'Virtual Keypad',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
                 ),
                 Text(
                   'Flutter on-screen keyboard',
@@ -92,10 +85,7 @@ class HomePage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
-          const _SectionHeader(
-            title: 'Input Types',
-            icon: Icons.input_rounded,
-          ),
+          const _SectionHeader(title: 'Input Types', icon: Icons.input_rounded),
           _ExampleCard(
             icon: Icons.dialpad_rounded,
             title: 'Numeric Input',
@@ -144,10 +134,7 @@ class HomePage extends StatelessWidget {
             onTap: () => _navigate(context, const MultilineTextExample()),
           ),
           const SizedBox(height: 4),
-          const _SectionHeader(
-            title: 'Features',
-            icon: Icons.stars_rounded,
-          ),
+          const _SectionHeader(title: 'Features', icon: Icons.stars_rounded),
           _ExampleCard(
             icon: Icons.bolt_rounded,
             title: 'Standalone Mode',
@@ -188,18 +175,14 @@ class HomePage extends StatelessWidget {
         pageBuilder: (context, animation, secondaryAnimation) => page,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(
-            opacity: CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeOut,
-            ),
+            opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
             child: SlideTransition(
               position: Tween<Offset>(
                 begin: const Offset(0.04, 0),
                 end: Offset.zero,
-              ).animate(CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeOut,
-              )),
+              ).animate(
+                CurvedAnimation(parent: animation, curve: Curves.easeOut),
+              ),
               child: child,
             ),
           );
@@ -349,8 +332,9 @@ class _ExampleCard extends StatelessWidget {
                           subtitle,
                           style: TextStyle(
                             fontSize: 12,
-                            color:
-                                colorScheme.onSurface.withValues(alpha: 0.55),
+                            color: colorScheme.onSurface.withValues(
+                              alpha: 0.55,
+                            ),
                           ),
                         ),
                       ],

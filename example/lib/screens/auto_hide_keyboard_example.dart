@@ -83,8 +83,9 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                             ),
                           ],
                           border: Border.all(
-                            color: colorScheme.outlineVariant
-                                .withValues(alpha: 0.1),
+                            color: colorScheme.outlineVariant.withValues(
+                              alpha: 0.1,
+                            ),
                           ),
                         ),
                         child: ClipRRect(
@@ -97,10 +98,11 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                             decoration: BoxDecoration(
                               border: Border(
                                 left: BorderSide(
-                                  color: _isAnyFocused
-                                      ? const Color(0xFF30cfd0)
-                                      : colorScheme.outlineVariant
-                                          .withValues(alpha: 0.4),
+                                  color:
+                                      _isAnyFocused
+                                          ? const Color(0xFF30cfd0)
+                                          : colorScheme.outlineVariant
+                                              .withValues(alpha: 0.4),
                                   width: 4,
                                 ),
                               ),
@@ -113,20 +115,24 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                                   height: 10,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: _isAnyFocused
-                                        ? const Color(0xFF30cfd0)
-                                        : colorScheme.outline
-                                            .withValues(alpha: 0.35),
-                                    boxShadow: _isAnyFocused
-                                        ? [
-                                            BoxShadow(
-                                              color: const Color(0xFF30cfd0)
-                                                  .withValues(alpha: 0.5),
-                                              blurRadius: 8,
-                                              spreadRadius: 1,
+                                    color:
+                                        _isAnyFocused
+                                            ? const Color(0xFF30cfd0)
+                                            : colorScheme.outline.withValues(
+                                              alpha: 0.35,
                                             ),
-                                          ]
-                                        : [],
+                                    boxShadow:
+                                        _isAnyFocused
+                                            ? [
+                                              BoxShadow(
+                                                color: const Color(
+                                                  0xFF30cfd0,
+                                                ).withValues(alpha: 0.5),
+                                                blurRadius: 8,
+                                                spreadRadius: 1,
+                                              ),
+                                            ]
+                                            : [],
                                   ),
                                 ),
                                 const SizedBox(width: 12),
@@ -142,9 +148,10 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w700,
-                                          color: _isAnyFocused
-                                              ? const Color(0xFF30cfd0)
-                                              : colorScheme.onSurface,
+                                          color:
+                                              _isAnyFocused
+                                                  ? const Color(0xFF30cfd0)
+                                                  : colorScheme.onSurface,
                                         ),
                                       ),
                                       const SizedBox(height: 2),
@@ -168,10 +175,12 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                                         ? Icons.keyboard_rounded
                                         : Icons.keyboard_hide_rounded,
                                     key: ValueKey(_isAnyFocused),
-                                    color: _isAnyFocused
-                                        ? const Color(0xFF30cfd0)
-                                        : colorScheme.outline
-                                            .withValues(alpha: 0.35),
+                                    color:
+                                        _isAnyFocused
+                                            ? const Color(0xFF30cfd0)
+                                            : colorScheme.outline.withValues(
+                                              alpha: 0.35,
+                                            ),
                                     size: 22,
                                   ),
                                 ),

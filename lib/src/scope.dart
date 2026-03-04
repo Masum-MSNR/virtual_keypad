@@ -21,10 +21,7 @@ import 'enums.dart';
 /// ```
 class VirtualKeypadScope extends StatefulWidget {
   /// Creates a scope for managing keyboard-textfield connections.
-  const VirtualKeypadScope({
-    super.key,
-    required this.child,
-  });
+  const VirtualKeypadScope({super.key, required this.child});
 
   /// The child widget tree containing text fields and keyboard.
   final Widget child;
@@ -120,7 +117,8 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
     TextInputAction inputAction = TextInputAction.done,
     bool allowPhysicalKeyboard = false,
   }) {
-    final changed = _activeController != controller ||
+    final changed =
+        _activeController != controller ||
         _activeKeyboardType != keyboardType ||
         _activeInputAction != inputAction ||
         _allowPhysicalKeyboard != allowPhysicalKeyboard;
@@ -193,10 +191,7 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
 
   @override
   Widget build(BuildContext context) {
-    return _VirtualKeypadScopeInherited(
-      state: this,
-      child: widget.child,
-    );
+    return _VirtualKeypadScopeInherited(state: this, child: widget.child);
   }
 }
 

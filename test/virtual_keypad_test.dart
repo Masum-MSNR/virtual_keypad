@@ -47,8 +47,10 @@ void main() {
     test('insertText replaces selection', () {
       final controller = VirtualKeypadController(text: 'Hello World');
       // Select "World"
-      controller.selection =
-          const TextSelection(baseOffset: 6, extentOffset: 11);
+      controller.selection = const TextSelection(
+        baseOffset: 6,
+        extentOffset: 11,
+      );
       controller.insertText('Flutter');
       expect(controller.text, 'Hello Flutter');
       expect(controller.cursorPosition, 13);
@@ -57,8 +59,10 @@ void main() {
     test('deleteBackward removes selection', () {
       final controller = VirtualKeypadController(text: 'Hello World');
       // Select "World"
-      controller.selection =
-          const TextSelection(baseOffset: 6, extentOffset: 11);
+      controller.selection = const TextSelection(
+        baseOffset: 6,
+        extentOffset: 11,
+      );
       controller.deleteBackward();
       expect(controller.text, 'Hello ');
       expect(controller.cursorPosition, 6);
@@ -69,9 +73,11 @@ void main() {
     test('insertText modifies current value', () {
       final control = StandaloneInputControl();
       // Simulate attach with initial empty value
-      control.setEditingState(TextEditingValue.empty.copyWith(
-        selection: const TextSelection.collapsed(offset: 0),
-      ));
+      control.setEditingState(
+        TextEditingValue.empty.copyWith(
+          selection: const TextSelection.collapsed(offset: 0),
+        ),
+      );
       control.insertText('Hi');
       expect(control.currentValue.text, 'Hi');
       expect(control.currentValue.selection.baseOffset, 2);
@@ -79,10 +85,12 @@ void main() {
 
     test('deleteBackward removes character', () {
       final control = StandaloneInputControl();
-      control.setEditingState(const TextEditingValue(
-        text: 'Hello',
-        selection: TextSelection.collapsed(offset: 5),
-      ));
+      control.setEditingState(
+        const TextEditingValue(
+          text: 'Hello',
+          selection: TextSelection.collapsed(offset: 5),
+        ),
+      );
       control.deleteBackward();
       expect(control.currentValue.text, 'Hell');
       expect(control.currentValue.selection.baseOffset, 4);
@@ -90,10 +98,12 @@ void main() {
 
     test('deleteBackward removes selection', () {
       final control = StandaloneInputControl();
-      control.setEditingState(const TextEditingValue(
-        text: 'Hello World',
-        selection: TextSelection(baseOffset: 5, extentOffset: 11),
-      ));
+      control.setEditingState(
+        const TextEditingValue(
+          text: 'Hello World',
+          selection: TextSelection(baseOffset: 5, extentOffset: 11),
+        ),
+      );
       control.deleteBackward();
       expect(control.currentValue.text, 'Hello');
       expect(control.currentValue.selection.baseOffset, 5);
@@ -101,10 +111,12 @@ void main() {
 
     test('insertText replaces selection', () {
       final control = StandaloneInputControl();
-      control.setEditingState(const TextEditingValue(
-        text: 'Hello World',
-        selection: TextSelection(baseOffset: 6, extentOffset: 11),
-      ));
+      control.setEditingState(
+        const TextEditingValue(
+          text: 'Hello World',
+          selection: TextSelection(baseOffset: 6, extentOffset: 11),
+        ),
+      );
       control.insertText('Flutter');
       expect(control.currentValue.text, 'Hello Flutter');
       expect(control.currentValue.selection.baseOffset, 13);
@@ -149,10 +161,7 @@ void main() {
           ),
         ),
       );
-      expect(
-        VirtualKeypadStandaloneScope.maybeOf(capturedContext),
-        isNull,
-      );
+      expect(VirtualKeypadStandaloneScope.maybeOf(capturedContext), isNull);
     });
 
     testWidgets('maybeOf returns state when scope is ancestor', (tester) async {
@@ -175,8 +184,9 @@ void main() {
       );
     });
 
-    testWidgets('two sibling scopes return different state instances',
-        (tester) async {
+    testWidgets('two sibling scopes return different state instances', (
+      tester,
+    ) async {
       late BuildContext contextA;
       late BuildContext contextB;
       await tester.pumpWidget(
@@ -184,16 +194,20 @@ void main() {
           home: Column(
             children: [
               VirtualKeypadStandaloneScope(
-                child: Builder(builder: (ctx) {
-                  contextA = ctx;
-                  return const SizedBox.shrink();
-                }),
+                child: Builder(
+                  builder: (ctx) {
+                    contextA = ctx;
+                    return const SizedBox.shrink();
+                  },
+                ),
               ),
               VirtualKeypadStandaloneScope(
-                child: Builder(builder: (ctx) {
-                  contextB = ctx;
-                  return const SizedBox.shrink();
-                }),
+                child: Builder(
+                  builder: (ctx) {
+                    contextB = ctx;
+                    return const SizedBox.shrink();
+                  },
+                ),
               ),
             ],
           ),

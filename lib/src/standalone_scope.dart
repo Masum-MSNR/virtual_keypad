@@ -23,10 +23,7 @@ import 'package:flutter/widgets.dart';
 /// focused text field in the application.
 class VirtualKeypadStandaloneScope extends StatefulWidget {
   /// Creates a standalone scope for [VirtualKeypad].
-  const VirtualKeypadStandaloneScope({
-    super.key,
-    required this.child,
-  });
+  const VirtualKeypadStandaloneScope({super.key, required this.child});
 
   /// The child widget tree containing text fields and the keyboard.
   final Widget child;

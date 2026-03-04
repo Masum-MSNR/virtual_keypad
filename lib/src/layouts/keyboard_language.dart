@@ -14,8 +14,8 @@ class KeyboardLayoutSet {
 
   /// Creates a simple layout set with only a primary layout (e.g., number pad).
   const KeyboardLayoutSet.single(this.primary)
-      : secondary = null,
-        tertiary = null;
+    : secondary = null,
+      tertiary = null;
 
   /// The primary layout (usually letters or main input).
   final KeyboardLayout primary;

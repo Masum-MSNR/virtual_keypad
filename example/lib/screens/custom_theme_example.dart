@@ -118,14 +118,15 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
                             itemCount: _themes.length,
-                            separatorBuilder: (_, _) =>
-                                const SizedBox(width: 10),
+                            separatorBuilder:
+                                (_, _) => const SizedBox(width: 10),
                             itemBuilder: (context, index) {
                               final theme = _themes[index];
                               final isSelected = index == _selectedTheme;
                               return GestureDetector(
-                                onTap: () =>
-                                    setState(() => _selectedTheme = index),
+                                onTap:
+                                    () =>
+                                        setState(() => _selectedTheme = index),
                                 child: AnimatedContainer(
                                   duration: const Duration(milliseconds: 250),
                                   padding: const EdgeInsets.symmetric(
@@ -133,30 +134,38 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                                     vertical: 10,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? theme.accent
-                                            .withValues(alpha: 0.2)
-                                        : current.appBarBg
-                                            .withValues(alpha: 0.6),
+                                    color:
+                                        isSelected
+                                            ? theme.accent.withValues(
+                                              alpha: 0.2,
+                                            )
+                                            : current.appBarBg.withValues(
+                                              alpha: 0.6,
+                                            ),
                                     borderRadius: BorderRadius.circular(26),
                                     border: Border.all(
-                                      color: isSelected
-                                          ? theme.accent
-                                              .withValues(alpha: 0.6)
-                                          : current.textColor
-                                              .withValues(alpha: 0.08),
+                                      color:
+                                          isSelected
+                                              ? theme.accent.withValues(
+                                                alpha: 0.6,
+                                              )
+                                              : current.textColor.withValues(
+                                                alpha: 0.08,
+                                              ),
                                       width: isSelected ? 2 : 1,
                                     ),
-                                    boxShadow: isSelected
-                                        ? [
-                                            BoxShadow(
-                                              color: theme.accent
-                                                  .withValues(alpha: 0.25),
-                                              blurRadius: 12,
-                                              offset: const Offset(0, 3),
-                                            ),
-                                          ]
-                                        : [],
+                                    boxShadow:
+                                        isSelected
+                                            ? [
+                                              BoxShadow(
+                                                color: theme.accent.withValues(
+                                                  alpha: 0.25,
+                                                ),
+                                                blurRadius: 12,
+                                                offset: const Offset(0, 3),
+                                              ),
+                                            ]
+                                            : [],
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -170,13 +179,15 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                                         theme.name,
                                         style: TextStyle(
                                           fontSize: 14,
-                                          fontWeight: isSelected
-                                              ? FontWeight.w700
-                                              : FontWeight.w400,
-                                          color: isSelected
-                                              ? theme.accent
-                                              : current.textColor
-                                                  .withValues(alpha: 0.55),
+                                          fontWeight:
+                                              isSelected
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w400,
+                                          color:
+                                              isSelected
+                                                  ? theme.accent
+                                                  : current.textColor
+                                                      .withValues(alpha: 0.55),
                                         ),
                                       ),
                                     ],
