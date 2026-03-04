@@ -11,11 +11,11 @@ class VirtualKey {
   /// - [capsText]: Optional uppercase variant. Defaults to [text.toUpperCase()].
   /// - [flex]: Relative width of the key. Default is 1.
   VirtualKey.character({required this.text, String? capsText, this.flex = 1})
-    : capsText = capsText ?? text?.toUpperCase(),
-      keyType = KeyType.character,
-      action = null,
-      label = null,
-      altLabel = null;
+      : capsText = capsText ?? text?.toUpperCase(),
+        keyType = KeyType.character,
+        action = null,
+        label = null,
+        altLabel = null;
 
   /// Creates an action key that performs a keyboard function.
   ///
@@ -30,8 +30,8 @@ class VirtualKey {
     this.label,
     this.altLabel,
     this.flex = 1,
-  }) : capsText = null,
-       keyType = KeyType.action;
+  })  : capsText = null,
+        keyType = KeyType.action;
 
   /// The primary text character for this key.
   final String? text;

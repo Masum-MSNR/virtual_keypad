@@ -271,8 +271,7 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
 
   void _registerWithScope() {
     if (_scope != null && widget.enabled && !widget.readOnly) {
-      final inputAction =
-          widget.textInputAction ??
+      final inputAction = widget.textInputAction ??
           (widget.maxLines != 1
               ? TextInputAction.newline
               : TextInputAction.done);

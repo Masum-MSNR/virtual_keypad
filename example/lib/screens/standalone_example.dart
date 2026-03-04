@@ -115,7 +115,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     ),
                   ),
                   const SizedBox(height: 24),
-
                   _SectionLabel(
                     icon: Icons.person_outline_rounded,
                     label: 'Contact Info',
@@ -123,7 +122,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     accent: accent,
                   ),
                   const SizedBox(height: 14),
-
                   TextField(
                     controller: _nameController,
                     keyboardType: TextInputType.name,
@@ -149,7 +147,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     ),
                   ),
                   const SizedBox(height: 14),
-
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
@@ -175,7 +172,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     ),
                   ),
                   const SizedBox(height: 14),
-
                   TextField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
@@ -201,7 +197,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     ),
                   ),
                   const SizedBox(height: 24),
-
                   _SectionLabel(
                     icon: Icons.note_alt_outlined,
                     label: 'Notes',
@@ -209,7 +204,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     accent: accent,
                   ),
                   const SizedBox(height: 14),
-
                   TextField(
                     controller: _notesController,
                     keyboardType: TextInputType.multiline,

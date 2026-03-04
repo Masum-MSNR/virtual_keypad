@@ -117,8 +117,7 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
     TextInputAction inputAction = TextInputAction.done,
     bool allowPhysicalKeyboard = false,
   }) {
-    final changed =
-        _activeController != controller ||
+    final changed = _activeController != controller ||
         _activeKeyboardType != keyboardType ||
         _activeInputAction != inputAction ||
         _allowPhysicalKeyboard != allowPhysicalKeyboard;

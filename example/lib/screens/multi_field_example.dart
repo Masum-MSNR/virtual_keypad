@@ -34,10 +34,10 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
   }
 
   List<bool> get _stepsDone => [
-    _nameController.text.isNotEmpty,
-    _emailController.text.isNotEmpty,
-    _passwordController.text.isNotEmpty,
-  ];
+        _nameController.text.isNotEmpty,
+        _emailController.text.isNotEmpty,
+        _passwordController.text.isNotEmpty,
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -86,15 +86,21 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
                           // ── Header ──
                           Text(
                             'Create Account',
-                            style: Theme.of(context).textTheme.headlineSmall
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
                                 ?.copyWith(fontWeight: FontWeight.w800),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Fill in your details to get started',
-                            style: Theme.of(context).textTheme.bodyMedium
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
                                 ?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
                                       .withValues(alpha: 0.55),
                                 ),
                           ),
@@ -256,8 +262,8 @@ class _ProgressDots extends StatelessWidget {
                 color: i < filled - 1
                     ? _kGreenComplete
                     : (i < filled
-                          ? _kGradientStart.withValues(alpha: 0.5)
-                          : muted),
+                        ? _kGradientStart.withValues(alpha: 0.5)
+                        : muted),
               ),
             ),
         ],

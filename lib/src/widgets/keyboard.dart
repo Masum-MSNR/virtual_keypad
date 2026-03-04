@@ -500,8 +500,8 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     final layout = shouldShowKeyboard
         ? _currentLayout
         : (_wasVisible && _cachedLayout != null
-              ? _cachedLayout!
-              : _currentLayout);
+            ? _cachedLayout!
+            : _currentLayout);
 
     // Reset cache after animation would complete
     if (!shouldShowKeyboard && _wasVisible && !widget.hideWhenUnfocused) {
@@ -646,8 +646,7 @@ class _KeyWidgetState extends State<_KeyWidget> {
 
     _removePopup();
 
-    final keyWidth =
-        widget.baseWidth * widget.virtualKey.flex +
+    final keyWidth = widget.baseWidth * widget.virtualKey.flex +
         (widget.virtualKey.flex - 1) * widget.theme.horizontalGap;
     final popupWidth = keyWidth + 14;
     final popupHeight = widget.height + 12;
@@ -692,8 +691,7 @@ class _KeyWidgetState extends State<_KeyWidget> {
         ? widget.theme.actionKeyDecoration
         : widget.theme.keyDecoration;
 
-    final width =
-        widget.baseWidth * key.flex +
+    final width = widget.baseWidth * key.flex +
         (key.flex - 1) * widget.theme.horizontalGap;
 
     return CompositedTransformTarget(
@@ -783,8 +781,8 @@ class _KeyWidgetState extends State<_KeyWidget> {
           widget.capsLock
               ? Icons.keyboard_capslock
               : (widget.shift
-                    ? Icons.arrow_upward
-                    : Icons.arrow_upward_outlined),
+                  ? Icons.arrow_upward
+                  : Icons.arrow_upward_outlined),
           size: widget.theme.keyTextSize,
           color: widget.theme.keyTextColor,
         );
