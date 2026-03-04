@@ -127,32 +127,32 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                                 onTap: () =>
                                     setState(() => _selectedTheme = index),
                                 child: AnimatedContainer(
-                                  duration:
-                                      const Duration(milliseconds: 250),
+                                  duration: const Duration(milliseconds: 250),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 20,
                                     vertical: 10,
                                   ),
                                   decoration: BoxDecoration(
                                     color: isSelected
-                                        ? theme.accent
-                                            .withValues(alpha: 0.2)
-                                        : current.appBarBg
-                                            .withValues(alpha: 0.6),
+                                        ? theme.accent.withValues(alpha: 0.2)
+                                        : current.appBarBg.withValues(
+                                            alpha: 0.6,
+                                          ),
                                     borderRadius: BorderRadius.circular(26),
                                     border: Border.all(
                                       color: isSelected
-                                          ? theme.accent
-                                              .withValues(alpha: 0.6)
-                                          : current.textColor
-                                              .withValues(alpha: 0.08),
+                                          ? theme.accent.withValues(alpha: 0.6)
+                                          : current.textColor.withValues(
+                                              alpha: 0.08,
+                                            ),
                                       width: isSelected ? 2 : 1,
                                     ),
                                     boxShadow: isSelected
                                         ? [
                                             BoxShadow(
-                                              color: theme.accent
-                                                  .withValues(alpha: 0.25),
+                                              color: theme.accent.withValues(
+                                                alpha: 0.25,
+                                              ),
                                               blurRadius: 12,
                                               offset: const Offset(0, 3),
                                             ),
@@ -164,8 +164,7 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                                     children: [
                                       Text(
                                         theme.emoji,
-                                        style:
-                                            const TextStyle(fontSize: 18),
+                                        style: const TextStyle(fontSize: 18),
                                       ),
                                       const SizedBox(width: 8),
                                       Text(
@@ -177,8 +176,9 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                                               : FontWeight.w400,
                                           color: isSelected
                                               ? theme.accent
-                                              : current.textColor
-                                                  .withValues(alpha: 0.55),
+                                              : current.textColor.withValues(
+                                                  alpha: 0.55,
+                                                ),
                                         ),
                                       ),
                                     ],
@@ -239,13 +239,11 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                           decoration: InputDecoration(
                             labelText: 'Type here',
                             labelStyle: TextStyle(
-                              color:
-                                  current.textColor.withValues(alpha: 0.5),
+                              color: current.textColor.withValues(alpha: 0.5),
                             ),
                             hintText: 'Try the themed keyboard',
                             hintStyle: TextStyle(
-                              color:
-                                  current.textColor.withValues(alpha: 0.2),
+                              color: current.textColor.withValues(alpha: 0.2),
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -254,8 +252,7 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(
-                                color:
-                                    current.accent.withValues(alpha: 0.15),
+                                color: current.accent.withValues(alpha: 0.15),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -269,8 +266,7 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                             fillColor: current.theme.keyColor,
                             prefixIcon: Icon(
                               Icons.palette_outlined,
-                              color:
-                                  current.textColor.withValues(alpha: 0.35),
+                              color: current.textColor.withValues(alpha: 0.35),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                               horizontal: 18,

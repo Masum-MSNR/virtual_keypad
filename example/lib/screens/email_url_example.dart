@@ -82,8 +82,9 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
                             labelText: 'Email',
                             hintText: 'user@example.com',
                             hintStyle: TextStyle(
-                              color: colorScheme.onSurface
-                                  .withValues(alpha: 0.25),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.25,
+                              ),
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
@@ -97,10 +98,9 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
                               ),
                             ),
                             prefixIcon: const Icon(Icons.email_outlined),
-                            suffixIcon:
-                                _isValidEmail(_emailController.text)
-                                    ? const _AnimatedCheckmark()
-                                    : null,
+                            suffixIcon: _isValidEmail(_emailController.text)
+                                ? const _AnimatedCheckmark()
+                                : null,
                             filled: true,
                             fillColor: colorScheme.surfaceContainerLowest,
                           ),
@@ -119,21 +119,24 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
                                   gradient: LinearGradient(
                                     colors: [
                                       Colors.transparent,
-                                      colorScheme.outlineVariant
-                                          .withValues(alpha: 0.4),
+                                      colorScheme.outlineVariant.withValues(
+                                        alpha: 0.4,
+                                      ),
                                     ],
                                   ),
                                 ),
                               ),
                             ),
                             Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 14),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                              ),
                               child: Icon(
                                 Icons.more_horiz_rounded,
                                 size: 18,
-                                color: colorScheme.outlineVariant
-                                    .withValues(alpha: 0.5),
+                                color: colorScheme.outlineVariant.withValues(
+                                  alpha: 0.5,
+                                ),
                               ),
                             ),
                             Expanded(
@@ -142,8 +145,9 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: [
-                                      colorScheme.outlineVariant
-                                          .withValues(alpha: 0.4),
+                                      colorScheme.outlineVariant.withValues(
+                                        alpha: 0.4,
+                                      ),
                                       Colors.transparent,
                                     ],
                                   ),
@@ -173,8 +177,9 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
                             labelText: 'Website',
                             hintText: 'https://example.com',
                             hintStyle: TextStyle(
-                              color: colorScheme.onSurface
-                                  .withValues(alpha: 0.25),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.25,
+                              ),
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
@@ -187,8 +192,7 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
                                 width: 2,
                               ),
                             ),
-                            prefixIcon:
-                                const Icon(Icons.language_rounded),
+                            prefixIcon: const Icon(Icons.language_rounded),
                             suffixIcon: _isValidUrl(_urlController.text)
                                 ? const _AnimatedCheckmark()
                                 : null,
@@ -200,12 +204,13 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
                               SnackBar(
                                 content: Row(
                                   children: [
-                                    const Icon(Icons.open_in_browser,
-                                        color: Colors.white, size: 18),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      'Opening ${_urlController.text}',
+                                    const Icon(
+                                      Icons.open_in_browser,
+                                      color: Colors.white,
+                                      size: 18,
                                     ),
+                                    const SizedBox(width: 10),
+                                    Text('Opening ${_urlController.text}'),
                                   ],
                                 ),
                                 behavior: SnackBarBehavior.floating,
@@ -319,8 +324,7 @@ class _InputCard extends StatelessWidget {
                         description,
                         style: TextStyle(
                           fontSize: 12,
-                          color:
-                              colorScheme.onSurface.withValues(alpha: 0.45),
+                          color: colorScheme.onSurface.withValues(alpha: 0.45),
                         ),
                       ),
                     ],
@@ -390,11 +394,7 @@ class _AnimatedCheckmarkState extends State<_AnimatedCheckmark>
             ),
           ],
         ),
-        child: const Icon(
-          Icons.check_rounded,
-          color: Colors.white,
-          size: 16,
-        ),
+        child: const Icon(Icons.check_rounded, color: Colors.white, size: 16),
       ),
     );
   }

@@ -257,8 +257,9 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
         if (element.widget is EditableText) {
           final editableTextState =
               (element as StatefulElement).state as EditableTextState;
-          editableTextState
-              .bringIntoView(TextPosition(offset: selection.baseOffset));
+          editableTextState.bringIntoView(
+            TextPosition(offset: selection.baseOffset),
+          );
           return;
         }
         element.visitChildren(visitChildren);
@@ -324,50 +325,60 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
   }
 
   Widget _buildContextMenu(
-      BuildContext context, EditableTextState editableTextState) {
+    BuildContext context,
+    EditableTextState editableTextState,
+  ) {
     final List<ContextMenuButtonItem> buttonItems = [];
 
     if (!editableTextState.textEditingValue.selection.isCollapsed) {
-      buttonItems.add(ContextMenuButtonItem(
-        label: 'Cut',
-        onPressed: () {
-          final selection = widget.controller.selection;
-          if (selection.isValid && !selection.isCollapsed) {
-            final selectedText = widget.controller.text.substring(
-              selection.start,
-              selection.end,
-            );
-            Clipboard.setData(ClipboardData(text: selectedText));
-            widget.controller.deleteRange(selection.start, selection.end);
-          }
-          editableTextState.hideToolbar();
-        },
-      ));
+      buttonItems.add(
+        ContextMenuButtonItem(
+          label: 'Cut',
+          onPressed: () {
+            final selection = widget.controller.selection;
+            if (selection.isValid && !selection.isCollapsed) {
+              final selectedText = widget.controller.text.substring(
+                selection.start,
+                selection.end,
+              );
+              Clipboard.setData(ClipboardData(text: selectedText));
+              widget.controller.deleteRange(selection.start, selection.end);
+            }
+            editableTextState.hideToolbar();
+          },
+        ),
+      );
     }
 
     if (!editableTextState.textEditingValue.selection.isCollapsed) {
-      buttonItems.add(ContextMenuButtonItem(
-        label: 'Copy',
-        onPressed: () {
-          editableTextState.copySelection(SelectionChangedCause.toolbar);
-        },
-      ));
+      buttonItems.add(
+        ContextMenuButtonItem(
+          label: 'Copy',
+          onPressed: () {
+            editableTextState.copySelection(SelectionChangedCause.toolbar);
+          },
+        ),
+      );
     }
 
-    buttonItems.add(ContextMenuButtonItem(
-      label: 'Paste',
-      onPressed: () {
-        _handlePaste();
-        editableTextState.hideToolbar();
-      },
-    ));
+    buttonItems.add(
+      ContextMenuButtonItem(
+        label: 'Paste',
+        onPressed: () {
+          _handlePaste();
+          editableTextState.hideToolbar();
+        },
+      ),
+    );
 
-    buttonItems.add(ContextMenuButtonItem(
-      label: 'Select All',
-      onPressed: () {
-        editableTextState.selectAll(SelectionChangedCause.toolbar);
-      },
-    ));
+    buttonItems.add(
+      ContextMenuButtonItem(
+        label: 'Select All',
+        onPressed: () {
+          editableTextState.selectAll(SelectionChangedCause.toolbar);
+        },
+      ),
+    );
 
     return AdaptiveTextSelectionToolbar.buttonItems(
       anchors: editableTextState.contextMenuAnchors,

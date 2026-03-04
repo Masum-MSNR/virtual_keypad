@@ -67,9 +67,7 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                           accentEnd.withValues(alpha: 0.04),
                         ],
                       ),
-                      border: Border.all(
-                        color: accent.withValues(alpha: 0.15),
-                      ),
+                      border: Border.all(color: accent.withValues(alpha: 0.15)),
                     ),
                     child: Row(
                       children: [
@@ -105,8 +103,9 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                                 'Using standard Flutter TextFields with VirtualKeypad(standalone: true)',
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: colorScheme.onSurface
-                                      .withValues(alpha: 0.55),
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.55,
+                                  ),
                                 ),
                               ),
                             ],
@@ -116,7 +115,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     ),
                   ),
                   const SizedBox(height: 24),
-
                   _SectionLabel(
                     icon: Icons.person_outline_rounded,
                     label: 'Contact Info',
@@ -124,7 +122,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     accent: accent,
                   ),
                   const SizedBox(height: 14),
-
                   TextField(
                     controller: _nameController,
                     keyboardType: TextInputType.name,
@@ -139,10 +136,7 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(
-                          color: accent,
-                          width: 2,
-                        ),
+                        borderSide: const BorderSide(color: accent, width: 2),
                       ),
                       filled: true,
                       fillColor: colorScheme.surfaceContainerLowest,
@@ -153,7 +147,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     ),
                   ),
                   const SizedBox(height: 14),
-
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
@@ -161,18 +154,14 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     decoration: InputDecoration(
                       labelText: 'Email',
                       hintText: 'you@example.com',
-                      prefixIcon:
-                          const Icon(Icons.alternate_email_rounded),
+                      prefixIcon: const Icon(Icons.alternate_email_rounded),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
                         borderSide: BorderSide.none,
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(
-                          color: accent,
-                          width: 2,
-                        ),
+                        borderSide: const BorderSide(color: accent, width: 2),
                       ),
                       filled: true,
                       fillColor: colorScheme.surfaceContainerLowest,
@@ -183,7 +172,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     ),
                   ),
                   const SizedBox(height: 14),
-
                   TextField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
@@ -198,10 +186,7 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(
-                          color: accent,
-                          width: 2,
-                        ),
+                        borderSide: const BorderSide(color: accent, width: 2),
                       ),
                       filled: true,
                       fillColor: colorScheme.surfaceContainerLowest,
@@ -212,7 +197,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     ),
                   ),
                   const SizedBox(height: 24),
-
                   _SectionLabel(
                     icon: Icons.note_alt_outlined,
                     label: 'Notes',
@@ -220,7 +204,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                     accent: accent,
                   ),
                   const SizedBox(height: 14),
-
                   TextField(
                     controller: _notesController,
                     keyboardType: TextInputType.multiline,
@@ -240,10 +223,7 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: const BorderSide(
-                          color: accent,
-                          width: 2,
-                        ),
+                        borderSide: const BorderSide(color: accent, width: 2),
                       ),
                       filled: true,
                       fillColor: colorScheme.surfaceContainerLowest,
@@ -258,10 +238,7 @@ class _StandaloneExampleState extends State<StandaloneExample> {
               ),
             ),
           ),
-          VirtualKeypad(
-            standalone: true,
-            hideWhenUnfocused: true,
-          ),
+          VirtualKeypad(standalone: true, hideWhenUnfocused: true),
         ],
       ),
     );
@@ -289,8 +266,11 @@ class _SectionLabel extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 18,
-                color: colorScheme.onSurface.withValues(alpha: 0.7)),
+            Icon(
+              icon,
+              size: 18,
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
             const SizedBox(width: 8),
             Text(
               label.toUpperCase(),

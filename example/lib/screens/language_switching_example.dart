@@ -14,9 +14,27 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
   String _currentLanguage = 'en';
 
   final _languages = [
-    ('en', 'English', '🇺🇸', 'QWERTY', [const Color(0xFF89f7fe), const Color(0xFF66a6ff)]),
-    ('bn', 'বাংলা', '🇧🇩', 'Bengali', [const Color(0xFF43e97b), const Color(0xFF38f9d7)]),
-    ('fr', 'Français', '🇫🇷', 'AZERTY', [const Color(0xFFf093fb), const Color(0xFFf5576c)]),
+    (
+      'en',
+      'English',
+      '🇺🇸',
+      'QWERTY',
+      [const Color(0xFF89f7fe), const Color(0xFF66a6ff)],
+    ),
+    (
+      'bn',
+      'বাংলা',
+      '🇧🇩',
+      'Bengali',
+      [const Color(0xFF43e97b), const Color(0xFF38f9d7)],
+    ),
+    (
+      'fr',
+      'Français',
+      '🇫🇷',
+      'AZERTY',
+      [const Color(0xFFf093fb), const Color(0xFFf5576c)],
+    ),
   ];
 
   @override
@@ -99,8 +117,7 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                           borderRadius: BorderRadius.circular(18),
                           boxShadow: [
                             BoxShadow(
-                              color: colorScheme.shadow
-                                  .withValues(alpha: 0.05),
+                              color: colorScheme.shadow.withValues(alpha: 0.05),
                               blurRadius: 16,
                               offset: const Offset(0, 4),
                             ),
@@ -112,15 +129,13 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                           minLines: 3,
                           onChanged: (_) => setState(() {}),
                           textAlignVertical: TextAlignVertical.top,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            height: 1.6,
-                          ),
+                          style: const TextStyle(fontSize: 15, height: 1.6),
                           decoration: InputDecoration(
                             hintText: hintText,
                             hintStyle: TextStyle(
-                              color: colorScheme.onSurface
-                                  .withValues(alpha: 0.2),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.2,
+                              ),
                               fontSize: 15,
                             ),
                             border: OutlineInputBorder(
@@ -130,8 +145,9 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(18),
                               borderSide: BorderSide(
-                                color: colorScheme.outlineVariant
-                                    .withValues(alpha: 0.15),
+                                color: colorScheme.outlineVariant.withValues(
+                                  alpha: 0.15,
+                                ),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -157,8 +173,9 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHigh
-                            .withValues(alpha: 0.3),
+                        color: colorScheme.surfaceContainerHigh.withValues(
+                          alpha: 0.3,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -166,8 +183,9 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                           Icon(
                             Icons.text_snippet_outlined,
                             size: 14,
-                            color: colorScheme.onSurface
-                                .withValues(alpha: 0.35),
+                            color: colorScheme.onSurface.withValues(
+                              alpha: 0.35,
+                            ),
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -175,8 +193,9 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              color: colorScheme.onSurface
-                                  .withValues(alpha: 0.45),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.45,
+                              ),
                             ),
                           ),
                           const Spacer(),
@@ -200,8 +219,9 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                                     Icon(
                                       Icons.clear_rounded,
                                       size: 14,
-                                      color: colorScheme.error
-                                          .withValues(alpha: 0.6),
+                                      color: colorScheme.error.withValues(
+                                        alpha: 0.6,
+                                      ),
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
@@ -209,8 +229,9 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
-                                        color: colorScheme.error
-                                            .withValues(alpha: 0.6),
+                                        color: colorScheme.error.withValues(
+                                          alpha: 0.6,
+                                        ),
                                       ),
                                     ),
                                   ],

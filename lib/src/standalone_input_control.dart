@@ -30,22 +30,19 @@ class StandaloneInputControl with TextInputControl {
   bool get isAttached => _attached;
 
   /// Derives a [KeyboardType] from the attached field's [TextInputType].
-  KeyboardType get keyboardType =>
-      _toKeyboardType(_configuration?.inputType);
+  KeyboardType get keyboardType => _toKeyboardType(_configuration?.inputType);
 
   /// The input action from the attached field's configuration.
   TextInputAction get inputAction =>
       _configuration?.inputAction ?? TextInputAction.done;
 
   /// Performs an input action (e.g. done, go, search) on the active client.
-  void performAction(TextInputAction action) =>
-      _client?.performAction(action);
+  void performAction(TextInputAction action) => _client?.performAction(action);
 
   @override
   void attach(TextInputClient client, TextInputConfiguration configuration) {
     _client = client;
-    _currentValue =
-        client.currentTextEditingValue ?? TextEditingValue.empty;
+    _currentValue = client.currentTextEditingValue ?? TextEditingValue.empty;
     _configuration = configuration;
     _attached = true;
   }
@@ -94,8 +91,7 @@ class StandaloneInputControl with TextInputControl {
       final newText = _currentValue.text.replaceRange(start, sel.end, '');
       _updateEditingValue(newText, start);
     } else if (!sel.isCollapsed) {
-      final newText =
-          _currentValue.text.replaceRange(sel.start, sel.end, '');
+      final newText = _currentValue.text.replaceRange(sel.start, sel.end, '');
       _updateEditingValue(newText, sel.start);
     }
   }

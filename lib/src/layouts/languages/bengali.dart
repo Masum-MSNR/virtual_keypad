@@ -53,7 +53,11 @@ final KeyboardLayout _textLayoutPrimary = [
   ],
   [
     VirtualKey.action(
-        action: KeyAction.symbols, label: '১২৩', altLabel: 'কখগ', flex: 1),
+      action: KeyAction.symbols,
+      label: '১২৩',
+      altLabel: 'কখগ',
+      flex: 1,
+    ),
     VirtualKey.character(text: 'স'),
     VirtualKey.character(text: 'হ'),
     VirtualKey.character(text: '্'),
@@ -92,7 +96,11 @@ final KeyboardLayout _textLayoutSecondary = [
   ],
   [
     VirtualKey.action(
-        action: KeyAction.symbolsAlt, label: '#+=', altLabel: '১২৩', flex: 1),
+      action: KeyAction.symbolsAlt,
+      label: '#+=',
+      altLabel: '১২৩',
+      flex: 1,
+    ),
     VirtualKey.character(text: '-'),
     VirtualKey.character(text: '/'),
     VirtualKey.character(text: ':'),
@@ -104,7 +112,11 @@ final KeyboardLayout _textLayoutSecondary = [
   ],
   [
     VirtualKey.action(
-        action: KeyAction.symbols, label: '১২৩', altLabel: 'কখগ', flex: 1),
+      action: KeyAction.symbols,
+      label: '১২৩',
+      altLabel: 'কখগ',
+      flex: 1,
+    ),
     VirtualKey.character(text: ','),
     VirtualKey.character(text: '্'),
     VirtualKey.action(action: KeyAction.space, flex: 3),
@@ -142,7 +154,11 @@ final KeyboardLayout _textLayoutTertiary = [
   ],
   [
     VirtualKey.action(
-        action: KeyAction.symbolsAlt, label: '#+=', altLabel: '১২৩', flex: 1),
+      action: KeyAction.symbolsAlt,
+      label: '#+=',
+      altLabel: '১২৩',
+      flex: 1,
+    ),
     VirtualKey.character(text: '.'),
     VirtualKey.character(text: ','),
     VirtualKey.character(text: '?'),
@@ -154,7 +170,11 @@ final KeyboardLayout _textLayoutTertiary = [
   ],
   [
     VirtualKey.action(
-        action: KeyAction.symbols, label: '১২৩', altLabel: 'কখগ', flex: 2),
+      action: KeyAction.symbols,
+      label: '১২৩',
+      altLabel: 'কখগ',
+      flex: 2,
+    ),
     VirtualKey.character(text: ','),
     VirtualKey.action(action: KeyAction.space, flex: 4),
     VirtualKey.character(text: '।'),

@@ -74,17 +74,19 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
-                              color: (_isAnyFocused
-                                      ? const Color(0xFF30cfd0)
-                                      : colorScheme.shadow)
-                                  .withValues(alpha: 0.1),
+                              color:
+                                  (_isAnyFocused
+                                          ? const Color(0xFF30cfd0)
+                                          : colorScheme.shadow)
+                                      .withValues(alpha: 0.1),
                               blurRadius: 12,
                               offset: const Offset(0, 3),
                             ),
                           ],
                           border: Border.all(
-                            color: colorScheme.outlineVariant
-                                .withValues(alpha: 0.1),
+                            color: colorScheme.outlineVariant.withValues(
+                              alpha: 0.1,
+                            ),
                           ),
                         ),
                         child: ClipRRect(
@@ -99,8 +101,9 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                                 left: BorderSide(
                                   color: _isAnyFocused
                                       ? const Color(0xFF30cfd0)
-                                      : colorScheme.outlineVariant
-                                          .withValues(alpha: 0.4),
+                                      : colorScheme.outlineVariant.withValues(
+                                          alpha: 0.4,
+                                        ),
                                   width: 4,
                                 ),
                               ),
@@ -108,21 +111,22 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                             child: Row(
                               children: [
                                 AnimatedContainer(
-                                  duration:
-                                      const Duration(milliseconds: 300),
+                                  duration: const Duration(milliseconds: 300),
                                   width: 10,
                                   height: 10,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: _isAnyFocused
                                         ? const Color(0xFF30cfd0)
-                                        : colorScheme.outline
-                                            .withValues(alpha: 0.35),
+                                        : colorScheme.outline.withValues(
+                                            alpha: 0.35,
+                                          ),
                                     boxShadow: _isAnyFocused
                                         ? [
                                             BoxShadow(
-                                              color: const Color(0xFF30cfd0)
-                                                  .withValues(alpha: 0.5),
+                                              color: const Color(
+                                                0xFF30cfd0,
+                                              ).withValues(alpha: 0.5),
                                               blurRadius: 8,
                                               spreadRadius: 1,
                                             ),
@@ -163,8 +167,7 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                                   ),
                                 ),
                                 AnimatedSwitcher(
-                                  duration:
-                                      const Duration(milliseconds: 300),
+                                  duration: const Duration(milliseconds: 300),
                                   child: Icon(
                                     _isAnyFocused
                                         ? Icons.keyboard_rounded
@@ -172,8 +175,9 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                                     key: ValueKey(_isAnyFocused),
                                     color: _isAnyFocused
                                         ? const Color(0xFF30cfd0)
-                                        : colorScheme.outline
-                                            .withValues(alpha: 0.35),
+                                        : colorScheme.outline.withValues(
+                                            alpha: 0.35,
+                                          ),
                                     size: 22,
                                   ),
                                 ),
@@ -208,8 +212,7 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                               width: 2,
                             ),
                           ),
-                          prefixIcon:
-                              const Icon(Icons.text_fields_rounded),
+                          prefixIcon: const Icon(Icons.text_fields_rounded),
                           filled: true,
                           fillColor: colorScheme.surfaceContainerLowest,
                           contentPadding: const EdgeInsets.symmetric(
@@ -264,8 +267,7 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                             borderRadius: BorderRadius.circular(16),
                             borderSide: BorderSide.none,
                           ),
-                          prefixIcon:
-                              const Icon(Icons.lock_outline_rounded),
+                          prefixIcon: const Icon(Icons.lock_outline_rounded),
                           filled: true,
                           fillColor: colorScheme.surfaceContainerHighest
                               .withValues(alpha: 0.5),
@@ -308,8 +310,11 @@ class _SectionLabel extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon, size: 18,
-                color: colorScheme.onSurface.withValues(alpha: 0.7)),
+            Icon(
+              icon,
+              size: 18,
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
             const SizedBox(width: 8),
             Text(
               label.toUpperCase(),

@@ -84,18 +84,16 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                     const SizedBox(height: 16),
                     Text(
                       'Enter Amount',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(fontWeight: FontWeight.w700),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'How much would you like to send?',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color:
-                                colorScheme.onSurface.withValues(alpha: 0.5),
-                          ),
+                        color: colorScheme.onSurface.withValues(alpha: 0.5),
+                      ),
                     ),
                     const SizedBox(height: 24),
 
@@ -112,8 +110,9 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                           color: colorScheme.surfaceContainerLowest,
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF667eea)
-                                  .withValues(alpha: 0.08),
+                              color: const Color(
+                                0xFF667eea,
+                              ).withValues(alpha: 0.08),
                               blurRadius: 24,
                               offset: const Offset(0, 8),
                             ),
@@ -129,16 +128,18 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                           keyboardType: KeyboardType.number,
                           decoration: InputDecoration(
                             prefixIcon: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 20, right: 4),
+                              padding: const EdgeInsets.only(
+                                left: 20,
+                                right: 4,
+                              ),
                               child: ShaderMask(
                                 shaderCallback: (bounds) =>
                                     const LinearGradient(
-                                  colors: [
-                                    Color(0xFF667eea),
-                                    Color(0xFF764ba2),
-                                  ],
-                                ).createShader(bounds),
+                                      colors: [
+                                        Color(0xFF667eea),
+                                        Color(0xFF764ba2),
+                                      ],
+                                    ).createShader(bounds),
                                 child: const Text(
                                   '\$',
                                   style: TextStyle(
@@ -155,8 +156,9 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                             ),
                             hintText: '0.00',
                             hintStyle: TextStyle(
-                              color:
-                                  colorScheme.onSurface.withValues(alpha: 0.15),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 0.15,
+                              ),
                               fontSize: 36,
                               fontWeight: FontWeight.w800,
                             ),
@@ -224,8 +226,9 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF764ba2)
-                                  .withValues(alpha: 0.35),
+                              color: const Color(
+                                0xFF764ba2,
+                              ).withValues(alpha: 0.35),
                               blurRadius: 16,
                               offset: const Offset(0, 6),
                             ),
@@ -256,10 +259,7 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                 ),
               ),
             ),
-            VirtualKeypad(
-              type: KeyboardType.number,
-              height: 260,
-            ),
+            VirtualKeypad(type: KeyboardType.number, height: 260),
           ],
         ),
       ),

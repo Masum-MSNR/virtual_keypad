@@ -34,10 +34,10 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
   }
 
   List<bool> get _stepsDone => [
-        _nameController.text.isNotEmpty,
-        _emailController.text.isNotEmpty,
-        _passwordController.text.isNotEmpty,
-      ];
+    _nameController.text.isNotEmpty,
+    _emailController.text.isNotEmpty,
+    _passwordController.text.isNotEmpty,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -86,21 +86,15 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
                           // ── Header ──
                           Text(
                             'Create Account',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
+                            style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(fontWeight: FontWeight.w800),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Fill in your details to get started',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
+                            style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
+                                  color: Theme.of(context).colorScheme.onSurface
                                       .withValues(alpha: 0.55),
                                 ),
                           ),
@@ -159,11 +153,13 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
                                 SnackBar(
                                   content: Row(
                                     children: [
-                                      const Icon(Icons.check_circle,
-                                          color: Colors.white, size: 18),
+                                      const Icon(
+                                        Icons.check_circle,
+                                        color: Colors.white,
+                                        size: 18,
+                                      ),
                                       const SizedBox(width: 10),
-                                      Text(
-                                          'Welcome, ${_nameController.text}!'),
+                                      Text('Welcome, ${_nameController.text}!'),
                                     ],
                                   ),
                                   behavior: SnackBarBehavior.floating,
@@ -223,8 +219,10 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
         prefixIcon: Icon(icon),
         filled: true,
         fillColor: colorScheme.surfaceContainerLowest,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
     );
   }
@@ -238,8 +236,9 @@ class _ProgressDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final muted =
-        Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.4);
+    final muted = Theme.of(
+      context,
+    ).colorScheme.outlineVariant.withValues(alpha: 0.4);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -256,7 +255,9 @@ class _ProgressDots extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
                 color: i < filled - 1
                     ? _kGreenComplete
-                    : (i < filled ? _kGradientStart.withValues(alpha: 0.5) : muted),
+                    : (i < filled
+                          ? _kGradientStart.withValues(alpha: 0.5)
+                          : muted),
               ),
             ),
         ],
@@ -271,8 +272,9 @@ class _Dot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final muted =
-        Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.4);
+    final muted = Theme.of(
+      context,
+    ).colorScheme.outlineVariant.withValues(alpha: 0.4);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -310,10 +312,7 @@ class _StepperColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: steps,
-    );
+    return Column(mainAxisSize: MainAxisSize.min, children: steps);
   }
 }
 
@@ -358,8 +357,9 @@ class _StepItem extends StatelessWidget {
                     border: done
                         ? null
                         : Border.all(
-                            color: colorScheme.outlineVariant
-                                .withValues(alpha: 0.6),
+                            color: colorScheme.outlineVariant.withValues(
+                              alpha: 0.6,
+                            ),
                           ),
                     boxShadow: done
                         ? [
@@ -375,18 +375,21 @@ class _StepItem extends StatelessWidget {
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 250),
                       child: done
-                          ? const Icon(Icons.check,
+                          ? const Icon(
+                              Icons.check,
                               key: ValueKey('check'),
                               size: 14,
-                              color: Colors.white)
+                              color: Colors.white,
+                            )
                           : Text(
                               stepNumber,
                               key: ValueKey('num$stepNumber'),
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurface
-                                    .withValues(alpha: 0.5),
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.5,
+                                ),
                               ),
                             ),
                     ),
@@ -401,8 +404,9 @@ class _StepItem extends StatelessWidget {
                         painter: _DottedLinePainter(
                           color: done
                               ? _kGreenComplete.withValues(alpha: 0.5)
-                              : colorScheme.outlineVariant
-                                  .withValues(alpha: 0.35),
+                              : colorScheme.outlineVariant.withValues(
+                                  alpha: 0.35,
+                                ),
                         ),
                         child: const SizedBox(width: 2),
                       ),
@@ -444,7 +448,11 @@ class _DottedLinePainter extends CustomPainter {
     var y = 0.0;
 
     while (y < size.height) {
-      canvas.drawLine(Offset(centerX, y), Offset(centerX, y + dashHeight), paint);
+      canvas.drawLine(
+        Offset(centerX, y),
+        Offset(centerX, y + dashHeight),
+        paint,
+      );
       y += dashHeight + gap;
     }
   }

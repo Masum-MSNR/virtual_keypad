@@ -182,10 +182,11 @@ class _PinPadExampleState extends State<PinPadExample>
                                   : _gradient,
                               boxShadow: [
                                 BoxShadow(
-                                  color: (_showSuccess
-                                          ? const Color(0xFF43A047)
-                                          : const Color(0xFFf5576c))
-                                      .withValues(alpha: 0.45),
+                                  color:
+                                      (_showSuccess
+                                              ? const Color(0xFF43A047)
+                                              : const Color(0xFFf5576c))
+                                          .withValues(alpha: 0.45),
                                   blurRadius: 24,
                                   spreadRadius: 2,
                                 ),
@@ -219,9 +220,7 @@ class _PinPadExampleState extends State<PinPadExample>
                         child: Text(
                           _showSuccess ? 'Unlocked!' : 'Enter PIN',
                           key: ValueKey(_showSuccess),
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge
+                          style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: _showSuccess
@@ -241,8 +240,9 @@ class _PinPadExampleState extends State<PinPadExample>
                             _showSuccess ? 'granted' : 'enter',
                           ),
                           style: TextStyle(
-                            color:
-                                colorScheme.onSurface.withValues(alpha: 0.45),
+                            color: colorScheme.onSurface.withValues(
+                              alpha: 0.45,
+                            ),
                             fontSize: 13,
                           ),
                         ),
@@ -269,8 +269,9 @@ class _PinPadExampleState extends State<PinPadExample>
                               isActive: isActive,
                               isSuccess: _showSuccess,
                               pulseAnimation: _pulseAnimation,
-                              outlineColor:
-                                  colorScheme.outline.withValues(alpha: 0.35),
+                              outlineColor: colorScheme.outline.withValues(
+                                alpha: 0.35,
+                              ),
                             );
                           }),
                         ),
@@ -342,10 +343,9 @@ class _PinDot extends StatelessWidget {
               border: Border.all(color: const Color(0xFFf5576c), width: 2),
               boxShadow: [
                 BoxShadow(
-                  color:
-                      const Color(0xFFf093fb).withValues(
-                        alpha: pulseAnimation.value,
-                      ),
+                  color: const Color(
+                    0xFFf093fb,
+                  ).withValues(alpha: pulseAnimation.value),
                   blurRadius: 14,
                   spreadRadius: 2,
                 ),
@@ -369,8 +369,8 @@ class _PinDot extends StatelessWidget {
                 colors: [Color(0xFF43A047), Color(0xFF66BB6A)],
               )
             : isFilled
-                ? _dotGradient
-                : null,
+            ? _dotGradient
+            : null,
         border: isFilled || isSuccess
             ? null
             : Border.all(color: outlineColor, width: 2),
@@ -383,14 +383,14 @@ class _PinDot extends StatelessWidget {
                 ),
               ]
             : isSuccess
-                ? [
-                    BoxShadow(
-                      color: const Color(0xFF43A047).withValues(alpha: 0.4),
-                      blurRadius: 10,
-                      spreadRadius: 1,
-                    ),
-                  ]
-                : null,
+            ? [
+                BoxShadow(
+                  color: const Color(0xFF43A047).withValues(alpha: 0.4),
+                  blurRadius: 10,
+                  spreadRadius: 1,
+                ),
+              ]
+            : null,
       ),
     );
   }

@@ -246,25 +246,76 @@ final KeyboardLayout _urlLayoutTertiary = _textLayoutTertiary;
 
 /// Number, signed number, and phone layouts remain the same as in English.
 final KeyboardLayout _numberLayout = [
-  [VirtualKey.character(text: '1'), VirtualKey.character(text: '2'), VirtualKey.character(text: '3')],
-  [VirtualKey.character(text: '4'), VirtualKey.character(text: '5'), VirtualKey.character(text: '6')],
-  [VirtualKey.character(text: '7'), VirtualKey.character(text: '8'), VirtualKey.character(text: '9')],
-  [VirtualKey.character(text: '.'), VirtualKey.character(text: '0'), VirtualKey.action(action: KeyAction.backSpace)],
+  [
+    VirtualKey.character(text: '1'),
+    VirtualKey.character(text: '2'),
+    VirtualKey.character(text: '3'),
+  ],
+  [
+    VirtualKey.character(text: '4'),
+    VirtualKey.character(text: '5'),
+    VirtualKey.character(text: '6'),
+  ],
+  [
+    VirtualKey.character(text: '7'),
+    VirtualKey.character(text: '8'),
+    VirtualKey.character(text: '9'),
+  ],
+  [
+    VirtualKey.character(text: '.'),
+    VirtualKey.character(text: '0'),
+    VirtualKey.action(action: KeyAction.backSpace),
+  ],
 ];
 
 final KeyboardLayout _signedNumberLayout = [
-  [VirtualKey.character(text: '1'), VirtualKey.character(text: '2'), VirtualKey.character(text: '3')],
-  [VirtualKey.character(text: '4'), VirtualKey.character(text: '5'), VirtualKey.character(text: '6')],
-  [VirtualKey.character(text: '7'), VirtualKey.character(text: '8'), VirtualKey.character(text: '9')],
-  [VirtualKey.character(text: '-'), VirtualKey.character(text: '0'), VirtualKey.character(text: '.')],
-  [VirtualKey.action(action: KeyAction.backSpace, flex: 2), VirtualKey.action(action: KeyAction.done)],
+  [
+    VirtualKey.character(text: '1'),
+    VirtualKey.character(text: '2'),
+    VirtualKey.character(text: '3'),
+  ],
+  [
+    VirtualKey.character(text: '4'),
+    VirtualKey.character(text: '5'),
+    VirtualKey.character(text: '6'),
+  ],
+  [
+    VirtualKey.character(text: '7'),
+    VirtualKey.character(text: '8'),
+    VirtualKey.character(text: '9'),
+  ],
+  [
+    VirtualKey.character(text: '-'),
+    VirtualKey.character(text: '0'),
+    VirtualKey.character(text: '.'),
+  ],
+  [
+    VirtualKey.action(action: KeyAction.backSpace, flex: 2),
+    VirtualKey.action(action: KeyAction.done),
+  ],
 ];
 
 final KeyboardLayout _phoneLayout = [
-  [VirtualKey.character(text: '1'), VirtualKey.character(text: '2'), VirtualKey.character(text: '3')],
-  [VirtualKey.character(text: '4'), VirtualKey.character(text: '5'), VirtualKey.character(text: '6')],
-  [VirtualKey.character(text: '7'), VirtualKey.character(text: '8'), VirtualKey.character(text: '9')],
-  [VirtualKey.character(text: '*'), VirtualKey.character(text: '0'), VirtualKey.character(text: '#')],
+  [
+    VirtualKey.character(text: '1'),
+    VirtualKey.character(text: '2'),
+    VirtualKey.character(text: '3'),
+  ],
+  [
+    VirtualKey.character(text: '4'),
+    VirtualKey.character(text: '5'),
+    VirtualKey.character(text: '6'),
+  ],
+  [
+    VirtualKey.character(text: '7'),
+    VirtualKey.character(text: '8'),
+    VirtualKey.character(text: '9'),
+  ],
+  [
+    VirtualKey.character(text: '*'),
+    VirtualKey.character(text: '0'),
+    VirtualKey.character(text: '#'),
+  ],
   [
     VirtualKey.character(text: '+'),
     VirtualKey.action(action: KeyAction.backSpace),
