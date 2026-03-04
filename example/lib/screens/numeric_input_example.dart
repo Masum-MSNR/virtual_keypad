@@ -85,15 +85,15 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                     Text(
                       'Enter Amount',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'How much would you like to send?',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurface.withValues(alpha: 0.5),
-                          ),
+                        color: colorScheme.onSurface.withValues(alpha: 0.5),
+                      ),
                     ),
                     const SizedBox(height: 24),
 
@@ -135,11 +135,11 @@ class _NumericInputExampleState extends State<NumericInputExample> {
                               child: ShaderMask(
                                 shaderCallback: (bounds) =>
                                     const LinearGradient(
-                                  colors: [
-                                    Color(0xFF667eea),
-                                    Color(0xFF764ba2),
-                                  ],
-                                ).createShader(bounds),
+                                      colors: [
+                                        Color(0xFF667eea),
+                                        Color(0xFF764ba2),
+                                      ],
+                                    ).createShader(bounds),
                                 child: const Text(
                                   '\$',
                                   style: TextStyle(

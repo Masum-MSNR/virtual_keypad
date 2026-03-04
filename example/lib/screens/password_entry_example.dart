@@ -116,17 +116,13 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
 
                         Text(
                           'Welcome Back',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
+                          style: Theme.of(context).textTheme.headlineSmall
                               ?.copyWith(fontWeight: FontWeight.w700),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           'Sign in to continue',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
+                          style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(color: colorScheme.onSurfaceVariant),
                         ),
                         const SizedBox(height: 28),
@@ -211,7 +207,7 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                                       color: active
                                           ? _strengthColor(strength)
                                           : colorScheme.outlineVariant
-                                              .withValues(alpha: 0.3),
+                                                .withValues(alpha: 0.3),
                                     ),
                                   ),
                                 );

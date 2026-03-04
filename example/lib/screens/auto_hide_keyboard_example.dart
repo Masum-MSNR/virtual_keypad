@@ -74,10 +74,11 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
-                              color: (_isAnyFocused
-                                      ? const Color(0xFF30cfd0)
-                                      : colorScheme.shadow)
-                                  .withValues(alpha: 0.1),
+                              color:
+                                  (_isAnyFocused
+                                          ? const Color(0xFF30cfd0)
+                                          : colorScheme.shadow)
+                                      .withValues(alpha: 0.1),
                               blurRadius: 12,
                               offset: const Offset(0, 3),
                             ),
