@@ -8,6 +8,7 @@ import '../layouts/keyboard_layout_provider.dart';
 import '../models.dart';
 import '../scope.dart';
 import '../standalone_input_control.dart';
+import '../standalone_scope.dart';
 import '../theme.dart';
 
 /// A customizable virtual on-screen keyboard widget.
@@ -133,11 +134,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
   void _initStandalone() {
     _inputControl = StandaloneInputControl(
-      onShow: () {
-        if (!mounted) return;
-        setState(() => _standaloneVisible = true);
-        _onStandaloneFieldChanged();
-      },
+      onShow: _onStandaloneShow,
       onHide: () {
         if (!mounted) return;
         setState(() => _standaloneVisible = false);
@@ -163,7 +160,46 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       if (_standaloneVisible) {
         setState(() => _standaloneVisible = false);
       }
+      return;
     }
+
+    // If wrapped in a scope, hide when focus moves outside that scope
+    final myScope = VirtualKeypadStandaloneScope.maybeOf(context);
+    if (myScope != null && _standaloneVisible) {
+      final focusedScope =
+          VirtualKeypadStandaloneScope.maybeOf(focus.context!);
+      if (focusedScope != myScope) {
+        setState(() => _standaloneVisible = false);
+      }
+    }
+  }
+
+  /// Called when the [StandaloneInputControl] requests the keyboard to show.
+  ///
+  /// If the keyboard is wrapped in a [VirtualKeypadStandaloneScope], the
+  /// focused text field must be within the same scope for the keyboard to
+  /// appear. This prevents the keyboard from responding to text fields that
+  /// belong to a different part of the widget tree.
+  void _onStandaloneShow() {
+    if (!mounted) return;
+
+    // If this keyboard is inside a VirtualKeypadStandaloneScope, only show
+    // when the focused widget is in the same scope.
+    final myScope = VirtualKeypadStandaloneScope.maybeOf(context);
+    if (myScope != null) {
+      final focusedContext = FocusManager.instance.primaryFocus?.context;
+      final focusedScope = focusedContext != null
+          ? VirtualKeypadStandaloneScope.maybeOf(focusedContext)
+          : null;
+      if (focusedScope != myScope) {
+        // The focused field is outside our scope – hide the keyboard.
+        if (_standaloneVisible) setState(() => _standaloneVisible = false);
+        return;
+      }
+    }
+
+    setState(() => _standaloneVisible = true);
+    _onStandaloneFieldChanged();
   }
 
   void _onStandaloneFieldChanged() {

@@ -45,6 +45,7 @@
 ///
 /// - [VirtualKeypad] - Customizable on-screen keyboard widget
 /// - [VirtualKeypadScope] - Manages keyboard-to-textfield connections (scope mode)
+/// - [VirtualKeypadStandaloneScope] - Restricts standalone keyboard to a widget subtree
 /// - [VirtualKeypadTextField] - Text field optimized for virtual keyboard input (scope mode)
 /// - [VirtualKeypadController] - Controller with text manipulation methods
 /// - [VirtualKeypadTheme] - Theming for keyboard appearance
@@ -57,6 +58,7 @@ export 'src/enums.dart';
 export 'src/models.dart';
 export 'src/scope.dart';
 export 'src/standalone_input_control.dart';
+export 'src/standalone_scope.dart';
 export 'src/theme.dart';
 export 'src/widgets/keyboard.dart';
 export 'src/widgets/text_field.dart';

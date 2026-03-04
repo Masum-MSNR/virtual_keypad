@@ -135,4 +135,75 @@ void main() {
       expect(key.isCharacter, false);
     });
   });
+
+  group('VirtualKeypadStandaloneScope', () {
+    testWidgets('maybeOf returns null when no scope in tree', (tester) async {
+      late BuildContext capturedContext;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (ctx) {
+              capturedContext = ctx;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+      expect(
+        VirtualKeypadStandaloneScope.maybeOf(capturedContext),
+        isNull,
+      );
+    });
+
+    testWidgets('maybeOf returns state when scope is ancestor', (tester) async {
+      late BuildContext capturedContext;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: VirtualKeypadStandaloneScope(
+            child: Builder(
+              builder: (ctx) {
+                capturedContext = ctx;
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        ),
+      );
+      expect(
+        VirtualKeypadStandaloneScope.maybeOf(capturedContext),
+        isA<VirtualKeypadStandaloneScopeState>(),
+      );
+    });
+
+    testWidgets('two sibling scopes return different state instances',
+        (tester) async {
+      late BuildContext contextA;
+      late BuildContext contextB;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Column(
+            children: [
+              VirtualKeypadStandaloneScope(
+                child: Builder(builder: (ctx) {
+                  contextA = ctx;
+                  return const SizedBox.shrink();
+                }),
+              ),
+              VirtualKeypadStandaloneScope(
+                child: Builder(builder: (ctx) {
+                  contextB = ctx;
+                  return const SizedBox.shrink();
+                }),
+              ),
+            ],
+          ),
+        ),
+      );
+      final scopeA = VirtualKeypadStandaloneScope.maybeOf(contextA);
+      final scopeB = VirtualKeypadStandaloneScope.maybeOf(contextB);
+      expect(scopeA, isNotNull);
+      expect(scopeB, isNotNull);
+      expect(scopeA, isNot(same(scopeB)));
+    });
+  });
 }
