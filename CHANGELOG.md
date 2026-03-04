@@ -1,3 +1,16 @@
+## 0.4.0
+
+### Added
+* **`VirtualKeypadStandaloneScope`** — New widget that restricts a standalone-mode keyboard to only respond to text fields within its subtree. Useful for apps like Widgetbook where multiple widget previews are shown simultaneously.
+* `VirtualKeypadStandaloneScope.maybeOf(context)` static method to look up the nearest scope.
+* Scope-aware focus handling in `VirtualKeypad` — the keyboard now hides when focus moves to a text field outside its scope.
+* Tests for `VirtualKeypadStandaloneScope` (`maybeOf` null case, ancestor lookup, sibling scope isolation).
+
+### Fixed
+* Dart formatting applied consistently across all example files to satisfy CI checks.
+
+---
+
 ## 0.3.1
 
 * Re-release of 0.3.0 (publish fix)

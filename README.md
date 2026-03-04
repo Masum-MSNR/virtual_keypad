@@ -24,6 +24,7 @@ Perfect for kiosk apps, password UIs, and custom input interfaces.
 - 🎹 **Multiple Layouts** - Text, numeric, phone, email, URL, or fully custom
 - 🌍 **Multi-Language** - Built-in English, Bengali & French, easily extensible
 - 🔌 **Standalone Mode** - Works with any standard Flutter TextField
+- 🎯 **Standalone Scope** - Restrict keyboard to a widget subtree
 - 🔤 **Smart TextField** - Auto-adapts keyboard layout based on input type
 - 🎨 **Fully Customizable** - Light, dark, or fully custom themes
 - 📱 **Cross-Platform** - Works on iOS, Android, Web, macOS, Windows, Linux
@@ -66,6 +67,23 @@ class MyApp extends StatelessWidget {
 ```
 
 > Just add `standalone: true` — no wrapper widgets needed. The keyboard auto-detects focused fields and adapts layout based on `keyboardType`.
+
+### Scoped Standalone Mode
+
+Wrap with `VirtualKeypadStandaloneScope` to restrict the keyboard to a specific subtree (useful in Widgetbook or multi-panel UIs):
+
+```dart
+VirtualKeypadStandaloneScope(
+  child: Column(
+    children: [
+      TextField(controller: controller),
+      VirtualKeypad(standalone: true),
+    ],
+  ),
+)
+```
+
+> Fields outside the scope won't trigger this keyboard.
 
 ### Scope Mode (full control)
 

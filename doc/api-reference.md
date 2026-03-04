@@ -2,6 +2,25 @@
 
 Complete API documentation for the Virtual Keypad package.
 
+## VirtualKeypadStandaloneScope
+
+Optional wrapper that restricts a standalone-mode keyboard to only respond to text fields within its subtree.
+
+```dart
+VirtualKeypadStandaloneScope(
+  child: Column(
+    children: [
+      TextField(controller: controller),
+      VirtualKeypad(standalone: true),
+    ],
+  ),
+)
+```
+
+| Static Method | Return Type | Description |
+|---------------|-------------|-------------|
+| `maybeOf(BuildContext)` | `VirtualKeypadStandaloneScopeState?` | Nearest ancestor scope, or null |
+
 ## VirtualKeypadScope
 
 Required wrapper that connects text fields to the keyboard.
