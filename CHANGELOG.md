@@ -1,3 +1,14 @@
+## 0.4.1
+
+### Fixed
+* Skip opening virtual keyboard on read-only text fields (thanks @EArminjon, PR #6)
+
+### Added
+* CI workflow for auto-deploying example app to Firebase Hosting ([masum-vk.web.app](https://masum-vk.web.app))
+* Live demo badge in README
+
+---
+
 ## 0.4.0
 
 ### Added
