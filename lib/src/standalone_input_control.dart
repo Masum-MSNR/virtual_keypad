@@ -41,6 +41,7 @@ class StandaloneInputControl with TextInputControl {
 
   @override
   void attach(TextInputClient client, TextInputConfiguration configuration) {
+    if (configuration.readOnly) return;
     _client = client;
     _currentValue = client.currentTextEditingValue ?? TextEditingValue.empty;
     _configuration = configuration;
