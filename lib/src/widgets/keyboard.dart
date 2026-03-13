@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../enums.dart';
 import '../layouts/keyboard_language.dart';
 import '../layouts/keyboard_layout_provider.dart';
@@ -136,8 +138,12 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     _inputControl = StandaloneInputControl(
       onShow: _onStandaloneShow,
       onHide: () {
-        if (!mounted) return;
-        setState(() => _standaloneVisible = false);
+        _standaloneVisible = false;
+        // onHide can be called during build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          setState(() {});
+        });
       },
     );
     TextInput.setInputControl(_inputControl!);
@@ -147,7 +153,6 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   void _disposeStandalone() {
     FocusManager.instance.removeListener(_onFocusChanged);
     if (_inputControl != null) {
-      TextInput.restorePlatformInputControl();
       _inputControl = null;
     }
   }
