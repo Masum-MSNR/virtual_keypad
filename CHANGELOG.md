@@ -1,3 +1,11 @@
+## 0.4.2
+
+### Fixed
+* Fix standalone keyboard breaking when navigating between pages that both use standalone mode — the previous page's `dispose` was restoring platform input control after the new page's `initState` had already set it (thanks @EArminjon, PR #7)
+* Defer `setState` in standalone `onHide` callback via `addPostFrameCallback` to avoid calling it during build
+
+---
+
 ## 0.4.1
 
 ### Fixed
