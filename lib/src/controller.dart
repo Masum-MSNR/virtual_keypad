@@ -29,7 +29,7 @@ class VirtualKeypadController extends TextEditingController {
 
   /// Sets the cursor position.
   ///
-  /// The position is clamped to valid bounds [0, text.length].
+  /// The position is clamped to valid bounds `[0, text.length]`.
   set cursorPosition(int position) {
     final clampedPos = position.clamp(0, text.length);
     selection = TextSelection.collapsed(offset: clampedPos);

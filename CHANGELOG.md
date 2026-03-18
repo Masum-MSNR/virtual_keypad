@@ -1,3 +1,12 @@
+## 0.4.3
+
+### Fixed
+* Fix encoding corruption (mojibake) in French keyboard tertiary layout — all special characters (`€`, `•`, `√`, `π`, `÷`, `×`, `¶`, `∆`, `£`, `¥`, `¢`, `°`, `©`, `®`, `™`, `✓`) now display correctly
+* Fix dartdoc warnings from unescaped doc references in `VirtualKeypadController`, `VirtualKey`, and `VirtualKeypad`
+* `nativeName` for French language corrected from garbled text to `Français`
+
+---
+
 ## 0.4.2
 
 ### Fixed

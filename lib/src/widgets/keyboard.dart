@@ -75,8 +75,8 @@ class VirtualKeypad extends StatefulWidget {
   final void Function(VirtualKey key)? onKeyPressed;
 
   /// Optional callback invoked when any key is pressed, including the
-  /// inserted text. [text] is the character inserted for character keys
-  /// (respecting shift/caps), or null for action keys.
+  /// inserted `text`. The text is the character inserted for character keys
+  /// (respecting shift/caps), or `null` for action keys.
   final void Function(VirtualKey key, String? text)? onKeyPressedWithText;
 
   /// Custom layout when [type] is [KeyboardType.custom].

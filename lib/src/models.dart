@@ -8,7 +8,7 @@ class VirtualKey {
   /// Creates a character key that inserts text.
   ///
   /// - [text]: The character to insert (and display in lowercase mode).
-  /// - [capsText]: Optional uppercase variant. Defaults to [text.toUpperCase()].
+  /// - [capsText]: Optional uppercase variant. Defaults to `text.toUpperCase()`.
   /// - [flex]: Relative width of the key. Default is 1.
   VirtualKey.character({required this.text, String? capsText, this.flex = 1})
       : capsText = capsText ?? text?.toUpperCase(),
