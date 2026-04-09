@@ -722,7 +722,13 @@ class _KeyWidgetState extends State<_KeyWidget> {
                 _showKeyPreview();
                 widget.onPressed(key);
               },
-              child: Center(child: _buildKeyContent()),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: _buildKeyContent(),
+                ),
+              ),
             ),
           ),
         ),
@@ -773,12 +779,10 @@ class _KeyWidgetState extends State<_KeyWidget> {
             color: widget.theme.keyTextColor,
           );
         }
-        return Text(
-          _getActionLabel(),
-          style: TextStyle(
-            fontSize: widget.theme.keyTextSize * 0.7,
-            color: widget.theme.keyTextColor,
-          ),
+        return Icon(
+          _getActionIcon(),
+          size: widget.theme.keyTextSize,
+          color: widget.theme.keyTextColor,
         );
 
       case KeyAction.shift:
@@ -824,21 +828,17 @@ class _KeyWidgetState extends State<_KeyWidget> {
         );
 
       case KeyAction.done:
-        return Text(
-          _getActionLabel(),
-          style: TextStyle(
-            fontSize: widget.theme.keyTextSize * 0.7,
-            color: widget.theme.keyTextColor,
-          ),
+        return Icon(
+          _getActionIcon(),
+          size: widget.theme.keyTextSize,
+          color: widget.theme.keyTextColor,
         );
 
       case KeyAction.go:
-        return Text(
-          'Go',
-          style: TextStyle(
-            fontSize: widget.theme.keyTextSize * 0.8,
-            color: widget.theme.keyTextColor,
-          ),
+        return Icon(
+          Icons.arrow_forward,
+          size: widget.theme.keyTextSize,
+          color: widget.theme.keyTextColor,
         );
 
       case KeyAction.search:
@@ -863,19 +863,18 @@ class _KeyWidgetState extends State<_KeyWidget> {
         );
 
       case KeyAction.next:
-        return Text(
-          'Next',
-          style: TextStyle(
-            fontSize: widget.theme.keyTextSize * 0.8,
-            color: widget.theme.keyTextColor,
-          ),
+        return Icon(
+          Icons.keyboard_tab,
+          size: widget.theme.keyTextSize,
+          color: widget.theme.keyTextColor,
         );
 
       case KeyAction.previous:
-        return Text(
-          'Prev',
-          style: TextStyle(
-            fontSize: widget.theme.keyTextSize * 0.8,
+        return Transform.flip(
+          flipX: true,
+          child: Icon(
+            Icons.keyboard_tab,
+            size: widget.theme.keyTextSize,
             color: widget.theme.keyTextColor,
           ),
         );
@@ -885,22 +884,20 @@ class _KeyWidgetState extends State<_KeyWidget> {
     }
   }
 
-  String _getActionLabel() {
+  IconData _getActionIcon() {
     switch (widget.inputAction) {
-      case TextInputAction.done:
-        return 'Done';
       case TextInputAction.go:
-        return 'Go';
+        return Icons.arrow_forward;
       case TextInputAction.search:
-        return 'Search';
+        return Icons.search;
       case TextInputAction.send:
-        return 'Send';
+        return Icons.send;
       case TextInputAction.next:
-        return 'Next';
+        return Icons.keyboard_tab;
       case TextInputAction.previous:
-        return 'Prev';
+        return Icons.keyboard_tab;
       default:
-        return 'Done';
+        return Icons.check;
     }
   }
 
