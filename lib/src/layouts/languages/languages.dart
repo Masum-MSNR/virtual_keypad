@@ -13,3 +13,4 @@ library;
 export 'bengali.dart';
 export 'english.dart';
 export 'french.dart';
+export 'hindi.dart';
