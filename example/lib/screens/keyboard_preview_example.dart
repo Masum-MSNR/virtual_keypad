@@ -16,8 +16,13 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
   final _languages = [
     ('en', 'English', '🇺🇸'),
     ('bn', 'বাংলা', '🇧🇩'),
+    ('de', 'Deutsch', '🇩🇪'),
+    ('es', 'Español', '🇪🇸'),
     ('fr', 'Français', '🇫🇷'),
     ('hi', 'हिन्दी', '🇮🇳'),
+    ('pt', 'Português', '🇧🇷'),
+    ('ru', 'Русский', '🇷🇺'),
+    ('tr', 'Türkçe', '🇹🇷'),
   ];
 
   final _inputTypes = [
