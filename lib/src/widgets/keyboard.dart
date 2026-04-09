@@ -519,7 +519,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     final maxColumns = layout.map((row) => row.length).reduce(max);
 
     final totalFlex = layout
-        .map((row) => row.fold(0, (sum, key) => sum + key.flex))
+        .map((row) => row.fold(0.0, (sum, key) => sum + key.flex))
         .reduce(max);
 
     final usedHeight = (rows + 1) * widget.theme.verticalGap;

@@ -10,7 +10,7 @@ class VirtualKey {
   /// - [text]: The character to insert (and display in lowercase mode).
   /// - [capsText]: Optional uppercase variant. Defaults to `text.toUpperCase()`.
   /// - [flex]: Relative width of the key. Default is 1.
-  VirtualKey.character({required this.text, String? capsText, this.flex = 1})
+  VirtualKey.character({required this.text, String? capsText, this.flex = 1.0})
       : capsText = capsText ?? text?.toUpperCase(),
         keyType = KeyType.character,
         action = null,
@@ -29,7 +29,7 @@ class VirtualKey {
     this.text,
     this.label,
     this.altLabel,
-    this.flex = 1,
+    this.flex = 1.0,
   })  : capsText = null,
         keyType = KeyType.action;
 
@@ -54,7 +54,8 @@ class VirtualKey {
   final String? altLabel;
 
   /// Relative width multiplier for the key. A flex of 2 means twice the width.
-  final int flex;
+  /// Supports fractional values like 1.5 for fine-grained sizing.
+  final double flex;
 
   /// Returns true if this is a character key.
   bool get isCharacter => keyType == KeyType.character;
