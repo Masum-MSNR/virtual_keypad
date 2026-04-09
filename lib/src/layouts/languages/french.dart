@@ -29,7 +29,7 @@ final KeyboardLayout _textLayoutPrimary = [
     VirtualKey.character(text: 'm'),
   ],
   [
-    VirtualKey.action(action: KeyAction.shift),
+    VirtualKey.action(action: KeyAction.shift, flex: 1.5),
     VirtualKey.character(text: 'w'),
     VirtualKey.character(text: 'x'),
     VirtualKey.character(text: 'c'),
@@ -37,7 +37,7 @@ final KeyboardLayout _textLayoutPrimary = [
     VirtualKey.character(text: 'b'),
     VirtualKey.character(text: 'n'),
     VirtualKey.character(text: "'"),
-    VirtualKey.action(action: KeyAction.backSpace),
+    VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
     VirtualKey.action(action: KeyAction.symbols, flex: 2),
@@ -75,7 +75,7 @@ final KeyboardLayout _textLayoutSecondary = [
     VirtualKey.character(text: '/'),
   ],
   [
-    VirtualKey.action(action: KeyAction.symbolsAlt),
+    VirtualKey.action(action: KeyAction.symbolsAlt, flex: 1.5),
     VirtualKey.character(text: '*'),
     VirtualKey.character(text: '"'),
     VirtualKey.character(text: "'"),
@@ -83,7 +83,7 @@ final KeyboardLayout _textLayoutSecondary = [
     VirtualKey.character(text: ';'),
     VirtualKey.character(text: '!'),
     VirtualKey.character(text: '?'),
-    VirtualKey.action(action: KeyAction.backSpace),
+    VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
     VirtualKey.action(action: KeyAction.symbols, flex: 2),
@@ -121,7 +121,7 @@ final KeyboardLayout _textLayoutTertiary = [
     VirtualKey.character(text: r'\'),
   ],
   [
-    VirtualKey.action(action: KeyAction.symbolsAlt),
+    VirtualKey.action(action: KeyAction.symbolsAlt, flex: 1.5),
     VirtualKey.character(text: '%'),
     VirtualKey.character(text: '©'),
     VirtualKey.character(text: '®'),
@@ -129,7 +129,7 @@ final KeyboardLayout _textLayoutTertiary = [
     VirtualKey.character(text: '✓'),
     VirtualKey.character(text: '['),
     VirtualKey.character(text: ']'),
-    VirtualKey.action(action: KeyAction.backSpace),
+    VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
     VirtualKey.action(action: KeyAction.symbols, flex: 2),
@@ -167,7 +167,7 @@ final KeyboardLayout _emailLayoutPrimary = [
     VirtualKey.character(text: 'm'),
   ],
   [
-    VirtualKey.action(action: KeyAction.shift),
+    VirtualKey.action(action: KeyAction.shift, flex: 1.5),
     VirtualKey.character(text: 'w'),
     VirtualKey.character(text: 'x'),
     VirtualKey.character(text: 'c'),
@@ -175,7 +175,7 @@ final KeyboardLayout _emailLayoutPrimary = [
     VirtualKey.character(text: 'b'),
     VirtualKey.character(text: 'n'),
     VirtualKey.character(text: ','),
-    VirtualKey.action(action: KeyAction.backSpace),
+    VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
     VirtualKey.action(action: KeyAction.symbols),
@@ -220,7 +220,7 @@ final KeyboardLayout _urlLayoutPrimary = [
     VirtualKey.character(text: 'm'),
   ],
   [
-    VirtualKey.action(action: KeyAction.shift),
+    VirtualKey.action(action: KeyAction.shift, flex: 1.5),
     VirtualKey.character(text: 'w'),
     VirtualKey.character(text: 'x'),
     VirtualKey.character(text: 'c'),
@@ -228,7 +228,7 @@ final KeyboardLayout _urlLayoutPrimary = [
     VirtualKey.character(text: 'b'),
     VirtualKey.character(text: 'n'),
     VirtualKey.character(text: ','),
-    VirtualKey.action(action: KeyAction.backSpace),
+    VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
     VirtualKey.action(action: KeyAction.symbols),
