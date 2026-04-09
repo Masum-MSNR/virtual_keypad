@@ -14,27 +14,15 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
   String _currentLanguage = 'en';
 
   final _languages = [
-    (
-      'en',
-      'English',
-      '🇺🇸',
-      'QWERTY',
-      [const Color(0xFF89f7fe), const Color(0xFF66a6ff)],
-    ),
-    (
-      'bn',
-      'বাংলা',
-      '🇧🇩',
-      'Bengali',
-      [const Color(0xFF43e97b), const Color(0xFF38f9d7)],
-    ),
-    (
-      'fr',
-      'Français',
-      '🇫🇷',
-      'AZERTY',
-      [const Color(0xFFf093fb), const Color(0xFFf5576c)],
-    ),
+    ('en', 'English', '🇺🇸'),
+    ('bn', 'বাংলা', '🇧🇩'),
+    ('hi', 'हिन्दी', '🇮🇳'),
+    ('de', 'Deutsch', '🇩🇪'),
+    ('es', 'Español', '🇪🇸'),
+    ('fr', 'Français', '🇫🇷'),
+    ('pt', 'Português', '🇧🇷'),
+    ('ru', 'Русский', '🇷🇺'),
+    ('tr', 'Türkçe', '🇹🇷'),
   ];
 
   @override
@@ -57,8 +45,20 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
     switch (_currentLanguage) {
       case 'bn':
         hintText = 'বাংলায় লিখুন...';
+      case 'hi':
+        hintText = 'हिन्दी में लिखें...';
       case 'fr':
         hintText = 'Écrivez en français...';
+      case 'de':
+        hintText = 'Auf Deutsch schreiben...';
+      case 'es':
+        hintText = 'Escribe en español...';
+      case 'pt':
+        hintText = 'Escreva em português...';
+      case 'ru':
+        hintText = 'Пишите по-русски...';
+      case 'tr':
+        hintText = 'Türkçe yazın...';
       default:
         hintText = 'Type in English...';
     }
@@ -90,23 +90,52 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
-                      children: _languages.map((lang) {
-                        final (code, label, flag, subtitle, colors) = lang;
-                        final isFirst = code == _languages.first.$1;
-                        return Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: isFirst ? 0 : 8),
-                            child: _LanguageCard(
-                              label: label,
-                              flag: flag,
-                              subtitle: subtitle,
-                              isSelected: _currentLanguage == code,
-                              gradientColors: colors,
-                              onTap: () => _switchLanguage(code),
+                      children: [
+                        Icon(
+                          Icons.translate,
+                          size: 18,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            value: _currentLanguage,
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: colorScheme.outlineVariant,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide(
+                                  color: colorScheme.outlineVariant.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                ),
+                              ),
+                              isDense: true,
                             ),
+                            items: _languages.map((lang) {
+                              return DropdownMenuItem(
+                                value: lang.$1,
+                                child: Text(
+                                  '${lang.$3} ${lang.$2}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (code) {
+                              if (code != null) _switchLanguage(code);
+                            },
                           ),
-                        );
-                      }).toList(),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 18),
 
@@ -255,92 +284,4 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
   }
 }
 
-class _LanguageCard extends StatelessWidget {
-  const _LanguageCard({
-    required this.label,
-    required this.flag,
-    required this.subtitle,
-    required this.isSelected,
-    required this.gradientColors,
-    required this.onTap,
-  });
 
-  final String label;
-  final String flag;
-  final String subtitle;
-  final bool isSelected;
-  final List<Color> gradientColors;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: isSelected
-              ? LinearGradient(
-                  colors: [
-                    gradientColors.first.withValues(alpha: 0.15),
-                    gradientColors.last.withValues(alpha: 0.08),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              : null,
-          color: isSelected
-              ? null
-              : colorScheme.surfaceContainerHigh.withValues(alpha: 0.4),
-          border: Border.all(
-            color: isSelected
-                ? gradientColors.first.withValues(alpha: 0.5)
-                : colorScheme.outlineVariant.withValues(alpha: 0.2),
-            width: isSelected ? 2 : 1,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: gradientColors.first.withValues(alpha: 0.15),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : [],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(flag, style: const TextStyle(fontSize: 28)),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                fontSize: 15,
-                color: isSelected
-                    ? colorScheme.onSurface
-                    : colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: isSelected
-                    ? gradientColors.first.withValues(alpha: 0.8)
-                    : colorScheme.onSurface.withValues(alpha: 0.35),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

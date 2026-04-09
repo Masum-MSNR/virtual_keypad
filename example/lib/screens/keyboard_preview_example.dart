@@ -16,10 +16,10 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
   final _languages = [
     ('en', 'English', '🇺🇸'),
     ('bn', 'বাংলা', '🇧🇩'),
+    ('hi', 'हिन्दी', '🇮🇳'),
     ('de', 'Deutsch', '🇩🇪'),
     ('es', 'Español', '🇪🇸'),
     ('fr', 'Français', '🇫🇷'),
-    ('hi', 'हिन्दी', '🇮🇳'),
     ('pt', 'Português', '🇧🇷'),
     ('ru', 'Русский', '🇷🇺'),
     ('tr', 'Türkçe', '🇹🇷'),
@@ -102,7 +102,7 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
         children: [
           // Language switcher
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 10),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerLowest,
               border: Border(
@@ -111,32 +111,49 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
                 ),
               ),
             ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: [
-                  Icon(Icons.translate, size: 18, color: colorScheme.primary),
-                  const SizedBox(width: 8),
-                  ..._languages.map((lang) {
-                    final isSelected = _currentLanguage == lang.$1;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: ChoiceChip(
-                        label: Text('${lang.$3} ${lang.$2}'),
-                        selected: isSelected,
-                        onSelected: (_) => _switchLanguage(lang.$1),
-                        labelStyle: TextStyle(
-                          fontSize: 13,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.w400,
-                        ),
-                        visualDensity: VisualDensity.compact,
+            child: Row(
+              children: [
+                Icon(Icons.translate, size: 18, color: colorScheme.primary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: _currentLanguage,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
                       ),
-                    );
-                  }),
-                ],
-              ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: colorScheme.outlineVariant,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: colorScheme.outlineVariant.withValues(
+                            alpha: 0.5,
+                          ),
+                        ),
+                      ),
+                      isDense: true,
+                    ),
+                    items: _languages.map((lang) {
+                      return DropdownMenuItem(
+                        value: lang.$1,
+                        child: Text(
+                          '${lang.$3} ${lang.$2}',
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (code) {
+                      if (code != null) _switchLanguage(code);
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
 
