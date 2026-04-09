@@ -17,11 +17,14 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
     ('en', 'English', '🇺🇸'),
     ('bn', 'বাংলা', '🇧🇩'),
     ('hi', 'हिन्दी', '🇮🇳'),
+    ('ar', 'العربية', '🇸🇦'),
     ('de', 'Deutsch', '🇩🇪'),
     ('es', 'Español', '🇪🇸'),
     ('fr', 'Français', '🇫🇷'),
+    ('ko', '한국어', '🇰🇷'),
     ('pt', 'Português', '🇧🇷'),
     ('ru', 'Русский', '🇷🇺'),
+    ('th', 'ไทย', '🇹🇭'),
     ('tr', 'Türkçe', '🇹🇷'),
   ];
 
@@ -57,8 +60,14 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
         hintText = 'Escreva em português...';
       case 'ru':
         hintText = 'Пишите по-русски...';
+      case 'th':
+        hintText = 'พิมพ์ภาษาไทย...';
       case 'tr':
         hintText = 'Türkçe yazın...';
+      case 'ar':
+        hintText = 'اكتب بالعربية...';
+      case 'ko':
+        hintText = '한국어로 입력하세요...';
       default:
         hintText = 'Type in English...';
     }
@@ -99,7 +108,7 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            value: _currentLanguage,
+                            initialValue: _currentLanguage,
                             decoration: InputDecoration(
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 12,
@@ -283,5 +292,3 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
     );
   }
 }
-
-

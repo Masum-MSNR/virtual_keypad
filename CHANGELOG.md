@@ -1,3 +1,24 @@
+## 0.5.0
+
+### Added
+* **9 new keyboard languages** — Arabic (`ar`), German (`de`), Hindi (`hi`), Korean (`ko`), Portuguese (`pt`), Russian (`ru`), Spanish (`es`), Thai (`th`), and Turkish (`tr`), bringing the total to **12 built-in languages**
+* Arabic layout with full RTL support (`isRTL: true`), Arabic-Indic numerals, diacritics, and Arabic punctuation (،/؟/؛)
+* Korean Dubeolsik (두벌식) layout with shift for double consonants (ㅃㅉㄸㄲㅆ) and compound vowels (ㅒㅖ)
+* Thai Kedmanee layout with Thai numerals (๑–๐), tone marks, and ฿ currency symbol
+* Non-Latin scripts (Arabic, Bengali, Hindi, Korean, Russian, Thai) use Latin QWERTY for email/URL input types
+* Native numeral support for Arabic (١–٠), Bengali (১–০), Hindi (१–०), and Thai (๑–๐) number pads with Western digit fallback via capsText
+* Language dropdown selectors in Keyboard Preview and Language Switching example screens
+* Localized hint text for all 12 languages in the Language Switching example
+
+### Fixed
+* Normalized key flex values across all layouts for consistent key sizing
+* Visual alignment of action keys (shift, backspace, symbols) now uniform across languages
+
+### Improved
+* Keyboard Preview example now shows all layouts for the selected language
+
+---
+
 ## 0.4.3
 
 ### Fixed

@@ -10,12 +10,15 @@
 /// 4. Register it with `KeyboardLayoutProvider.instance.registerLanguage()`
 library;
 
+export 'arabic.dart';
 export 'bengali.dart';
 export 'english.dart';
 export 'french.dart';
 export 'german.dart';
 export 'hindi.dart';
+export 'korean.dart';
 export 'portuguese.dart';
 export 'russian.dart';
 export 'spanish.dart';
+export 'thai.dart';
 export 'turkish.dart';

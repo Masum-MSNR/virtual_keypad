@@ -17,11 +17,14 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
     ('en', 'English', '🇺🇸'),
     ('bn', 'বাংলা', '🇧🇩'),
     ('hi', 'हिन्दी', '🇮🇳'),
+    ('ar', 'العربية', '🇸🇦'),
     ('de', 'Deutsch', '🇩🇪'),
     ('es', 'Español', '🇪🇸'),
     ('fr', 'Français', '🇫🇷'),
+    ('ko', '한국어', '🇰🇷'),
     ('pt', 'Português', '🇧🇷'),
     ('ru', 'Русский', '🇷🇺'),
+    ('th', 'ไทย', '🇹🇭'),
     ('tr', 'Türkçe', '🇹🇷'),
   ];
 
@@ -55,27 +58,33 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
     final sections = <_LayoutSection>[];
     for (final entry in _inputTypes) {
       final layoutSet = provider.getLayouts(entry.$1);
-      sections.add(_LayoutSection(
-        type: entry.$2,
-        stage: 'Primary',
-        icon: entry.$3,
-        layout: layoutSet.primary,
-      ));
-      if (layoutSet.secondary != null) {
-        sections.add(_LayoutSection(
+      sections.add(
+        _LayoutSection(
           type: entry.$2,
-          stage: 'Secondary',
+          stage: 'Primary',
           icon: entry.$3,
-          layout: layoutSet.secondary!,
-        ));
+          layout: layoutSet.primary,
+        ),
+      );
+      if (layoutSet.secondary != null) {
+        sections.add(
+          _LayoutSection(
+            type: entry.$2,
+            stage: 'Secondary',
+            icon: entry.$3,
+            layout: layoutSet.secondary!,
+          ),
+        );
       }
       if (layoutSet.tertiary != null) {
-        sections.add(_LayoutSection(
-          type: entry.$2,
-          stage: 'Tertiary',
-          icon: entry.$3,
-          layout: layoutSet.tertiary!,
-        ));
+        sections.add(
+          _LayoutSection(
+            type: entry.$2,
+            stage: 'Tertiary',
+            icon: entry.$3,
+            layout: layoutSet.tertiary!,
+          ),
+        );
       }
     }
 
@@ -117,7 +126,7 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: DropdownButtonFormField<String>(
-                    value: _currentLanguage,
+                    initialValue: _currentLanguage,
                     decoration: InputDecoration(
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -162,7 +171,7 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
             child: ListView.separated(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
               itemCount: sections.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 16),
+              separatorBuilder: (_, _) => const SizedBox(height: 16),
               itemBuilder: (context, index) {
                 final section = sections[index];
                 return _LayoutPreview(section: section);
@@ -259,13 +268,13 @@ class _LayoutPreview extends StatelessWidget {
           child: Column(
             children: layout.map((row) {
               return Padding(
-                padding:
-                    EdgeInsets.symmetric(vertical: theme.verticalGap / 2),
+                padding: EdgeInsets.symmetric(vertical: theme.verticalGap / 2),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: row.map((key) {
                     final isAction = key.isAction;
-                    final w = baseKeyWidth * key.flex +
+                    final w =
+                        baseKeyWidth * key.flex +
                         (key.flex - 1) * theme.horizontalGap;
 
                     return Container(
@@ -309,11 +318,19 @@ class _LayoutPreview extends StatelessWidget {
 
     switch (key.action) {
       case KeyAction.backSpace:
-        return Icon(Icons.backspace_outlined, size: iconSize, color: theme.keyTextColor);
+        return Icon(
+          Icons.backspace_outlined,
+          size: iconSize,
+          color: theme.keyTextColor,
+        );
       case KeyAction.enter:
         return Icon(Icons.check, size: iconSize, color: theme.keyTextColor);
       case KeyAction.shift:
-        return Icon(Icons.arrow_upward_outlined, size: iconSize, color: theme.keyTextColor);
+        return Icon(
+          Icons.arrow_upward_outlined,
+          size: iconSize,
+          color: theme.keyTextColor,
+        );
       case KeyAction.space:
         return Text(key.label ?? 'space', style: smallStyle);
       case KeyAction.symbols:
@@ -323,7 +340,11 @@ class _LayoutPreview extends StatelessWidget {
       case KeyAction.done:
         return Icon(Icons.check, size: iconSize, color: theme.keyTextColor);
       case KeyAction.go:
-        return Icon(Icons.arrow_forward, size: iconSize, color: theme.keyTextColor);
+        return Icon(
+          Icons.arrow_forward,
+          size: iconSize,
+          color: theme.keyTextColor,
+        );
       case KeyAction.search:
         return Icon(Icons.search, size: iconSize, color: theme.keyTextColor);
       case KeyAction.send:
@@ -331,11 +352,19 @@ class _LayoutPreview extends StatelessWidget {
       case KeyAction.call:
         return Icon(Icons.call, size: iconSize, color: theme.keyTextColor);
       case KeyAction.next:
-        return Icon(Icons.keyboard_tab, size: iconSize, color: theme.keyTextColor);
+        return Icon(
+          Icons.keyboard_tab,
+          size: iconSize,
+          color: theme.keyTextColor,
+        );
       case KeyAction.previous:
         return Transform.flip(
           flipX: true,
-          child: Icon(Icons.keyboard_tab, size: iconSize, color: theme.keyTextColor),
+          child: Icon(
+            Icons.keyboard_tab,
+            size: iconSize,
+            color: theme.keyTextColor,
+          ),
         );
       default:
         return const SizedBox.shrink();

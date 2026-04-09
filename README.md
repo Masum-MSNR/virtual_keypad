@@ -23,7 +23,7 @@ Perfect for kiosk apps, password UIs, and custom input interfaces.
 ## Features
 
 - 🎹 **Multiple Layouts** - Text, numeric, phone, email, URL, or fully custom
-- 🌍 **Multi-Language** - Built-in English, Bengali & French, easily extensible
+- 🌍 **Multi-Language** - 12 built-in languages, easily extensible
 - 🔌 **Standalone Mode** - Works with any standard Flutter TextField
 - 🎯 **Standalone Scope** - Restrict keyboard to a widget subtree
 - 🔤 **Smart TextField** - Auto-adapts keyboard layout based on input type
@@ -32,6 +32,27 @@ Perfect for kiosk apps, password UIs, and custom input interfaces.
 - ✂️ **Full Editing** - Selection, copy/paste, cursor control
 - 👆 **Key Preview** - Native-style key press popup feedback
 - 🫥 **Auto-Hide** - Animated show/hide on focus change
+
+## Supported Languages
+
+All 12 languages are registered automatically when you call `initializeKeyboardLayouts()`.
+
+| Code | Language | Native Name | Layout | Script | RTL |
+|------|----------|-------------|--------|--------|-----|
+| `ar` | Arabic | العربية | Arabic IBM PC | Arabic | ✅ |
+| `bn` | Bengali | বাংলা | Bengali | Bengali | |
+| `de` | German | Deutsch | QWERTZ | Latin | |
+| `en` | English | English | QWERTY | Latin | |
+| `es` | Spanish | Español | QWERTY (ES) | Latin | |
+| `fr` | French | Français | AZERTY | Latin | |
+| `hi` | Hindi | हिन्दी | Devanagari | Devanagari | |
+| `ko` | Korean | 한국어 | Dubeolsik (두벌식) | Hangul | |
+| `pt` | Portuguese | Português | QWERTY (PT) | Latin | |
+| `ru` | Russian | Русский | ЙЦУКЕН (JCUKEN) | Cyrillic | |
+| `th` | Thai | ไทย | Kedmanee | Thai | |
+| `tr` | Turkish | Türkçe | QWERTY (TR) | Latin | |
+
+> **Note:** If you notice any incorrect characters, missing keys, or layout mismatches for a language you are fluent in, feel free to fix it and [create a pull request](https://github.com/Masum-MSNR/virtual_keypad/pulls). Community contributions are welcome!
 
 ## Installation
 
@@ -210,26 +231,21 @@ VirtualKeypad(
 ## Multi-Language
 
 ```dart
-initializeKeyboardLayouts(); // Registers English & Bengali
+initializeKeyboardLayouts(); // Registers all 12 languages
 
 // Switch language
-KeyboardLayoutProvider.instance.setLanguage('bn'); // Bengali
+KeyboardLayoutProvider.instance.setLanguage('ar'); // Arabic
+KeyboardLayoutProvider.instance.setLanguage('ko'); // Korean
 KeyboardLayoutProvider.instance.setLanguage('en'); // English
 ```
-
-| Code | Language | Layout |
-|------|----------|--------|
-| `en` | English | QWERTY |
-| `bn` | Bengali | বাংলা |
-| `fr` | French | AZERTY |
 
 ### Adding a Custom Language
 
 ```dart
-final spanishLanguage = KeyboardLanguage(
-  code: 'es',
-  name: 'Spanish',
-  nativeName: 'Español',
+final myLanguage = KeyboardLanguage(
+  code: 'xx',
+  name: 'MyLanguage',
+  nativeName: 'MyLanguage',
   textLayouts: KeyboardLayoutSet(
     primary: textPrimaryLayout,
     secondary: symbolsLayout,
@@ -237,8 +253,8 @@ final spanishLanguage = KeyboardLanguage(
   ),
 );
 
-KeyboardLayoutProvider.instance.registerLanguage(spanishLanguage);
-KeyboardLayoutProvider.instance.setLanguage('es');
+KeyboardLayoutProvider.instance.registerLanguage(myLanguage);
+KeyboardLayoutProvider.instance.setLanguage('xx');
 ```
 
 ## API Reference
