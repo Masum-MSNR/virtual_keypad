@@ -10,6 +10,7 @@ import 'screens/language_switching_example.dart';
 import 'screens/email_url_example.dart';
 import 'screens/pin_pad_example.dart';
 import 'screens/standalone_example.dart';
+import 'screens/keyboard_preview_example.dart';
 
 void main() {
   initializeKeyboardLayouts();
@@ -85,6 +86,18 @@ class HomePage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         children: [
+          const _SectionHeader(
+            title: 'Developer Tools',
+            icon: Icons.developer_mode_rounded,
+          ),
+          _ExampleCard(
+            icon: Icons.preview_rounded,
+            title: 'Keyboard Preview',
+            subtitle: 'All types & languages side by side',
+            gradient: const [Color(0xFF6C63FF), Color(0xFF8B5CF6)],
+            onTap: () => _navigate(context, const KeyboardPreviewExample()),
+          ),
+          const SizedBox(height: 4),
           const _SectionHeader(title: 'Input Types', icon: Icons.input_rounded),
           _ExampleCard(
             icon: Icons.dialpad_rounded,
