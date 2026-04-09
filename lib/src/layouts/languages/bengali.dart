@@ -41,7 +41,7 @@ final KeyboardLayout _textLayoutPrimary = [
     VirtualKey.character(text: 'ফ'),
   ],
   [
-    VirtualKey.action(action: KeyAction.shift, flex: 1),
+    VirtualKey.action(action: KeyAction.shift, flex: 1.5),
     VirtualKey.character(text: 'ব'),
     VirtualKey.character(text: 'ভ'),
     VirtualKey.character(text: 'ম'),
@@ -49,7 +49,7 @@ final KeyboardLayout _textLayoutPrimary = [
     VirtualKey.character(text: 'র'),
     VirtualKey.character(text: 'ল'),
     VirtualKey.character(text: 'শ'),
-    VirtualKey.action(action: KeyAction.backSpace, flex: 1),
+    VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
     VirtualKey.action(
@@ -99,7 +99,7 @@ final KeyboardLayout _textLayoutSecondary = [
       action: KeyAction.symbolsAlt,
       label: '#+=',
       altLabel: '১২৩',
-      flex: 1,
+      flex: 1.5,
     ),
     VirtualKey.character(text: '-'),
     VirtualKey.character(text: '/'),
@@ -108,21 +108,21 @@ final KeyboardLayout _textLayoutSecondary = [
     VirtualKey.character(text: '!'),
     VirtualKey.character(text: '"'),
     VirtualKey.character(text: "'"),
-    VirtualKey.action(action: KeyAction.backSpace, flex: 1),
+    VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
     VirtualKey.action(
       action: KeyAction.symbols,
       label: '১২৩',
       altLabel: 'কখগ',
-      flex: 1,
+      flex: 1.5,
     ),
     VirtualKey.character(text: ','),
     VirtualKey.character(text: '্'),
     VirtualKey.action(action: KeyAction.space, flex: 3),
     VirtualKey.character(text: '।'),
     VirtualKey.character(text: '॥'),
-    VirtualKey.action(action: KeyAction.enter, flex: 1),
+    VirtualKey.action(action: KeyAction.enter, flex: 1.5),
   ],
 ];
 
@@ -157,7 +157,7 @@ final KeyboardLayout _textLayoutTertiary = [
       action: KeyAction.symbolsAlt,
       label: '#+=',
       altLabel: '১২৩',
-      flex: 1,
+      flex: 1.5,
     ),
     VirtualKey.character(text: '.'),
     VirtualKey.character(text: ','),
@@ -166,7 +166,7 @@ final KeyboardLayout _textLayoutTertiary = [
     VirtualKey.character(text: "'"),
     VirtualKey.character(text: '`'),
     VirtualKey.character(text: '°'),
-    VirtualKey.action(action: KeyAction.backSpace, flex: 1),
+    VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
     VirtualKey.action(
@@ -209,7 +209,7 @@ final KeyboardLayout _emailLayoutPrimary = [
     VirtualKey.character(text: 'ঠ'),
   ],
   [
-    VirtualKey.action(action: KeyAction.shift, flex: 1),
+    VirtualKey.action(action: KeyAction.shift, flex: 1.5),
     VirtualKey.character(text: 'ড'),
     VirtualKey.character(text: 'ত'),
     VirtualKey.character(text: 'দ'),
@@ -217,16 +217,16 @@ final KeyboardLayout _emailLayoutPrimary = [
     VirtualKey.character(text: 'প'),
     VirtualKey.character(text: 'ব'),
     VirtualKey.character(text: 'ম'),
-    VirtualKey.action(action: KeyAction.backSpace, flex: 1),
+    VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
-    VirtualKey.action(action: KeyAction.symbols, flex: 1),
+    VirtualKey.action(action: KeyAction.symbols, flex: 1.5),
     VirtualKey.character(text: '@'),
     VirtualKey.action(action: KeyAction.space, flex: 3),
     VirtualKey.character(text: '.'),
     VirtualKey.character(text: '_'),
     VirtualKey.character(text: '-'),
-    VirtualKey.action(action: KeyAction.done, flex: 1),
+    VirtualKey.action(action: KeyAction.done, flex: 1.5),
   ],
 ];
 
@@ -257,7 +257,7 @@ final KeyboardLayout _emailLayoutSecondary = [
     VirtualKey.character(text: '%'),
   ],
   [
-    VirtualKey.action(action: KeyAction.symbolsAlt, flex: 1),
+    VirtualKey.action(action: KeyAction.symbolsAlt, flex: 1.5),
     VirtualKey.character(text: '!'),
     VirtualKey.character(text: '?'),
     VirtualKey.character(text: "'"),
@@ -265,16 +265,16 @@ final KeyboardLayout _emailLayoutSecondary = [
     VirtualKey.character(text: ':'),
     VirtualKey.character(text: ';'),
     VirtualKey.character(text: '/'),
-    VirtualKey.action(action: KeyAction.backSpace, flex: 1),
+    VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
-    VirtualKey.action(action: KeyAction.symbols, flex: 1),
+    VirtualKey.action(action: KeyAction.symbols, flex: 1.5),
     VirtualKey.character(text: '@'),
     VirtualKey.action(action: KeyAction.space, flex: 3),
     VirtualKey.character(text: '.'),
     VirtualKey.character(text: '_'),
     VirtualKey.character(text: '-'),
-    VirtualKey.action(action: KeyAction.done, flex: 1),
+    VirtualKey.action(action: KeyAction.done, flex: 1.5),
   ],
 ];
 

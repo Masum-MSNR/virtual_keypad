@@ -178,13 +178,13 @@ final KeyboardLayout _emailLayoutPrimary = [
     VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
-    VirtualKey.action(action: KeyAction.symbols),
+    VirtualKey.action(action: KeyAction.symbols, flex: 1.5),
     VirtualKey.character(text: '@'),
     VirtualKey.action(action: KeyAction.space, flex: 3),
     VirtualKey.character(text: '.'),
     VirtualKey.character(text: '_'),
     VirtualKey.character(text: '-'),
-    VirtualKey.action(action: KeyAction.done),
+    VirtualKey.action(action: KeyAction.done, flex: 1.5),
   ],
 ];
 
@@ -231,13 +231,13 @@ final KeyboardLayout _urlLayoutPrimary = [
     VirtualKey.action(action: KeyAction.backSpace, flex: 1.5),
   ],
   [
-    VirtualKey.action(action: KeyAction.symbols),
+    VirtualKey.action(action: KeyAction.symbols, flex: 1.5),
     VirtualKey.character(text: '/'),
     VirtualKey.character(text: '.'),
-    VirtualKey.action(action: KeyAction.space, flex: 2),
+    VirtualKey.action(action: KeyAction.space, flex: 3),
     VirtualKey.character(text: '-'),
     VirtualKey.character(text: ':'),
-    VirtualKey.action(action: KeyAction.go),
+    VirtualKey.action(action: KeyAction.go, flex: 1.5),
   ],
 ];
 
