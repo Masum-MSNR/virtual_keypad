@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
@@ -17,14 +19,14 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
     ('fr', 'Français', '🇫🇷'),
   ];
 
-  final _keyboardTypes = [
-    (KeyboardType.text, 'Text', 'Standard QWERTY / script layout', Icons.keyboard),
-    (KeyboardType.emailAddress, 'Email', 'With @ and . accessible', Icons.alternate_email),
-    (KeyboardType.url, 'URL', 'With / : . accessible', Icons.link),
-    (KeyboardType.number, 'Number', 'Numeric keypad (0-9)', Icons.dialpad),
-    (KeyboardType.numberSigned, 'Number Signed', 'With minus sign', Icons.exposure_neg_1),
-    (KeyboardType.phone, 'Phone', 'Phone dialer layout', Icons.phone),
-    (KeyboardType.multiline, 'Multiline', 'Text with return key', Icons.notes),
+  final _inputTypes = [
+    (KeyboardInputType.text, 'Text', Icons.keyboard),
+    (KeyboardInputType.email, 'Email', Icons.alternate_email),
+    (KeyboardInputType.url, 'URL', Icons.link),
+    (KeyboardInputType.number, 'Number', Icons.dialpad),
+    (KeyboardInputType.numberSigned, 'Number Signed', Icons.exposure_neg_1),
+    (KeyboardInputType.numberDecimal, 'Number Decimal', Icons.pin),
+    (KeyboardInputType.phone, 'Phone', Icons.phone),
   ];
 
   @override
@@ -41,6 +43,35 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final provider = KeyboardLayoutProvider.instance;
+
+    // Build flat list of all layout sections
+    final sections = <_LayoutSection>[];
+    for (final entry in _inputTypes) {
+      final layoutSet = provider.getLayouts(entry.$1);
+      sections.add(_LayoutSection(
+        type: entry.$2,
+        stage: 'Primary',
+        icon: entry.$3,
+        layout: layoutSet.primary,
+      ));
+      if (layoutSet.secondary != null) {
+        sections.add(_LayoutSection(
+          type: entry.$2,
+          stage: 'Secondary',
+          icon: entry.$3,
+          layout: layoutSet.secondary!,
+        ));
+      }
+      if (layoutSet.tertiary != null) {
+        sections.add(_LayoutSection(
+          type: entry.$2,
+          stage: 'Tertiary',
+          icon: entry.$3,
+          layout: layoutSet.tertiary!,
+        ));
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -65,7 +96,7 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
         children: [
           // Language switcher
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerLowest,
               border: Border(
@@ -74,58 +105,44 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
                 ),
               ),
             ),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.translate,
-                  size: 18,
-                  color: colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Language',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                ..._languages.map((lang) {
-                  final isSelected = _currentLanguage == lang.$1;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text('${lang.$3} ${lang.$2}'),
-                      selected: isSelected,
-                      onSelected: (_) => _switchLanguage(lang.$1),
-                      labelStyle: TextStyle(
-                        fontSize: 13,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w400,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Icon(Icons.translate, size: 18, color: colorScheme.primary),
+                  const SizedBox(width: 8),
+                  ..._languages.map((lang) {
+                    final isSelected = _currentLanguage == lang.$1;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ChoiceChip(
+                        label: Text('${lang.$3} ${lang.$2}'),
+                        selected: isSelected,
+                        onSelected: (_) => _switchLanguage(lang.$1),
+                        labelStyle: TextStyle(
+                          fontSize: 13,
+                          fontWeight:
+                              isSelected ? FontWeight.w600 : FontWeight.w400,
+                        ),
+                        visualDensity: VisualDensity.compact,
                       ),
-                      visualDensity: VisualDensity.compact,
-                    ),
-                  );
-                }),
-              ],
+                    );
+                  }),
+                ],
+              ),
             ),
           ),
 
-          // Keyboard type list
+          // All layouts list
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-              itemCount: _keyboardTypes.length,
+              itemCount: sections.length,
               separatorBuilder: (_, __) => const SizedBox(height: 16),
               itemBuilder: (context, index) {
-                final entry = _keyboardTypes[index];
-                return _KeyboardTypePreview(
-                  type: entry.$1,
-                  label: entry.$2,
-                  description: entry.$3,
-                  icon: entry.$4,
-                );
+                final section = sections[index];
+                return _LayoutPreview(section: section);
               },
             ),
           ),
@@ -135,22 +152,40 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
   }
 }
 
-class _KeyboardTypePreview extends StatelessWidget {
-  const _KeyboardTypePreview({
+class _LayoutSection {
+  const _LayoutSection({
     required this.type,
-    required this.label,
-    required this.description,
+    required this.stage,
     required this.icon,
+    required this.layout,
   });
 
-  final KeyboardType type;
-  final String label;
-  final String description;
+  final String type;
+  final String stage;
   final IconData icon;
+  final KeyboardLayout layout;
+}
+
+class _LayoutPreview extends StatelessWidget {
+  const _LayoutPreview({required this.section});
+
+  final _LayoutSection section;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final layout = section.layout;
+    final theme = VirtualKeypadTheme.light;
+
+    final screenWidth = MediaQuery.of(context).size.width - 32; // padding
+    final totalFlex = layout
+        .map((row) => row.fold(0.0, (sum, key) => sum + key.flex))
+        .reduce(max);
+    final maxCols = layout.map((row) => row.length).reduce(max);
+
+    final usedWidth = (maxCols + 1) * theme.horizontalGap;
+    final baseKeyWidth = (screenWidth - usedWidth) / totalFlex;
+    const keyHeight = 42.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,57 +193,129 @@ class _KeyboardTypePreview extends StatelessWidget {
         // Header
         Row(
           children: [
-            Icon(icon, size: 18, color: colorScheme.primary),
-            const SizedBox(width: 8),
+            Icon(section.icon, size: 16, color: colorScheme.primary),
+            const SizedBox(width: 6),
             Text(
-              label,
+              section.type,
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: colorScheme.onSurface,
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: Text(
-                description,
+                section.stage,
                 style: TextStyle(
-                  fontSize: 12,
-                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onPrimaryContainer,
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        // Keyboard preview
+        const SizedBox(height: 6),
+        // Rendered layout
         Container(
+          width: screenWidth,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.4),
-            ),
+            color: theme.backgroundColor,
+            borderRadius: BorderRadius.circular(10),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: VirtualKeypad(
-            type: type,
-            height: _heightForType(type),
+          padding: EdgeInsets.symmetric(
+            vertical: theme.verticalGap / 2,
+            horizontal: theme.horizontalGap / 2,
+          ),
+          child: Column(
+            children: layout.map((row) {
+              return Padding(
+                padding:
+                    EdgeInsets.symmetric(vertical: theme.verticalGap / 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: row.map((key) {
+                    final isAction = key.isAction;
+                    final w = baseKeyWidth * key.flex +
+                        (key.flex - 1) * theme.horizontalGap;
+
+                    return Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: theme.horizontalGap / 2,
+                      ),
+                      height: keyHeight,
+                      width: w,
+                      decoration: isAction
+                          ? theme.actionKeyDecoration
+                          : theme.keyDecoration,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: _buildKeyLabel(key, theme),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              );
+            }).toList(),
           ),
         ),
       ],
     );
   }
 
-  double _heightForType(KeyboardType type) {
-    switch (type) {
-      case KeyboardType.number:
-      case KeyboardType.numberDecimal:
-        return 240;
-      case KeyboardType.numberSigned:
-      case KeyboardType.phone:
-        return 280;
+  Widget _buildKeyLabel(VirtualKey key, VirtualKeypadTheme theme) {
+    final style = TextStyle(
+      fontSize: theme.keyTextSize,
+      color: theme.keyTextColor,
+    );
+    final smallStyle = style.copyWith(fontSize: theme.keyTextSize * 0.7);
+    final iconSize = theme.keyTextSize;
+
+    if (key.isCharacter) {
+      return Text(key.text ?? '', style: style);
+    }
+
+    switch (key.action) {
+      case KeyAction.backSpace:
+        return Icon(Icons.backspace_outlined, size: iconSize, color: theme.keyTextColor);
+      case KeyAction.enter:
+        return Icon(Icons.check, size: iconSize, color: theme.keyTextColor);
+      case KeyAction.shift:
+        return Icon(Icons.arrow_upward_outlined, size: iconSize, color: theme.keyTextColor);
+      case KeyAction.space:
+        return Text(key.label ?? 'space', style: smallStyle);
+      case KeyAction.symbols:
+        return Text(key.label ?? '123', style: smallStyle);
+      case KeyAction.symbolsAlt:
+        return Text(key.label ?? '#+=', style: smallStyle);
+      case KeyAction.done:
+        return Icon(Icons.check, size: iconSize, color: theme.keyTextColor);
+      case KeyAction.go:
+        return Icon(Icons.arrow_forward, size: iconSize, color: theme.keyTextColor);
+      case KeyAction.search:
+        return Icon(Icons.search, size: iconSize, color: theme.keyTextColor);
+      case KeyAction.send:
+        return Icon(Icons.send, size: iconSize, color: theme.keyTextColor);
+      case KeyAction.call:
+        return Icon(Icons.call, size: iconSize, color: theme.keyTextColor);
+      case KeyAction.next:
+        return Icon(Icons.keyboard_tab, size: iconSize, color: theme.keyTextColor);
+      case KeyAction.previous:
+        return Transform.flip(
+          flipX: true,
+          child: Icon(Icons.keyboard_tab, size: iconSize, color: theme.keyTextColor),
+        );
       default:
-        return 260;
+        return const SizedBox.shrink();
     }
   }
 }
