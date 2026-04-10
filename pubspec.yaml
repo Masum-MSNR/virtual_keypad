@@ -5,6 +5,14 @@ homepage: https://github.com/Masum-MSNR/virtual_keypad
 repository: https://github.com/Masum-MSNR/virtual_keypad
 issue_tracker: https://github.com/Masum-MSNR/virtual_keypad/issues
 
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:
+
 topics:
   - keyboard
   - virtual-keyboard
