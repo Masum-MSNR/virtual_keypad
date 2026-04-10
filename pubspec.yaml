@@ -1,17 +1,9 @@
 name: virtual_keypad
-description: "A customizable virtual on-screen keyboard for Flutter with multi-language support. 12 built-in languages including Arabic (RTL), Korean, Thai, Hindi, and more. Supports text, numeric, phone, email, and URL layouts with full theming."
-version: 0.5.0
+description: "A customizable virtual on-screen keyboard for Flutter. 12 built-in languages with RTL support. Text, numeric, phone, email, and URL layouts with full theming."
+version: 0.5.1
 homepage: https://github.com/Masum-MSNR/virtual_keypad
 repository: https://github.com/Masum-MSNR/virtual_keypad
 issue_tracker: https://github.com/Masum-MSNR/virtual_keypad/issues
-
-platforms:
-  android:
-  ios:
-  linux:
-  macos:
-  web:
-  windows:
 
 topics:
   - keyboard

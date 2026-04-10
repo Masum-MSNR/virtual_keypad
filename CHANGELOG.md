@@ -1,3 +1,10 @@
+## 0.5.1
+
+### Fixed
+* Shorten package description to comply with pub.dev 180-character limit
+
+---
+
 ## 0.5.0
 
 ### Added
