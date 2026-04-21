@@ -7,7 +7,7 @@ on:
 
 jobs:
   analyze:
-    name: Analyze & Test
+    name: Analyze, Test & Pub Checks
     runs-on: ubuntu-latest
     
     steps:
@@ -30,3 +30,16 @@ jobs:
 
       - name: Run tests
         run: flutter test
+
+      - name: Verify pub publish dry-run
+        run: flutter pub publish --dry-run
+
+      - name: Install pana
+        run: dart pub global activate pana
+
+      - name: Check pub points with pana
+        run: |
+          export PATH="$HOME/.pub-cache/bin:$PATH"
+          FLUTTER_ROOT="$(dirname "$(dirname "$(which flutter)")")"
+          DART_SDK="$FLUTTER_ROOT/bin/cache/dart-sdk"
+          pana --flutter-sdk "$FLUTTER_ROOT" --dart-sdk "$DART_SDK" --exit-code-threshold 0 .

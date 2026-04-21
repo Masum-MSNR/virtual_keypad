@@ -84,6 +84,18 @@ KeyboardLayoutSet(
 KeyboardLayoutSet.single(numberLayout)
 ```
 
+## Validation Rules
+
+When you register a language, the provider validates it immediately.
+
+- `code`, `name`, and `nativeName` must be non-empty
+- Every layout must contain at least one row
+- Layout rows cannot be empty
+- Every key must have `flex > 0`
+- Character keys must provide non-empty `text`
+
+These checks make broken language definitions fail fast during integration instead of producing a partially rendered keyboard later.
+
 ## Built-in Languages
 
 | Code | Language | Layout |

@@ -220,4 +220,310 @@ void main() {
       expect(scopeA, isNot(same(scopeB)));
     });
   });
+
+  group('VirtualKeypad form navigation', () {
+    testWidgets('next action moves focus to the next scoped field', (
+      tester,
+    ) async {
+      final firstController = VirtualKeypadController();
+      final secondController = VirtualKeypadController();
+      var firstSubmitted = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(
+                    controller: firstController,
+                    textInputAction: TextInputAction.next,
+                    onSubmitted: (_) => firstSubmitted = true,
+                  ),
+                  VirtualKeypadTextField(
+                    controller: secondController,
+                    textInputAction: TextInputAction.done,
+                  ),
+                  const VirtualKeypad(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField).at(0));
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.widget<TextField>(find.byType(TextField).at(0)).focusNode?.hasFocus,
+        isTrue,
+      );
+
+      await tester.tap(find.byIcon(Icons.keyboard_tab));
+      await tester.pumpAndSettle();
+
+      expect(firstSubmitted, isTrue);
+      expect(
+        tester.widget<TextField>(find.byType(TextField).at(0)).focusNode?.hasFocus,
+        isFalse,
+      );
+      expect(
+        tester.widget<TextField>(find.byType(TextField).at(1)).focusNode?.hasFocus,
+        isTrue,
+      );
+    });
+
+    testWidgets('previous action moves focus to the previous scoped field', (
+      tester,
+    ) async {
+      final firstController = VirtualKeypadController();
+      final secondController = VirtualKeypadController();
+      var secondSubmitted = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(
+                    controller: firstController,
+                    textInputAction: TextInputAction.done,
+                  ),
+                  VirtualKeypadTextField(
+                    controller: secondController,
+                    textInputAction: TextInputAction.previous,
+                    onSubmitted: (_) => secondSubmitted = true,
+                  ),
+                  const VirtualKeypad(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField).at(1));
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.widget<TextField>(find.byType(TextField).at(1)).focusNode?.hasFocus,
+        isTrue,
+      );
+
+      await tester.tap(find.byIcon(Icons.keyboard_tab));
+      await tester.pumpAndSettle();
+
+      expect(secondSubmitted, isTrue);
+      expect(
+        tester.widget<TextField>(find.byType(TextField).at(0)).focusNode?.hasFocus,
+        isTrue,
+      );
+      expect(
+        tester.widget<TextField>(find.byType(TextField).at(1)).focusNode?.hasFocus,
+        isFalse,
+      );
+    });
+  });
+
+  group('VirtualKeypad accessibility', () {
+    testWidgets('action keys expose semantic labels and hints', (tester) async {
+      final semanticsHandle = tester.ensureSemantics();
+
+      try {
+        final firstController = VirtualKeypadController();
+        final secondController = VirtualKeypadController();
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: VirtualKeypadScope(
+                child: Column(
+                  children: [
+                    VirtualKeypadTextField(
+                      controller: firstController,
+                      textInputAction: TextInputAction.next,
+                    ),
+                    VirtualKeypadTextField(controller: secondController),
+                    const VirtualKeypad(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.byType(TextField).first);
+        await tester.pumpAndSettle();
+
+        expect(
+          tester.getSemantics(find.bySemanticsLabel('Backspace')),
+          matchesSemantics(
+            label: 'Backspace',
+            hint: 'Deletes the previous character. Long press to repeat.',
+            isButton: true,
+            hasEnabledState: true,
+            isEnabled: true,
+            hasTapAction: true,
+          ),
+        );
+
+        expect(
+          tester.getSemantics(find.bySemanticsLabel('Next field')),
+          matchesSemantics(
+            label: 'Next field',
+            hint: 'Moves focus to the next field.',
+            isButton: true,
+            hasEnabledState: true,
+            isEnabled: true,
+            hasTapAction: true,
+          ),
+        );
+      } finally {
+        semanticsHandle.dispose();
+      }
+    });
+
+    testWidgets('shift key announces its current state', (tester) async {
+      final semanticsHandle = tester.ensureSemantics();
+
+      try {
+        final controller = VirtualKeypadController();
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: VirtualKeypadScope(
+                child: Column(
+                  children: [
+                    VirtualKeypadTextField(controller: controller),
+                    const VirtualKeypad(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.byType(TextField).first);
+        await tester.pumpAndSettle();
+
+        expect(
+          tester.getSemantics(find.bySemanticsLabel('Shift')),
+          matchesSemantics(
+            label: 'Shift',
+            value: 'Off',
+            hint: 'Turns uppercase on for the next character.',
+            isButton: true,
+            hasEnabledState: true,
+            isEnabled: true,
+            hasTapAction: true,
+          ),
+        );
+
+        await tester.tap(find.byIcon(Icons.arrow_upward_outlined));
+        await tester.pumpAndSettle();
+
+        expect(
+          tester.getSemantics(find.bySemanticsLabel('Shift')),
+          matchesSemantics(
+            label: 'Shift',
+            value: 'On',
+            hint: 'Turns caps lock on.',
+            isButton: true,
+            hasEnabledState: true,
+            isEnabled: true,
+            hasTapAction: true,
+          ),
+        );
+      } finally {
+        semanticsHandle.dispose();
+      }
+    });
+  });
+
+  group('VirtualKeypad configuration', () {
+    final customLayout = <KeyRow>[
+      [VirtualKey.character(text: '1')],
+    ];
+
+    test('requires customLayout when type is custom', () {
+      expect(
+        () => VirtualKeypad(type: KeyboardType.custom),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+
+    test('rejects customLayout when type is not custom', () {
+      expect(
+        () => VirtualKeypad(customLayout: customLayout),
+        throwsA(isA<AssertionError>()),
+      );
+      expect(
+        () => VirtualKeypad(type: KeyboardType.text, customLayout: customLayout),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+  });
+
+  group('KeyboardLayoutProvider validation', () {
+    final provider = KeyboardLayoutProvider.instance;
+
+    setUp(() {
+      provider.reset();
+    });
+
+    tearDown(() {
+      provider.reset();
+    });
+
+    test('rejects languages with an empty code', () {
+      expect(
+        () => provider.registerLanguage(
+          KeyboardLanguage(
+            code: '',
+            name: 'Invalid',
+            nativeName: 'Invalid',
+            textLayouts: KeyboardLayoutSet.single([
+              [VirtualKey.character(text: 'a')],
+            ]),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('rejects languages with empty layout rows', () {
+      expect(
+        () => provider.registerLanguage(
+          KeyboardLanguage(
+            code: 'xx',
+            name: 'Invalid',
+            nativeName: 'Invalid',
+            textLayouts: const KeyboardLayoutSet.single([
+              [],
+            ]),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('rejects languages with non-positive key flex', () {
+      expect(
+        () => provider.registerLanguage(
+          KeyboardLanguage(
+            code: 'yy',
+            name: 'Invalid',
+            nativeName: 'Invalid',
+            textLayouts: KeyboardLayoutSet.single([
+              [VirtualKey.character(text: 'a', flex: 0)],
+            ]),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+  });
 }

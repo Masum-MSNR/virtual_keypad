@@ -1,4 +1,5 @@
 import 'keyboard_language.dart';
+import '../models.dart';
 import 'languages/arabic.dart';
 import 'languages/bengali.dart';
 import 'languages/english.dart';
@@ -54,6 +55,7 @@ class KeyboardLayoutProvider {
   ///
   /// If a language with the same code already exists, it will be replaced.
   void registerLanguage(KeyboardLanguage language) {
+    _validateLanguage(language);
     _languages[language.code] = language;
   }
 
@@ -101,6 +103,102 @@ class KeyboardLayoutProvider {
     _languages.clear();
     _languages['en'] = englishLanguage;
     _currentLanguageCode = 'en';
+  }
+
+  void _validateLanguage(KeyboardLanguage language) {
+    if (language.code.trim().isEmpty) {
+      throw ArgumentError.value(
+        language.code,
+        'language.code',
+        'Language code cannot be empty.',
+      );
+    }
+
+    if (language.name.trim().isEmpty) {
+      throw ArgumentError.value(
+        language.name,
+        'language.name',
+        'Language name cannot be empty.',
+      );
+    }
+
+    if (language.nativeName.trim().isEmpty) {
+      throw ArgumentError.value(
+        language.nativeName,
+        'language.nativeName',
+        'Language nativeName cannot be empty.',
+      );
+    }
+
+    _validateLayoutSet(language.textLayouts, '${language.code}.textLayouts');
+
+    final optionalSets = <String, KeyboardLayoutSet?>{
+      'emailLayouts': language.emailLayouts,
+      'urlLayouts': language.urlLayouts,
+      'numberLayouts': language.numberLayouts,
+      'numberSignedLayouts': language.numberSignedLayouts,
+      'numberDecimalLayouts': language.numberDecimalLayouts,
+      'phoneLayouts': language.phoneLayouts,
+    };
+
+    for (final entry in optionalSets.entries) {
+      final layoutSet = entry.value;
+      if (layoutSet != null) {
+        _validateLayoutSet(layoutSet, '${language.code}.${entry.key}');
+      }
+    }
+  }
+
+  void _validateLayoutSet(KeyboardLayoutSet layoutSet, String name) {
+    _validateLayout(layoutSet.primary, '$name.primary');
+
+    if (layoutSet.secondary != null) {
+      _validateLayout(layoutSet.secondary!, '$name.secondary');
+    }
+
+    if (layoutSet.tertiary != null) {
+      _validateLayout(layoutSet.tertiary!, '$name.tertiary');
+    }
+  }
+
+  void _validateLayout(KeyboardLayout layout, String name) {
+    if (layout.isEmpty) {
+      throw ArgumentError.value(
+        layout,
+        name,
+        'Layout must contain at least one row.',
+      );
+    }
+
+    for (var rowIndex = 0; rowIndex < layout.length; rowIndex++) {
+      final row = layout[rowIndex];
+      if (row.isEmpty) {
+        throw ArgumentError.value(
+          row,
+          '$name[$rowIndex]',
+          'Layout rows cannot be empty.',
+        );
+      }
+
+      for (var keyIndex = 0; keyIndex < row.length; keyIndex++) {
+        final key = row[keyIndex];
+        if (key.flex <= 0) {
+          throw ArgumentError.value(
+            key.flex,
+            '$name[$rowIndex][$keyIndex].flex',
+            'Key flex must be greater than zero.',
+          );
+        }
+
+        if (key.isCharacter && (key.text == null || key.text!.isEmpty)) {
+          throw ArgumentError.value(
+            key.text,
+            '$name[$rowIndex][$keyIndex].text',
+            'Character keys must provide non-empty text.',
+          );
+        }
+      }
+    }
   }
 }
 

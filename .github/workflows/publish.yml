@@ -6,7 +6,43 @@ on:
     tags: [ 'v*' ]
 
 jobs:
+  package-quality:
+    name: Release Gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Verify pub publish dry-run
+        run: flutter pub publish --dry-run
+
+      - name: Install pana
+        run: dart pub global activate pana
+
+      - name: Check pub points with pana
+        run: |
+          export PATH="$HOME/.pub-cache/bin:$PATH"
+          FLUTTER_ROOT="$(dirname "$(dirname "$(which flutter)")")"
+          DART_SDK="$FLUTTER_ROOT/bin/cache/dart-sdk"
+          pana --flutter-sdk "$FLUTTER_ROOT" --dart-sdk "$DART_SDK" --exit-code-threshold 0 .
+
   deploy-example:
+    needs: package-quality
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -32,6 +68,7 @@ jobs:
 
   # JOB 2: Create the tag (Runs only on branch push)
   create-tag:
+    needs: package-quality
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -64,6 +101,7 @@ jobs:
 
   # JOB 3: Publish to Pub.dev (Runs only on tag push)
   publish:
+    needs: package-quality
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:

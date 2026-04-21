@@ -69,12 +69,18 @@ The on-screen keyboard widget.
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `type` | `KeyboardType?` | `null` | Override layout (auto if null) |
+| `inputAction` | `TextInputAction?` | `null` | Override the action shown on the submit key |
 | `height` | `double` | `280` | Keyboard height |
+| `width` | `double?` | `null` | Keyboard width (defaults to screen width) |
 | `theme` | `VirtualKeypadTheme` | `light` | Visual theme |
 | `hideWhenUnfocused` | `bool` | `false` | Auto-hide animation |
+| `standalone` | `bool` | `false` | Enable TextField interception mode |
 | `customLayout` | `KeyboardLayout?` | `null` | Custom key arrangement |
 | `onKeyPressed` | `void Function(VirtualKey)?` | `null` | Key press callback |
+| `onKeyPressedWithText` | `void Function(VirtualKey, String?)?` | `null` | Key press callback with inserted text |
 | `animationDuration` | `Duration` | `200ms` | Show/hide duration |
+
+**Validation:** `customLayout` requires `type: KeyboardType.custom`, and `customLayout` is rejected for non-custom types.
 
 ## VirtualKeypadController
 
@@ -133,8 +139,8 @@ VirtualKey.action(action: KeyAction.backSpace, label: '⌫', flex: 2)
 
 ### KeyboardType
 
-`text` · `multiline` · `number` · `numberSigned` · `phone` · `emailAddress` · `url` · `custom`
+`text` · `multiline` · `number` · `numberSigned` · `numberDecimal` · `phone` · `datetime` · `emailAddress` · `url` · `visiblePassword` · `name` · `streetAddress` · `none` · `custom`
 
 ### KeyAction
 
-`backSpace` · `enter` · `shift` · `space` · `symbols` · `symbolsAlt` · `done` · `go` · `search` · `send` · `next` · `previous`
+`backSpace` · `enter` · `shift` · `space` · `symbols` · `symbolsAlt` · `switchLanguage` · `done` · `go` · `search` · `send` · `next` · `previous` · `call`

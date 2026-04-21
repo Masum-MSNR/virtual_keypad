@@ -1,0 +1,71 @@
+name: Accessibility issue
+description: Report screen reader, focus, semantics, or touch target problems.
+title: "[Accessibility]: "
+labels:
+  - accessibility
+  - ux
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What accessibility issue did you hit?
+      placeholder: VoiceOver announces the action key as an unlabeled button.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - iOS
+        - Android
+        - Web
+        - macOS
+        - Windows
+        - Linux
+    validations:
+      required: true
+
+  - type: dropdown
+    id: assistive_tech
+    attributes:
+      label: Assistive technology
+      options:
+        - VoiceOver
+        - TalkBack
+        - Keyboard navigation
+        - Switch control
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual behavior
+      placeholder: The key is focusable but has no useful label or hint.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior
+      placeholder: The key should announce its label, state, and action clearly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      placeholder: 1. Open the standalone example... 2. Focus the email field... 3. Swipe to the submit key...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Extra context
+      description: Include recordings, screenshots, device details, or code snippets if helpful.

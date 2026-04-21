@@ -63,6 +63,17 @@ docs: update README installation section
 4. Update documentation if needed
 5. Submit a PR with a clear description
 
+### PR Checklist
+
+Before opening a PR, verify all relevant items below:
+
+- `flutter test` passes for the package
+- `flutter analyze` passes for the package
+- Public API changes are reflected in `README.md` and `doc/` guides
+- User-facing behavior changes are covered by widget or unit tests
+- Accessibility-impacting UI changes were checked for semantics and labels
+- Example app content was updated if the recommended integration path changed
+
 ## Adding Features
 
 ### New Keyboard Layout
@@ -78,7 +89,9 @@ See [Theming Guide](doc/theming.md)
 1. Add to `KeyAction` enum in `lib/src/enums.dart`
 2. Handle in `_handleAction()` in `lib/src/widgets/keyboard.dart`
 3. Add icon/label in `_buildKeyContent()`
-4. Update documentation
+4. Add or update semantics labels and hints for the new action
+5. Update documentation
+6. Add regression tests for the new action behavior
 
 ## Reporting Issues
 

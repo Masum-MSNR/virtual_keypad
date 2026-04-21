@@ -53,7 +53,14 @@ class VirtualKeypad extends StatefulWidget {
     this.standalone = false,
     this.animationDuration = const Duration(milliseconds: 200),
     this.animationCurve = Curves.easeInOut,
-  });
+  })  : assert(
+          type != KeyboardType.custom || customLayout != null,
+          'VirtualKeypad.customLayout is required when type is KeyboardType.custom.',
+        ),
+        assert(
+          customLayout == null || type == KeyboardType.custom,
+          'VirtualKeypad.customLayout can only be used when type is KeyboardType.custom.',
+        );
 
   /// Override keyboard type. If null, uses the type from the focused text field.
   final KeyboardType? type;
@@ -393,11 +400,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
             _scope?.insertText('\n');
           }
         } else {
-          if (widget.standalone) {
-            _inputControl?.submit();
-          } else {
-            _scope?.submit();
-          }
+          _submitOrTraverse(inputAction);
         }
         break;
 
@@ -471,8 +474,34 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         break;
 
       case KeyAction.next:
+        _submitOrTraverse(TextInputAction.next);
+        break;
+
       case KeyAction.previous:
+        _submitOrTraverse(TextInputAction.previous);
+        break;
+
       case KeyAction.switchLanguage:
+        break;
+    }
+  }
+
+  void _submitOrTraverse(TextInputAction inputAction) {
+    if (widget.standalone) {
+      _inputControl?.performAction(inputAction);
+      return;
+    }
+
+    _scope?.submit();
+
+    switch (inputAction) {
+      case TextInputAction.next:
+        FocusScope.of(context).nextFocus();
+        break;
+      case TextInputAction.previous:
+        FocusScope.of(context).previousFocus();
+        break;
+      default:
         break;
     }
   }
@@ -688,6 +717,11 @@ class _KeyWidgetState extends State<_KeyWidget> {
     _popupEntry = null;
   }
 
+  void _activateKey() {
+    _showKeyPreview();
+    widget.onPressed(widget.virtualKey);
+  }
+
   @override
   Widget build(BuildContext context) {
     final key = widget.virtualKey;
@@ -701,32 +735,39 @@ class _KeyWidgetState extends State<_KeyWidget> {
 
     return CompositedTransformTarget(
       link: _layerLink,
-      child: Container(
-        margin: EdgeInsets.symmetric(
-          vertical: widget.theme.verticalGap / 2,
-          horizontal: widget.theme.horizontalGap / 2,
-        ),
-        height: widget.height,
-        width: width,
-        decoration: _getDecoration(decoration),
-        clipBehavior: Clip.antiAlias,
-        child: Material(
-          color: Colors.transparent,
-          child: GestureDetector(
-            onLongPressStart: (_) => _startRepeat(),
-            onLongPressEnd: (_) => _stopRepeat(),
-            onLongPressCancel: _stopRepeat,
-            child: InkWell(
-              splashColor: widget.theme.splashColor ?? VkpColors.splashColor,
-              onTap: () {
-                _showKeyPreview();
-                widget.onPressed(key);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: _buildKeyContent(),
+      child: Semantics(
+        button: true,
+        enabled: true,
+        label: _semanticLabel(),
+        value: _semanticValue(),
+        hint: _semanticHint(),
+        onTap: _activateKey,
+        child: Container(
+          margin: EdgeInsets.symmetric(
+            vertical: widget.theme.verticalGap / 2,
+            horizontal: widget.theme.horizontalGap / 2,
+          ),
+          height: widget.height,
+          width: width,
+          decoration: _getDecoration(decoration),
+          clipBehavior: Clip.antiAlias,
+          child: Material(
+            color: Colors.transparent,
+            child: GestureDetector(
+              onLongPressStart: (_) => _startRepeat(),
+              onLongPressEnd: (_) => _stopRepeat(),
+              onLongPressCancel: _stopRepeat,
+              child: InkWell(
+                splashColor: widget.theme.splashColor ?? VkpColors.splashColor,
+                onTap: _activateKey,
+                child: ExcludeSemantics(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: _buildKeyContent(),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -748,6 +789,163 @@ class _KeyWidgetState extends State<_KeyWidget> {
     }
 
     return base;
+  }
+
+  String _semanticLabel() {
+    final key = widget.virtualKey;
+
+    if (key.isCharacter) {
+      return key.getDisplayText(shift: widget.shift, capsLock: widget.capsLock);
+    }
+
+    switch (key.action) {
+      case KeyAction.backSpace:
+        return 'Backspace';
+      case KeyAction.enter:
+        return widget.type == KeyboardType.multiline
+            ? 'New line'
+            : _inputActionLabel(widget.inputAction);
+      case KeyAction.shift:
+        return 'Shift';
+      case KeyAction.space:
+        return 'Space';
+      case KeyAction.symbols:
+        return widget.layoutStage == LayoutStage.primary
+            ? 'Show symbols'
+            : 'Show letters';
+      case KeyAction.symbolsAlt:
+        return widget.layoutStage == LayoutStage.secondary
+            ? 'Show more symbols'
+            : 'Show main symbols';
+      case KeyAction.done:
+        return 'Done';
+      case KeyAction.go:
+        return 'Go';
+      case KeyAction.search:
+        return 'Search';
+      case KeyAction.send:
+        return 'Send';
+      case KeyAction.call:
+        return 'Call';
+      case KeyAction.next:
+        return 'Next field';
+      case KeyAction.previous:
+        return 'Previous field';
+      case KeyAction.switchLanguage:
+        return 'Switch language';
+      default:
+        return 'Key';
+    }
+  }
+
+  String? _semanticValue() {
+    final key = widget.virtualKey;
+
+    switch (key.action) {
+      case KeyAction.shift:
+        if (widget.capsLock) return 'Caps lock on';
+        return widget.shift ? 'On' : 'Off';
+      case KeyAction.symbols:
+        return widget.layoutStage == LayoutStage.primary
+            ? 'Letters keyboard'
+            : 'Symbols keyboard';
+      case KeyAction.symbolsAlt:
+        return widget.layoutStage == LayoutStage.tertiary
+            ? 'More symbols'
+            : 'Main symbols';
+      default:
+        return null;
+    }
+  }
+
+  String? _semanticHint() {
+    final key = widget.virtualKey;
+
+    if (key.isCharacter) {
+      final text =
+          key.getDisplayText(shift: widget.shift, capsLock: widget.capsLock);
+      return 'Inserts $text';
+    }
+
+    switch (key.action) {
+      case KeyAction.backSpace:
+        return 'Deletes the previous character. Long press to repeat.';
+      case KeyAction.enter:
+        return widget.type == KeyboardType.multiline
+            ? 'Inserts a new line.'
+            : _inputActionHint(widget.inputAction);
+      case KeyAction.shift:
+        if (widget.capsLock) {
+          return 'Turns caps lock off.';
+        }
+        return widget.shift
+            ? 'Turns caps lock on.'
+            : 'Turns uppercase on for the next character.';
+      case KeyAction.space:
+        return 'Inserts a space.';
+      case KeyAction.symbols:
+        return widget.layoutStage == LayoutStage.primary
+            ? 'Switches to the symbols keyboard.'
+            : 'Switches back to letters.';
+      case KeyAction.symbolsAlt:
+        return widget.layoutStage == LayoutStage.secondary
+            ? 'Shows more symbols.'
+            : 'Returns to the main symbols page.';
+      case KeyAction.done:
+        return 'Submits the current field.';
+      case KeyAction.go:
+        return 'Triggers the go action.';
+      case KeyAction.search:
+        return 'Triggers the search action.';
+      case KeyAction.send:
+        return 'Triggers the send action.';
+      case KeyAction.call:
+        return 'Triggers the call action.';
+      case KeyAction.next:
+        return 'Moves focus to the next field.';
+      case KeyAction.previous:
+        return 'Moves focus to the previous field.';
+      case KeyAction.switchLanguage:
+        return 'Switches the keyboard language.';
+      default:
+        return null;
+    }
+  }
+
+  String _inputActionLabel(TextInputAction inputAction) {
+    switch (inputAction) {
+      case TextInputAction.go:
+        return 'Go';
+      case TextInputAction.search:
+        return 'Search';
+      case TextInputAction.send:
+        return 'Send';
+      case TextInputAction.next:
+        return 'Next field';
+      case TextInputAction.previous:
+        return 'Previous field';
+      case TextInputAction.newline:
+        return 'New line';
+      default:
+        return 'Done';
+    }
+  }
+
+  String _inputActionHint(TextInputAction inputAction) {
+    switch (inputAction) {
+      case TextInputAction.next:
+        return 'Moves focus to the next field.';
+      case TextInputAction.previous:
+        return 'Moves focus to the previous field.';
+      case TextInputAction.search:
+        return 'Triggers the search action.';
+      case TextInputAction.send:
+        return 'Triggers the send action.';
+      case TextInputAction.go:
+        return 'Triggers the go action.';
+      default:
+        return 'Submits the current field.';
+    }
   }
 
   Widget _buildKeyContent() {

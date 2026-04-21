@@ -1,0 +1,63 @@
+name: Onboarding friction
+description: Report setup confusion, unclear docs, or integration blockers.
+title: "[Onboarding]: "
+labels:
+  - onboarding
+  - ux
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What were you trying to do?
+      description: Describe the setup or integration task you were attempting.
+      placeholder: I was trying to add the keypad to an existing login form...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: integration_mode
+    attributes:
+      label: Which integration path were you following?
+      options:
+        - Standalone mode
+        - Scoped mode
+        - Custom layout
+        - Multi-language setup
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: blocker
+    attributes:
+      label: Where did the friction happen?
+      description: Call out the unclear step, missing behavior, or confusing docs.
+      placeholder: The README did not make it clear when to use standalone vs scoped mode.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+      placeholder: I expected a short decision guide and a minimal working example.
+    validations:
+      required: true
+
+  - type: textarea
+    id: docs_consulted
+    attributes:
+      label: What documentation or examples did you check?
+      placeholder: README, API reference, example app, custom layouts guide...
+
+  - type: input
+    id: flutter_version
+    attributes:
+      label: Flutter version
+      placeholder: flutter --version
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction or sample code
+      render: dart

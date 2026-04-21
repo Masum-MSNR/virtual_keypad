@@ -1,16 +1,37 @@
-# virtual_keypad_example
+# Virtual Keypad Example
 
-A new Flutter project.
+This example app shows how to integrate `virtual_keypad` in real UI flows instead of isolated toy widgets.
 
-## Getting Started
+## Run It
 
-This project is a starting point for a Flutter application.
+```bash
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+## What It Covers
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Keyboard Preview: compare layouts, actions, and languages quickly
+- Numeric Input: amount entry with a number-focused keypad
+- PIN Pad: fully custom layout with fixed-position keys
+- Password Entry: hidden text flow with submit behavior
+- Email & URL: input-aware action keys and layout changes
+- Multi-Field Form: scoped mode with focus-driven behavior
+- Multiline Text: newline-aware keyboard behavior
+- Standalone Mode: use the keyboard with standard Flutter `TextField`s
+- Auto-Hide Keyboard: focus-aware show and hide transitions
+- Custom Themes: theme presets and custom styling
+- Language Switching: built-in multi-language support
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Which Screen To Open First
+
+- Start with `Standalone Mode` if you want the fastest integration path.
+- Start with `Multi-Field Form` if you need structured form flows and keyboard-managed submit behavior.
+- Start with `PIN Pad` if you need a custom layout.
+
+## Architecture Guide
+
+- Standalone mode: use standard `TextField` widgets with `VirtualKeypad(standalone: true)`.
+- Scoped mode: use `VirtualKeypadScope`, `VirtualKeypadTextField`, and `VirtualKeypad()` together when you need tighter control.
+
+The example app is intentionally broad: it is both a demo and a decision guide for choosing the right integration mode.

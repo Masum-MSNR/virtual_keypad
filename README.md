@@ -107,6 +107,16 @@ VirtualKeypadStandaloneScope(
 
 > Fields outside the scope won't trigger this keyboard.
 
+### Which Mode Should You Use?
+
+| Mode | Best For | Use These Widgets |
+|------|----------|-------------------|
+| Standalone | Fast integration with existing `TextField` / `TextFormField` UIs | `TextField` + `VirtualKeypad(standalone: true)` |
+| Scoped | Full control over submit handling, focus-driven layout changes, and system keyboard blocking | `VirtualKeypadScope` + `VirtualKeypadTextField` + `VirtualKeypad()` |
+
+Choose standalone mode when you want the package to drop into an existing form with minimal refactoring.
+Choose scoped mode when you need predictable focus routing, custom submit handling, or tighter keyboard behavior control.
+
 ### Scope Mode (full control)
 
 ```dart
@@ -189,6 +199,8 @@ VirtualKeypad(
   customLayout: pinLayout,
 )
 ```
+
+> `customLayout` must be used together with `type: KeyboardType.custom`. Invalid combinations assert immediately in debug mode so setup mistakes fail fast.
 
 ## Theming
 
@@ -305,6 +317,13 @@ controller.moveCursorRight();
 ## Examples
 
 Check out the [example](example/) directory for a complete demo app with 9 screens showcasing all features.
+
+## Common Setup Mistakes
+
+- Forgetting `initializeKeyboardLayouts()` before `runApp()`. Built-in layouts are registered there.
+- Mixing standalone mode and scoped mode in the same form without a clear reason. Pick one architecture per flow.
+- Providing `customLayout` without `type: KeyboardType.custom`, or setting `type: KeyboardType.custom` without a layout.
+- Expecting `VirtualKeypadTextField` to allow the system keyboard by default. It blocks physical/system keyboard input unless `allowPhysicalKeyboard: true`.
 
 ## Documentation
 

@@ -35,6 +35,8 @@ VirtualKey.action(action: KeyAction.backSpace, label: '⌫', flex: 2)
 | `symbols` | Switch to symbols |
 | `done` | Submit action |
 
+All `KeyAction` values are available in custom layouts, including `next`, `previous`, `search`, `send`, and `call`.
+
 ## Flex Sizing
 
 The `flex` property sets relative key width:
@@ -48,6 +50,17 @@ The `flex` property sets relative key width:
 ```
 
 ## Examples
+
+Use custom layouts with `type: KeyboardType.custom`:
+
+```dart
+VirtualKeypad(
+  type: KeyboardType.custom,
+  customLayout: pinLayout,
+)
+```
+
+If `type` and `customLayout` do not match, the widget asserts in debug mode so configuration mistakes surface immediately.
 
 ### PIN Pad
 
