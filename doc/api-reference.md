@@ -2,6 +2,18 @@
 
 Complete API documentation for the Virtual Keypad package.
 
+## Public Libraries
+
+The package exposes multiple public entrypoints so pub.dev documentation and
+IDE imports can stay focused on the surface you need.
+
+| Import | Best For |
+|--------|----------|
+| `package:virtual_keypad/virtual_keypad.dart` | Full package surface |
+| `package:virtual_keypad/widgets.dart` | Scoped widget workflows |
+| `package:virtual_keypad/standalone.dart` | Standard `TextField` / `TextFormField` integration |
+| `package:virtual_keypad/layouts.dart` | Language registration and layout access |
+
 ## VirtualKeypadStandaloneScope
 
 Optional wrapper that restricts a standalone-mode keyboard to only respond to text fields within its subtree.
@@ -81,6 +93,7 @@ The on-screen keyboard widget.
 | `customLayout` | `KeyboardLayout?` | `null` | Custom key arrangement |
 | `onKeyPressed` | `void Function(VirtualKey)?` | `null` | Key press callback |
 | `onKeyPressedWithText` | `void Function(VirtualKey, String?)?` | `null` | Key press callback with inserted text |
+| `onStandaloneInputAction` | `void Function(KeyAction, String)?` | `null` | Called for submit-style actions in standalone mode, including custom `call` keys |
 | `onLanguageChanged` | `ValueChanged<String>?` | `null` | Called when the user picks a language from the keyboard |
 | `animationDuration` | `Duration` | `200ms` | Show/hide duration |
 

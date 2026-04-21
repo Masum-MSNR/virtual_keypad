@@ -51,6 +51,15 @@
 /// - [VirtualKeypadTheme] - Theming for keyboard appearance
 /// - [KeyboardType] - Input types that determine keyboard layout
 /// - [StandaloneInputControl] - Text input interceptor for standalone mode
+///
+/// ## Additional Libraries
+///
+/// The package also exposes focused entrypoints for pub.dev documentation and
+/// more selective imports:
+///
+/// - `package:virtual_keypad/widgets.dart` for widget-first scoped usage
+/// - `package:virtual_keypad/standalone.dart` for standalone TextField usage
+/// - `package:virtual_keypad/layouts.dart` for languages, layouts, and setup
 library;
 
 export 'src/controller.dart';

@@ -1,3 +1,29 @@
+## 0.6.0
+
+### Added
+* Distinct submit-style action reporting for both scoped and standalone integrations
+  - `VirtualKeypadTextField.onInputAction`
+  - `VirtualKeypad.onStandaloneInputAction`
+* In-keyboard language switching with `availableLanguages`, `initialLanguage`, `onLanguageChanged`, and long-press space-bar language picker support
+* Session-level language memory in `KeyboardLayoutProvider`
+* Focused public entrypoints for documentation and selective imports
+  - `package:virtual_keypad/widgets.dart`
+  - `package:virtual_keypad/standalone.dart`
+  - `package:virtual_keypad/layouts.dart`
+* Contributor workflow templates for pull requests, onboarding friction reports, and accessibility issues
+
+### Improved
+* Release workflows now analyze the example app in CI and release gates
+* README, API docs, and example docs expanded for standalone actions, language switching, focused imports, and deploy-facing package positioning
+* Language registration now fails fast for malformed layouts, empty rows, invalid flex values, and missing character text
+* Language switching example updated to reflect in-keyboard switching flow
+* Pub.dev documentation navigation improved by exposing additional public libraries
+
+### Fixed
+* Custom submit-style action keys such as search, send, call, next, and previous now flow through the correct action path instead of collapsing into a generic submit behavior
+
+---
+
 ## 0.5.1
 
 ### Fixed

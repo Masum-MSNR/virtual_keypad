@@ -48,6 +48,7 @@ class VirtualKeypad extends StatefulWidget {
     this.theme = VirtualKeypadTheme.light,
     this.onKeyPressed,
     this.onKeyPressedWithText,
+    this.onStandaloneInputAction,
     this.availableLanguages,
     this.initialLanguage,
     this.onLanguageChanged,
@@ -88,6 +89,13 @@ class VirtualKeypad extends StatefulWidget {
   /// inserted `text`. The text is the character inserted for character keys
   /// (respecting shift/caps), or `null` for action keys.
   final void Function(VirtualKey key, String? text)? onKeyPressedWithText;
+
+  /// Called when a submit-style action key is pressed in standalone mode.
+  ///
+  /// This is useful for actions like call, search, send, next, and done when
+  /// using `VirtualKeypad(standalone: true)` with standard Flutter text fields.
+  /// The callback receives the pressed [KeyAction] and the current field text.
+  final void Function(KeyAction action, String text)? onStandaloneInputAction;
 
   /// Ordered list of language codes that can be switched from the keyboard.
   ///
@@ -620,6 +628,11 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
   void _submitOrTraverse(KeyAction action) {
     if (widget.standalone) {
+      widget.onStandaloneInputAction?.call(
+        action,
+        _inputControl?.currentValue.text ?? '',
+      );
+
       final inputAction = _textInputActionForKeyAction(action);
       if (inputAction != null) {
         _inputControl?.performAction(inputAction);

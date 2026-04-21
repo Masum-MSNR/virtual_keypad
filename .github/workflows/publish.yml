@@ -28,6 +28,14 @@ jobs:
       - name: Run tests
         run: flutter test
 
+      - name: Install example dependencies
+        working-directory: example
+        run: flutter pub get
+
+      - name: Analyze example app
+        working-directory: example
+        run: flutter analyze
+
       - name: Verify pub publish dry-run
         run: flutter pub publish --dry-run
 

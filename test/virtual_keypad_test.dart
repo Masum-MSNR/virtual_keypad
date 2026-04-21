@@ -546,6 +546,47 @@ void main() {
     });
   });
 
+  group('VirtualKeypad standalone actions', () {
+    testWidgets('custom call action reports through standalone callback', (
+      tester,
+    ) async {
+      final controller = TextEditingController(text: '5551234');
+      KeyAction? action;
+      String? submittedText;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                TextField(controller: controller),
+                VirtualKeypad(
+                  standalone: true,
+                  type: KeyboardType.custom,
+                  customLayout: [
+                    [VirtualKey.action(action: KeyAction.call)],
+                  ],
+                  onStandaloneInputAction: (pressedAction, text) {
+                    action = pressedAction;
+                    submittedText = text;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.call));
+      await tester.pumpAndSettle();
+
+      expect(action, KeyAction.call);
+      expect(submittedText, '5551234');
+    });
+  });
+
   group('VirtualKeypad configuration', () {
     final customLayout = <KeyRow>[
       [VirtualKey.character(text: '1')],
@@ -601,11 +642,11 @@ void main() {
     test('rejects languages with empty layout rows', () {
       expect(
         () => provider.registerLanguage(
-          KeyboardLanguage(
+          const KeyboardLanguage(
             code: 'xx',
             name: 'Invalid',
             nativeName: 'Invalid',
-            textLayouts: const KeyboardLayoutSet.single([
+            textLayouts: KeyboardLayoutSet.single([
               [],
             ]),
           ),
