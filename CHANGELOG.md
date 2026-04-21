@@ -1,3 +1,10 @@
+## 0.6.1
+
+### Improved
+* Refined package metadata and keyword topics for the `0.6.1` release
+
+---
+
 ## 0.6.0
 
 ### Added
