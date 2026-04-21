@@ -19,8 +19,9 @@ export 'src/theme.dart';
 export 'src/standalone_input_control.dart';
 export 'src/standalone_scope.dart';
 export 'src/widgets/keyboard.dart';
-export 'src/layouts/layouts.dart' show
-    KeyboardLanguage,
-    KeyboardLayoutProvider,
-    KeyboardLayoutSet,
-    initializeKeyboardLayouts;
+export 'src/layouts/layouts.dart'
+    show
+        KeyboardLanguage,
+        KeyboardLayoutProvider,
+        KeyboardLayoutSet,
+        initializeKeyboardLayouts;
