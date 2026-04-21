@@ -249,7 +249,24 @@ initializeKeyboardLayouts(); // Registers all 12 languages
 KeyboardLayoutProvider.instance.setLanguage('ar'); // Arabic
 KeyboardLayoutProvider.instance.setLanguage('ko'); // Korean
 KeyboardLayoutProvider.instance.setLanguage('en'); // English
+
+VirtualKeypad(
+  availableLanguages: ['en', 'bn', 'ar'],
+  initialLanguage: 'en',
+  onLanguageChanged: (code) {
+    // Save the selected language if you want to restore it next launch.
+  },
+)
 ```
+
+When `availableLanguages` contains more than one language, users can long-press
+the space bar to open the language picker. The first language in the list is the
+fallback language for that keyboard.
+
+The selected language is remembered for the current app session through the
+shared keyboard layout provider. If you want to restore the same language after
+an app restart, save the code from `onLanguageChanged` and pass it back through
+`initialLanguage`.
 
 ### Adding a Custom Language
 
@@ -294,9 +311,12 @@ VirtualKeypad(
   type: null,                        // Override layout (auto if null)
   height: 280,                       // Keyboard height
   theme: VirtualKeypadTheme.light,   // Visual theme
+  availableLanguages: ['en', 'bn'],  // Optional in-keyboard language picker
+  initialLanguage: 'en',             // Startup language for this session
   hideWhenUnfocused: false,          // Auto-hide animation
   customLayout: null,                // Custom key arrangement
   onKeyPressed: (key) {},            // Key press callback
+  onLanguageChanged: (code) {},      // Language switch callback
 )
 ```
 

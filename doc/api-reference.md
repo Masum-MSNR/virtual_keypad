@@ -57,6 +57,7 @@ Drop-in `TextField` replacement with virtual keyboard integration.
 | `decoration` | `InputDecoration?` | `null` | Input decoration |
 | `onChanged` | `ValueChanged<String>?` | `null` | Text change callback |
 | `onSubmitted` | `ValueChanged<String>?` | `null` | Submit callback |
+| `onInputAction` | `void Function(KeyAction, String)?` | `null` | Reports the pressed submit-like action and current text |
 | `onTap` | `VoidCallback?` | `null` | Tap callback |
 | `autofocus` | `bool` | `false` | Auto-focus on build |
 | `enabled` | `bool` | `true` | Accept input |
@@ -75,12 +76,17 @@ The on-screen keyboard widget.
 | `theme` | `VirtualKeypadTheme` | `light` | Visual theme |
 | `hideWhenUnfocused` | `bool` | `false` | Auto-hide animation |
 | `standalone` | `bool` | `false` | Enable TextField interception mode |
+| `availableLanguages` | `List<String>?` | `null` | Ordered language codes enabled for in-keyboard switching |
+| `initialLanguage` | `String?` | `null` | Preferred startup language for the session |
 | `customLayout` | `KeyboardLayout?` | `null` | Custom key arrangement |
 | `onKeyPressed` | `void Function(VirtualKey)?` | `null` | Key press callback |
 | `onKeyPressedWithText` | `void Function(VirtualKey, String?)?` | `null` | Key press callback with inserted text |
+| `onLanguageChanged` | `ValueChanged<String>?` | `null` | Called when the user picks a language from the keyboard |
 | `animationDuration` | `Duration` | `200ms` | Show/hide duration |
 
 **Validation:** `customLayout` requires `type: KeyboardType.custom`, and `customLayout` is rejected for non-custom types.
+
+**Language switching:** When `availableLanguages` contains more than one valid code, users can long-press the space bar to switch languages. The first valid language acts as the fallback for that keyboard. The selected language is remembered for the current app run.
 
 ## VirtualKeypadController
 

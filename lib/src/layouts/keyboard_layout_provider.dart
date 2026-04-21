@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'keyboard_language.dart';
 import '../models.dart';
 import 'languages/arabic.dart';
@@ -35,7 +37,9 @@ class KeyboardLayoutProvider {
   static final KeyboardLayoutProvider instance = KeyboardLayoutProvider._();
 
   final Map<String, KeyboardLanguage> _languages = {};
+  final List<VoidCallback> _listeners = [];
   String _currentLanguageCode = 'en';
+  bool _hasExplicitLanguageSelection = false;
 
   /// All registered languages.
   Iterable<KeyboardLanguage> get languages => _languages.values;
@@ -50,6 +54,19 @@ class KeyboardLayoutProvider {
 
   /// The current language code.
   String get currentLanguageCode => _currentLanguageCode;
+
+  /// Whether the current language was explicitly selected during this app run.
+  bool get hasExplicitLanguageSelection => _hasExplicitLanguageSelection;
+
+  /// Adds a listener that is called when the selected language changes.
+  void addListener(VoidCallback listener) {
+    _listeners.add(listener);
+  }
+
+  /// Removes a language selection listener.
+  void removeListener(VoidCallback listener) {
+    _listeners.remove(listener);
+  }
 
   /// Registers a new keyboard language.
   ///
@@ -70,12 +87,20 @@ class KeyboardLayoutProvider {
   /// Sets the current language by code.
   ///
   /// Returns true if the language was found and set, false otherwise.
-  bool setLanguage(String code) {
-    if (_languages.containsKey(code)) {
-      _currentLanguageCode = code;
-      return true;
+  bool setLanguage(String code, {bool userInitiated = true}) {
+    if (!_languages.containsKey(code)) return false;
+
+    final changed = _currentLanguageCode != code;
+    _currentLanguageCode = code;
+    if (userInitiated) {
+      _hasExplicitLanguageSelection = true;
     }
-    return false;
+
+    if (changed) {
+      _notifyListeners();
+    }
+
+    return true;
   }
 
   /// Gets a language by code, or null if not found.
@@ -103,6 +128,14 @@ class KeyboardLayoutProvider {
     _languages.clear();
     _languages['en'] = englishLanguage;
     _currentLanguageCode = 'en';
+    _hasExplicitLanguageSelection = false;
+    _notifyListeners();
+  }
+
+  void _notifyListeners() {
+    for (final listener in List<VoidCallback>.from(_listeners)) {
+      listener();
+    }
   }
 
   void _validateLanguage(KeyboardLanguage language) {

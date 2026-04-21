@@ -44,6 +44,7 @@ class VirtualKeypadTextField extends StatefulWidget {
     this.onChanged,
     this.onTap,
     this.onSubmitted,
+    this.onInputAction,
     this.allowPhysicalKeyboard = false,
     this.keyboardType = KeyboardType.text,
     this.textInputAction,
@@ -101,6 +102,12 @@ class VirtualKeypadTextField extends StatefulWidget {
 
   /// Called when the user submits (e.g., presses enter/done).
   final ValueChanged<String>? onSubmitted;
+
+  /// Called when a submit-like keyboard action is triggered.
+  ///
+  /// This reports which [KeyAction] was pressed, such as search, send,
+  /// call, next, or done, along with the current field text.
+  final void Function(KeyAction action, String text)? onInputAction;
 
   /// Whether to allow physical keyboard input alongside virtual keyboard.
   ///
@@ -292,7 +299,8 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
     }
   }
 
-  void _handleSubmit() {
+  void _handleSubmit(KeyAction action) {
+    widget.onInputAction?.call(action, widget.controller.text);
     widget.onSubmitted?.call(widget.controller.text);
   }
 

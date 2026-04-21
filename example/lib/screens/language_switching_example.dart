@@ -285,7 +285,11 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
                 ),
               ),
             ),
-            VirtualKeypad(),
+            VirtualKeypad(
+              availableLanguages: _languages.map((lang) => lang.$1).toList(),
+              initialLanguage: 'en',
+              onLanguageChanged: _switchLanguage,
+            ),
           ],
         ),
       ),

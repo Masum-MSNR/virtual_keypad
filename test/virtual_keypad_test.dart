@@ -256,7 +256,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        tester.widget<TextField>(find.byType(TextField).at(0)).focusNode?.hasFocus,
+        tester
+            .widget<TextField>(find.byType(TextField).at(0))
+            .focusNode
+            ?.hasFocus,
         isTrue,
       );
 
@@ -265,11 +268,17 @@ void main() {
 
       expect(firstSubmitted, isTrue);
       expect(
-        tester.widget<TextField>(find.byType(TextField).at(0)).focusNode?.hasFocus,
+        tester
+            .widget<TextField>(find.byType(TextField).at(0))
+            .focusNode
+            ?.hasFocus,
         isFalse,
       );
       expect(
-        tester.widget<TextField>(find.byType(TextField).at(1)).focusNode?.hasFocus,
+        tester
+            .widget<TextField>(find.byType(TextField).at(1))
+            .focusNode
+            ?.hasFocus,
         isTrue,
       );
     });
@@ -308,7 +317,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        tester.widget<TextField>(find.byType(TextField).at(1)).focusNode?.hasFocus,
+        tester
+            .widget<TextField>(find.byType(TextField).at(1))
+            .focusNode
+            ?.hasFocus,
         isTrue,
       );
 
@@ -317,13 +329,104 @@ void main() {
 
       expect(secondSubmitted, isTrue);
       expect(
-        tester.widget<TextField>(find.byType(TextField).at(0)).focusNode?.hasFocus,
+        tester
+            .widget<TextField>(find.byType(TextField).at(0))
+            .focusNode
+            ?.hasFocus,
         isTrue,
       );
       expect(
-        tester.widget<TextField>(find.byType(TextField).at(1)).focusNode?.hasFocus,
+        tester
+            .widget<TextField>(find.byType(TextField).at(1))
+            .focusNode
+            ?.hasFocus,
         isFalse,
       );
+    });
+  });
+
+  group('VirtualKeypad action handling', () {
+    testWidgets('custom search action reports the pressed action', (
+      tester,
+    ) async {
+      final controller = VirtualKeypadController(text: 'query');
+      KeyAction? action;
+      String? submittedText;
+      var submitted = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(
+                    controller: controller,
+                    onInputAction: (pressedAction, text) {
+                      action = pressedAction;
+                      submittedText = text;
+                    },
+                    onSubmitted: (_) => submitted = true,
+                  ),
+                  VirtualKeypad(
+                    type: KeyboardType.custom,
+                    customLayout: [
+                      [VirtualKey.action(action: KeyAction.search)],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.search));
+      await tester.pumpAndSettle();
+
+      expect(action, KeyAction.search);
+      expect(submittedText, 'query');
+      expect(submitted, isTrue);
+    });
+
+    testWidgets('custom call action reports the pressed action',
+        (tester) async {
+      final controller = VirtualKeypadController(text: '5551234');
+      KeyAction? action;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(
+                    controller: controller,
+                    onInputAction: (pressedAction, _) {
+                      action = pressedAction;
+                    },
+                  ),
+                  VirtualKeypad(
+                    type: KeyboardType.custom,
+                    customLayout: [
+                      [VirtualKey.action(action: KeyAction.call)],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.call));
+      await tester.pumpAndSettle();
+
+      expect(action, KeyAction.call);
     });
   });
 
@@ -461,7 +564,8 @@ void main() {
         throwsA(isA<AssertionError>()),
       );
       expect(
-        () => VirtualKeypad(type: KeyboardType.text, customLayout: customLayout),
+        () =>
+            VirtualKeypad(type: KeyboardType.text, customLayout: customLayout),
         throwsA(isA<AssertionError>()),
       );
     });
@@ -524,6 +628,140 @@ void main() {
         ),
         throwsArgumentError,
       );
+    });
+  });
+
+  group('VirtualKeypad language switching', () {
+    final provider = KeyboardLayoutProvider.instance;
+
+    setUp(() {
+      provider.reset();
+      initializeKeyboardLayouts();
+    });
+
+    tearDown(() {
+      provider.reset();
+    });
+
+    testWidgets('initialLanguage seeds the runtime language', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(
+                    controller: VirtualKeypadController(),
+                  ),
+                  const VirtualKeypad(
+                    availableLanguages: ['en', 'bn'],
+                    initialLanguage: 'bn',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(provider.currentLanguageCode, 'bn');
+    });
+
+    testWidgets('long-pressing space opens picker and changes language', (
+      tester,
+    ) async {
+      String? changedLanguage;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(
+                    controller: VirtualKeypadController(),
+                  ),
+                  VirtualKeypad(
+                    availableLanguages: const ['en', 'bn'],
+                    onLanguageChanged: (code) {
+                      changedLanguage = code;
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+
+      await tester.longPress(find.text('space'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('বাংলা'), findsOneWidget);
+
+      await tester.tap(find.text('বাংলা'));
+      await tester.pumpAndSettle();
+
+      expect(provider.currentLanguageCode, 'bn');
+      expect(changedLanguage, 'bn');
+    });
+
+    testWidgets('explicit language selection persists across widget rebuilds', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(
+                    controller: VirtualKeypadController(),
+                  ),
+                  const VirtualKeypad(
+                    availableLanguages: ['en', 'bn'],
+                    initialLanguage: 'en',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+      await tester.longPress(find.text('space'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('বাংলা'));
+      await tester.pumpAndSettle();
+
+      expect(provider.currentLanguageCode, 'bn');
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(
+                    controller: VirtualKeypadController(),
+                  ),
+                  const VirtualKeypad(
+                    availableLanguages: ['en', 'bn'],
+                    initialLanguage: 'en',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(provider.currentLanguageCode, 'bn');
     });
   });
 }

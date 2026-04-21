@@ -48,6 +48,9 @@ class VirtualKeypad extends StatefulWidget {
     this.theme = VirtualKeypadTheme.light,
     this.onKeyPressed,
     this.onKeyPressedWithText,
+    this.availableLanguages,
+    this.initialLanguage,
+    this.onLanguageChanged,
     this.customLayout,
     this.hideWhenUnfocused = false,
     this.standalone = false,
@@ -85,6 +88,23 @@ class VirtualKeypad extends StatefulWidget {
   /// inserted `text`. The text is the character inserted for character keys
   /// (respecting shift/caps), or `null` for action keys.
   final void Function(VirtualKey key, String? text)? onKeyPressedWithText;
+
+  /// Ordered list of language codes that can be switched from the keyboard.
+  ///
+  /// When multiple valid codes are provided, long-pressing the space bar opens
+  /// a language picker. The first valid code acts as the fallback language for
+  /// this keyboard when no runtime language has been explicitly selected.
+  final List<String>? availableLanguages;
+
+  /// Preferred initial language for the keyboard.
+  ///
+  /// This seeds the runtime language when the app has no explicit language
+  /// selection yet, or when the current runtime language is not allowed by
+  /// [availableLanguages].
+  final String? initialLanguage;
+
+  /// Called when the user selects a new language from the keyboard picker.
+  final ValueChanged<String>? onLanguageChanged;
 
   /// Custom layout when [type] is [KeyboardType.custom].
   final KeyboardLayout? customLayout;
@@ -136,6 +156,8 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   @override
   void initState() {
     super.initState();
+    KeyboardLayoutProvider.instance.addListener(_onLanguageChanged);
+    _syncLanguageConfiguration();
     if (widget.standalone) {
       _initStandalone();
     }
@@ -243,6 +265,10 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   @override
   void didUpdateWidget(VirtualKeypad oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.availableLanguages != oldWidget.availableLanguages ||
+        widget.initialLanguage != oldWidget.initialLanguage) {
+      _syncLanguageConfiguration();
+    }
     if (widget.standalone != oldWidget.standalone) {
       if (widget.standalone) {
         // Switching to standalone
@@ -259,6 +285,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
   @override
   void dispose() {
+    KeyboardLayoutProvider.instance.removeListener(_onLanguageChanged);
     if (widget.standalone) {
       _disposeStandalone();
     } else {
@@ -288,6 +315,112 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       }
 
       setState(() {});
+    }
+  }
+
+  void _onLanguageChanged() {
+    _syncLanguageConfiguration();
+    if (!mounted) return;
+
+    _layoutStage = LayoutStage.primary;
+    _shift = false;
+    _capsLock = false;
+    _cachedLayout = _currentLayout;
+    setState(() {});
+  }
+
+  List<KeyboardLanguage> get _availableLanguages {
+    final codes = widget.availableLanguages;
+    if (codes == null || codes.isEmpty) return const [];
+
+    final seen = <String>{};
+    final languages = <KeyboardLanguage>[];
+    final provider = KeyboardLayoutProvider.instance;
+
+    for (final code in codes) {
+      if (!seen.add(code)) continue;
+      final language = provider.getLanguage(code);
+      if (language != null) {
+        languages.add(language);
+      }
+    }
+
+    return languages;
+  }
+
+  bool get _canSwitchLanguages => _availableLanguages.length > 1;
+
+  void _syncLanguageConfiguration() {
+    final provider = KeyboardLayoutProvider.instance;
+    final allowedCodes =
+        _availableLanguages.map((language) => language.code).toList();
+
+    if (allowedCodes.isEmpty) {
+      final initialLanguage = widget.initialLanguage;
+      if (!provider.hasExplicitLanguageSelection &&
+          initialLanguage != null &&
+          provider.hasLanguage(initialLanguage)) {
+        provider.setLanguage(initialLanguage, userInitiated: false);
+      }
+      return;
+    }
+
+    final currentLanguage = provider.currentLanguageCode;
+    if (provider.hasExplicitLanguageSelection &&
+        allowedCodes.contains(currentLanguage)) {
+      return;
+    }
+
+    final initialLanguage = widget.initialLanguage;
+    final targetLanguage =
+        initialLanguage != null && allowedCodes.contains(initialLanguage)
+            ? initialLanguage
+            : allowedCodes.contains(currentLanguage)
+                ? currentLanguage
+                : allowedCodes.first;
+
+    if (currentLanguage != targetLanguage) {
+      provider.setLanguage(targetLanguage, userInitiated: false);
+    }
+  }
+
+  Future<void> _showLanguagePicker(Offset globalPosition) async {
+    if (!_canSwitchLanguages) return;
+
+    final overlayBox =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+    final selectedLanguage = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        globalPosition.dx,
+        globalPosition.dy,
+        overlayBox.size.width - globalPosition.dx,
+        overlayBox.size.height - globalPosition.dy,
+      ),
+      items: _availableLanguages.map((language) {
+        final isCurrent = language.code ==
+            KeyboardLayoutProvider.instance.currentLanguageCode;
+
+        return PopupMenuItem<String>(
+          value: language.code,
+          child: Row(
+            children: [
+              Expanded(child: Text(language.nativeName)),
+              if (isCurrent) const Icon(Icons.check, size: 16),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+
+    if (selectedLanguage != null) {
+      final changed = KeyboardLayoutProvider.instance.setLanguage(
+        selectedLanguage,
+        userInitiated: true,
+      );
+      if (changed) {
+        widget.onLanguageChanged?.call(selectedLanguage);
+      }
     }
   }
 
@@ -400,7 +533,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
             _scope?.insertText('\n');
           }
         } else {
-          _submitOrTraverse(inputAction);
+          _submitOrTraverse(_keyActionForSubmitKey(action));
         }
         break;
 
@@ -462,23 +595,22 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         break;
 
       case KeyAction.done:
+        _submitOrTraverse(_keyActionForSubmitKey(action));
+        break;
+
       case KeyAction.go:
       case KeyAction.search:
       case KeyAction.send:
       case KeyAction.call:
-        if (widget.standalone) {
-          _inputControl?.submit();
-        } else {
-          _scope?.submit();
-        }
+        _submitOrTraverse(action);
         break;
 
       case KeyAction.next:
-        _submitOrTraverse(TextInputAction.next);
+        _submitOrTraverse(KeyAction.next);
         break;
 
       case KeyAction.previous:
-        _submitOrTraverse(TextInputAction.previous);
+        _submitOrTraverse(KeyAction.previous);
         break;
 
       case KeyAction.switchLanguage:
@@ -486,23 +618,68 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     }
   }
 
-  void _submitOrTraverse(TextInputAction inputAction) {
+  void _submitOrTraverse(KeyAction action) {
     if (widget.standalone) {
-      _inputControl?.performAction(inputAction);
+      final inputAction = _textInputActionForKeyAction(action);
+      if (inputAction != null) {
+        _inputControl?.performAction(inputAction);
+      } else {
+        _inputControl?.submit();
+      }
       return;
     }
 
-    _scope?.submit();
+    _scope?.submit(action);
 
-    switch (inputAction) {
-      case TextInputAction.next:
+    switch (action) {
+      case KeyAction.next:
         FocusScope.of(context).nextFocus();
         break;
-      case TextInputAction.previous:
+      case KeyAction.previous:
         FocusScope.of(context).previousFocus();
         break;
       default:
         break;
+    }
+  }
+
+  KeyAction _keyActionForSubmitKey(KeyAction action) {
+    if (action != KeyAction.done && action != KeyAction.enter) {
+      return action;
+    }
+
+    switch (_effectiveInputAction) {
+      case TextInputAction.go:
+        return KeyAction.go;
+      case TextInputAction.search:
+        return KeyAction.search;
+      case TextInputAction.send:
+        return KeyAction.send;
+      case TextInputAction.next:
+        return KeyAction.next;
+      case TextInputAction.previous:
+        return KeyAction.previous;
+      default:
+        return KeyAction.done;
+    }
+  }
+
+  TextInputAction? _textInputActionForKeyAction(KeyAction action) {
+    switch (action) {
+      case KeyAction.done:
+        return TextInputAction.done;
+      case KeyAction.go:
+        return TextInputAction.go;
+      case KeyAction.search:
+        return TextInputAction.search;
+      case KeyAction.send:
+        return TextInputAction.send;
+      case KeyAction.next:
+        return TextInputAction.next;
+      case KeyAction.previous:
+        return TextInputAction.previous;
+      default:
+        return null;
     }
   }
 
@@ -585,6 +762,8 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
                     inputAction: _effectiveInputAction,
                     languageCode:
                         KeyboardLayoutProvider.instance.currentLanguageCode,
+                    canOpenLanguagePicker: _canSwitchLanguages,
+                    onSpaceLongPress: _showLanguagePicker,
                     onPressed: _onKeyPressed,
                   );
                 }).toList(),
@@ -624,6 +803,8 @@ class _KeyWidget extends StatefulWidget {
     required this.layoutStage,
     required this.inputAction,
     required this.languageCode,
+    required this.canOpenLanguagePicker,
+    required this.onSpaceLongPress,
     required this.onPressed,
   });
 
@@ -637,6 +818,8 @@ class _KeyWidget extends StatefulWidget {
   final LayoutStage layoutStage;
   final TextInputAction inputAction;
   final String languageCode;
+  final bool canOpenLanguagePicker;
+  final ValueChanged<Offset> onSpaceLongPress;
   final void Function(VirtualKey) onPressed;
 
   @override
@@ -722,6 +905,36 @@ class _KeyWidgetState extends State<_KeyWidget> {
     widget.onPressed(widget.virtualKey);
   }
 
+  void _requestSpaceLanguagePicker([Offset? globalPosition]) {
+    if (!widget.canOpenLanguagePicker ||
+        widget.virtualKey.action != KeyAction.space) {
+      return;
+    }
+
+    final renderBox = context.findRenderObject() as RenderBox?;
+    final resolvedPosition = globalPosition ??
+        (renderBox != null
+            ? renderBox.localToGlobal(
+                Offset(renderBox.size.width / 2, renderBox.size.height / 2),
+              )
+            : Offset.zero);
+
+    widget.onSpaceLongPress(resolvedPosition);
+  }
+
+  void _handleLongPressStart(LongPressStartDetails details) {
+    if (widget.virtualKey.action == KeyAction.backSpace) {
+      _startRepeat();
+      return;
+    }
+
+    _requestSpaceLanguagePicker(details.globalPosition);
+  }
+
+  void _handleSecondaryTapDown(TapDownDetails details) {
+    _requestSpaceLanguagePicker(details.globalPosition);
+  }
+
   @override
   Widget build(BuildContext context) {
     final key = widget.virtualKey;
@@ -742,6 +955,10 @@ class _KeyWidgetState extends State<_KeyWidget> {
         value: _semanticValue(),
         hint: _semanticHint(),
         onTap: _activateKey,
+        onLongPress: widget.canOpenLanguagePicker &&
+                widget.virtualKey.action == KeyAction.space
+            ? _requestSpaceLanguagePicker
+            : null,
         child: Container(
           margin: EdgeInsets.symmetric(
             vertical: widget.theme.verticalGap / 2,
@@ -754,9 +971,10 @@ class _KeyWidgetState extends State<_KeyWidget> {
           child: Material(
             color: Colors.transparent,
             child: GestureDetector(
-              onLongPressStart: (_) => _startRepeat(),
+              onLongPressStart: _handleLongPressStart,
               onLongPressEnd: (_) => _stopRepeat(),
               onLongPressCancel: _stopRepeat,
+              onSecondaryTapDown: _handleSecondaryTapDown,
               child: InkWell(
                 splashColor: widget.theme.splashColor ?? VkpColors.splashColor,
                 onTap: _activateKey,
@@ -882,7 +1100,9 @@ class _KeyWidgetState extends State<_KeyWidget> {
             ? 'Turns caps lock on.'
             : 'Turns uppercase on for the next character.';
       case KeyAction.space:
-        return 'Inserts a space.';
+        return widget.canOpenLanguagePicker
+            ? 'Inserts a space. Long press to switch language.'
+            : 'Inserts a space.';
       case KeyAction.symbols:
         return widget.layoutStage == LayoutStage.primary
             ? 'Switches to the symbols keyboard.'

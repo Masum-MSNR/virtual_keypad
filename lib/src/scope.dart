@@ -52,7 +52,7 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
   bool Function()? _deleteSelectionCallback;
   (int, int)? Function()? _getSelectionCallback;
   VoidCallback? _clearSelectionCallback;
-  VoidCallback? _onSubmitCallback;
+  ValueChanged<KeyAction>? _onSubmitCallback;
 
   /// The currently active (focused) text field's controller.
   VirtualKeypadController? get activeController => _activeController;
@@ -99,7 +99,7 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
   }
 
   /// Sets the callback for when the submit/done action is triggered.
-  void setOnSubmitCallback(VoidCallback? callback) {
+  void setOnSubmitCallback(ValueChanged<KeyAction>? callback) {
     _onSubmitCallback = callback;
   }
 
@@ -184,8 +184,27 @@ class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
   }
 
   /// Triggers the submit/done action for the active text field.
-  void submit() {
-    _onSubmitCallback?.call();
+  void submit([KeyAction? action]) {
+    _onSubmitCallback?.call(
+      action ?? _keyActionForInputAction(_activeInputAction),
+    );
+  }
+
+  KeyAction _keyActionForInputAction(TextInputAction inputAction) {
+    switch (inputAction) {
+      case TextInputAction.go:
+        return KeyAction.go;
+      case TextInputAction.search:
+        return KeyAction.search;
+      case TextInputAction.send:
+        return KeyAction.send;
+      case TextInputAction.next:
+        return KeyAction.next;
+      case TextInputAction.previous:
+        return KeyAction.previous;
+      default:
+        return KeyAction.done;
+    }
   }
 
   @override
