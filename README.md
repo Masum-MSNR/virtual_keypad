@@ -137,14 +137,54 @@ VirtualKeypadStandaloneScope(
 
 > Fields outside the scope won't trigger this keyboard.
 
+### Floating Mode (draggable and additive)
+
+Use `VirtualKeypadFloating` when you want the same keyboard behavior in a movable floating panel instead of an inline widget:
+
+```dart
+VirtualKeypadFloating(
+  standalone: true,
+  width: 360,
+  height: 280,
+  borderRadius: 20,
+  theme: VirtualKeypadTheme.dark,
+  child: Column(
+    children: [
+      TextField(controller: controller),
+    ],
+  ),
+)
+```
+
+`VirtualKeypadFloating` supports the same keyboard theming as `VirtualKeypad`, plus floating-specific panel configuration such as `width`, `height`, and `borderRadius`.
+
+For scoped usage, keep `VirtualKeypadScope` exactly as-is and place `VirtualKeypadFloating` inside the scope:
+
+```dart
+VirtualKeypadScope(
+  child: VirtualKeypadFloating(
+    width: 360,
+    child: Column(
+      children: [
+        VirtualKeypadTextField(controller: controller),
+      ],
+    ),
+  ),
+)
+```
+
+> Floating mode is additive. Existing `VirtualKeypad()` and `VirtualKeypad(standalone: true)` usage stays unchanged.
+
 ### Which Mode Should You Use?
 
 | Mode | Best For | Use These Widgets |
 |------|----------|-------------------|
 | Standalone | Fast integration with existing `TextField` / `TextFormField` UIs | `TextField` + `VirtualKeypad(standalone: true)` |
+| Floating | Draggable overlay-style keyboards that should stay above the UI | `VirtualKeypadFloating(...)` |
 | Scoped | Full control over submit handling, focus-driven layout changes, and system keyboard blocking | `VirtualKeypadScope` + `VirtualKeypadTextField` + `VirtualKeypad()` |
 
 Choose standalone mode when you want a Flutter virtual keyboard or keypad to drop into an existing form with minimal refactoring.
+Choose floating mode when you need that same keyboard behavior in a draggable panel for kiosk, desktop, POS, or multitasking layouts.
 Choose scoped mode when you need predictable focus routing, custom submit handling, secure input behavior, or tighter control for complex form, kiosk, or authentication flows.
 
 ### Scope Mode (full control)

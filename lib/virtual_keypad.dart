@@ -44,6 +44,7 @@
 /// ## Key Components
 ///
 /// - [VirtualKeypad] - Customizable on-screen keyboard widget
+/// - [VirtualKeypadFloating] - Floating host for draggable keyboard overlays
 /// - [VirtualKeypadScope] - Manages keyboard-to-textfield connections (scope mode)
 /// - [VirtualKeypadStandaloneScope] - Restricts standalone keyboard to a widget subtree
 /// - [VirtualKeypadTextField] - Text field optimized for virtual keyboard input (scope mode)
@@ -70,5 +71,6 @@ export 'src/standalone_input_control.dart';
 export 'src/standalone_scope.dart';
 export 'src/theme.dart';
 export 'src/widgets/keyboard.dart';
+export 'src/widgets/floating_keyboard.dart';
 export 'src/widgets/text_field.dart';
 export 'src/layouts/layouts.dart';

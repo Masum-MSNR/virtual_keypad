@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:virtual_keypad_example/example_page_layout.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 class KeyboardPreviewExample extends StatefulWidget {
@@ -110,71 +111,91 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
       body: Column(
         children: [
           // Language switcher
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerLowest,
-              border: Border(
-                bottom: BorderSide(
+          ExampleConstrainedContent(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerLowest,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
                   color: colorScheme.outlineVariant.withValues(alpha: 0.3),
                 ),
               ),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.translate, size: 18, color: colorScheme.primary),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    initialValue: _currentLanguage,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 8,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: colorScheme.outlineVariant,
+              child: Row(
+                children: [
+                  Icon(Icons.translate, size: 18, color: colorScheme.primary),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      initialValue: _currentLanguage,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
                         ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: colorScheme.outlineVariant.withValues(
-                            alpha: 0.5,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: colorScheme.outlineVariant,
                           ),
                         ),
-                      ),
-                      isDense: true,
-                    ),
-                    items: _languages.map((lang) {
-                      return DropdownMenuItem(
-                        value: lang.$1,
-                        child: Text(
-                          '${lang.$3} ${lang.$2}',
-                          style: const TextStyle(fontSize: 14),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: colorScheme.outlineVariant.withValues(
+                              alpha: 0.5,
+                            ),
+                          ),
                         ),
-                      );
-                    }).toList(),
-                    onChanged: (code) {
-                      if (code != null) _switchLanguage(code);
-                    },
+                        isDense: true,
+                      ),
+                      items: _languages.map((lang) {
+                        return DropdownMenuItem(
+                          value: lang.$1,
+                          child: Text(
+                            '${lang.$3} ${lang.$2}',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (code) {
+                        if (code != null) _switchLanguage(code);
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 
           // All layouts list
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-              itemCount: sections.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 16),
-              itemBuilder: (context, index) {
-                final section = sections[index];
-                return _LayoutPreview(section: section);
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final horizontalPadding = constraints.maxWidth < 600
+                    ? 16.0
+                    : 24.0;
+
+                return ListView.separated(
+                  padding: EdgeInsets.fromLTRB(
+                    horizontalPadding,
+                    12,
+                    horizontalPadding,
+                    24,
+                  ),
+                  itemCount: sections.length,
+                  separatorBuilder: (_, _) => const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    final section = sections[index];
+                    return Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 760),
+                        child: _LayoutPreview(section: section),
+                      ),
+                    );
+                  },
+                );
               },
             ),
           ),
@@ -205,102 +226,110 @@ class _LayoutPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final layout = section.layout;
-    final theme = VirtualKeypadTheme.light;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final colorScheme = Theme.of(context).colorScheme;
+        final layout = section.layout;
+        final theme = VirtualKeypadTheme.light;
+        final availableWidth = constraints.maxWidth;
+        final totalFlex = layout
+            .map((row) => row.fold(0.0, (sum, key) => sum + key.flex))
+            .reduce(max);
+        final maxCols = layout.map((row) => row.length).reduce(max);
 
-    final screenWidth = MediaQuery.of(context).size.width - 32; // padding
-    final totalFlex = layout
-        .map((row) => row.fold(0.0, (sum, key) => sum + key.flex))
-        .reduce(max);
-    final maxCols = layout.map((row) => row.length).reduce(max);
+        final usedWidth = (maxCols + 1) * theme.horizontalGap;
+        final baseKeyWidth = (availableWidth - usedWidth) / totalFlex;
+        const keyHeight = 42.0;
 
-    final usedWidth = (maxCols + 1) * theme.horizontalGap;
-    final baseKeyWidth = (screenWidth - usedWidth) / totalFlex;
-    const keyHeight = 42.0;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Header
-        Row(
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(section.icon, size: 16, color: colorScheme.primary),
-            const SizedBox(width: 6),
-            Text(
-              section.type,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: colorScheme.onSurface,
-              ),
+            // Header
+            Row(
+              children: [
+                Icon(section.icon, size: 16, color: colorScheme.primary),
+                const SizedBox(width: 6),
+                Text(
+                  section.type,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    section.stage,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 6),
+            const SizedBox(height: 6),
+            // Rendered layout
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              width: availableWidth,
               decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
+                color: theme.backgroundColor,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                section.stage,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onPrimaryContainer,
-                ),
+              padding: EdgeInsets.symmetric(
+                vertical: theme.verticalGap / 2,
+                horizontal: theme.horizontalGap / 2,
+              ),
+              child: Column(
+                children: layout.map((row) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: theme.verticalGap / 2,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: row.map((key) {
+                        final isAction = key.isAction;
+                        final w =
+                            baseKeyWidth * key.flex +
+                            (key.flex - 1) * theme.horizontalGap;
+
+                        return Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: theme.horizontalGap / 2,
+                          ),
+                          height: keyHeight,
+                          width: w,
+                          decoration: isAction
+                              ? theme.actionKeyDecoration
+                              : theme.keyDecoration,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: _buildKeyLabel(key, theme),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
           ],
-        ),
-        const SizedBox(height: 6),
-        // Rendered layout
-        Container(
-          width: screenWidth,
-          decoration: BoxDecoration(
-            color: theme.backgroundColor,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: EdgeInsets.symmetric(
-            vertical: theme.verticalGap / 2,
-            horizontal: theme.horizontalGap / 2,
-          ),
-          child: Column(
-            children: layout.map((row) {
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: theme.verticalGap / 2),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: row.map((key) {
-                    final isAction = key.isAction;
-                    final w =
-                        baseKeyWidth * key.flex +
-                        (key.flex - 1) * theme.horizontalGap;
-
-                    return Container(
-                      margin: EdgeInsets.symmetric(
-                        horizontal: theme.horizontalGap / 2,
-                      ),
-                      height: keyHeight,
-                      width: w,
-                      decoration: isAction
-                          ? theme.actionKeyDecoration
-                          : theme.keyDecoration,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: _buildKeyLabel(key, theme),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 

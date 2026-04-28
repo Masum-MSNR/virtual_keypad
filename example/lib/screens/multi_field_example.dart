@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:virtual_keypad_example/example_page_layout.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 const _kGradientStart = Color(0xFFfa709a);
@@ -74,8 +75,9 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
                   builder: (context, _) {
                     final filled = _filledCount;
                     final done = _stepsDone;
-                    return SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+                    return ExampleScrollableContent(
+                      topPadding: 20,
+                      bottomPadding: 24,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [

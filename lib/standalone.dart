@@ -7,6 +7,7 @@
 /// ## Included Surface
 ///
 /// - [VirtualKeypad] for the keyboard widget itself
+/// - [VirtualKeypadFloating] for a draggable floating keyboard host
 /// - [VirtualKeypadStandaloneScope] to limit standalone behavior to a subtree
 /// - [StandaloneInputControl] for advanced text-input interception use cases
 /// - Layout and theming types needed for custom standalone keyboards
@@ -18,6 +19,7 @@ export 'src/models.dart';
 export 'src/theme.dart';
 export 'src/standalone_input_control.dart';
 export 'src/standalone_scope.dart';
+export 'src/widgets/floating_keyboard.dart';
 export 'src/widgets/keyboard.dart';
 export 'src/layouts/layouts.dart'
     show

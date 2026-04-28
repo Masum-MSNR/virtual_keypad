@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:virtual_keypad_example/example_page_layout.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 class StandaloneExample extends StatefulWidget {
@@ -49,8 +50,9 @@ class _StandaloneExampleState extends State<StandaloneExample> {
       body: Column(
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+            child: ExampleScrollableContent(
+              topPadding: 20,
+              bottomPadding: 100,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -233,7 +235,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 100),
                 ],
               ),
             ),

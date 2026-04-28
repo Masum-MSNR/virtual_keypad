@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:virtual_keypad_example/example_page_layout.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 class CustomThemeExample extends StatefulWidget {
@@ -108,7 +109,7 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
             body: Column(
               children: [
                 Expanded(
-                  child: Padding(
+                  child: ExampleConstrainedContent(
                     padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                     child: Column(
                       children: [

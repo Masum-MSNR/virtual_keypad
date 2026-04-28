@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:virtual_keypad_example/example_page_layout.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 class LanguageSwitchingExample extends StatefulWidget {
@@ -93,7 +94,7 @@ class _LanguageSwitchingExampleState extends State<LanguageSwitchingExample> {
         body: Column(
           children: [
             Expanded(
-              child: Padding(
+              child: ExampleConstrainedContent(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:virtual_keypad_example/example_page_layout.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 class PinPadExample extends StatefulWidget {
@@ -155,143 +156,139 @@ class _PinPadExampleState extends State<PinPadExample>
         body: Column(
           children: [
             Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Lock icon in gradient circle
-                      AnimatedBuilder(
-                        animation: _lockController,
-                        builder: (context, _) {
-                          return Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: _showSuccess
-                                  ? const LinearGradient(
-                                      colors: [
-                                        Color(0xFF43A047),
-                                        Color(0xFF66BB6A),
-                                      ],
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    )
-                                  : _gradient,
-                              boxShadow: [
-                                BoxShadow(
-                                  color:
-                                      (_showSuccess
-                                              ? const Color(0xFF43A047)
-                                              : const Color(0xFFf5576c))
-                                          .withValues(alpha: 0.45),
-                                  blurRadius: 24,
-                                  spreadRadius: 2,
-                                ),
-                              ],
-                            ),
-                            child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 350),
-                              transitionBuilder: (child, animation) {
-                                return ScaleTransition(
-                                  scale: animation,
-                                  child: child,
-                                );
-                              },
-                              child: Icon(
-                                _showSuccess
-                                    ? Icons.lock_open_rounded
-                                    : Icons.lock_rounded,
-                                key: ValueKey(_showSuccess),
-                                color: Colors.white,
-                                size: 36,
+              child: ExampleScrollableContent(
+                topPadding: 24,
+                bottomPadding: 24,
+                alignment: Alignment.center,
+                maxWidth: 520,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Lock icon in gradient circle
+                    AnimatedBuilder(
+                      animation: _lockController,
+                      builder: (context, _) {
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: _showSuccess
+                                ? const LinearGradient(
+                                    colors: [
+                                      Color(0xFF43A047),
+                                      Color(0xFF66BB6A),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  )
+                                : _gradient,
+                            boxShadow: [
+                              BoxShadow(
+                                color:
+                                    (_showSuccess
+                                            ? const Color(0xFF43A047)
+                                            : const Color(0xFFf5576c))
+                                        .withValues(alpha: 0.45),
+                                blurRadius: 24,
+                                spreadRadius: 2,
                               ),
+                            ],
+                          ),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 350),
+                            transitionBuilder: (child, animation) {
+                              return ScaleTransition(
+                                scale: animation,
+                                child: child,
+                              );
+                            },
+                            child: Icon(
+                              _showSuccess
+                                  ? Icons.lock_open_rounded
+                                  : Icons.lock_rounded,
+                              key: ValueKey(_showSuccess),
+                              color: Colors.white,
+                              size: 36,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Title
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: Text(
+                        _showSuccess ? 'Unlocked!' : 'Enter PIN',
+                        key: ValueKey(_showSuccess),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: _showSuccess ? const Color(0xFF43A047) : null,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: Text(
+                        _showSuccess
+                            ? 'Access granted'
+                            : 'Enter your $_pinLength-digit PIN',
+                        key: ValueKey<String>(
+                          _showSuccess ? 'granted' : 'enter',
+                        ),
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withValues(alpha: 0.45),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // PIN dots with shake
+                    AnimatedBuilder(
+                      animation: _shakeAnimation,
+                      builder: (context, child) {
+                        return Transform.translate(
+                          offset: Offset(_shakeAnimation.value, 0),
+                          child: child,
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(_pinLength, (index) {
+                          final isFilled = index < enteredLength;
+                          final isActive =
+                              index == enteredLength && !_showSuccess;
+                          return _PinDot(
+                            isFilled: isFilled,
+                            isActive: isActive,
+                            isSuccess: _showSuccess,
+                            pulseAnimation: _pulseAnimation,
+                            outlineColor: colorScheme.outline.withValues(
+                              alpha: 0.35,
                             ),
                           );
-                        },
+                        }),
                       ),
-                      const SizedBox(height: 20),
+                    ),
+                    const SizedBox(height: 20),
 
-                      // Title
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 200),
-                        child: Text(
-                          _showSuccess ? 'Unlocked!' : 'Enter PIN',
-                          key: ValueKey(_showSuccess),
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: _showSuccess
-                                    ? const Color(0xFF43A047)
-                                    : null,
-                              ),
+                    // Hidden text field
+                    SizedBox(
+                      height: 0,
+                      child: Opacity(
+                        opacity: 0,
+                        child: VirtualKeypadTextField(
+                          controller: _controller,
+                          maxLength: _pinLength,
+                          autofocus: true,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 200),
-                        child: Text(
-                          _showSuccess
-                              ? 'Access granted'
-                              : 'Enter your $_pinLength-digit PIN',
-                          key: ValueKey<String>(
-                            _showSuccess ? 'granted' : 'enter',
-                          ),
-                          style: TextStyle(
-                            color: colorScheme.onSurface.withValues(
-                              alpha: 0.45,
-                            ),
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-
-                      // PIN dots with shake
-                      AnimatedBuilder(
-                        animation: _shakeAnimation,
-                        builder: (context, child) {
-                          return Transform.translate(
-                            offset: Offset(_shakeAnimation.value, 0),
-                            child: child,
-                          );
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(_pinLength, (index) {
-                            final isFilled = index < enteredLength;
-                            final isActive =
-                                index == enteredLength && !_showSuccess;
-                            return _PinDot(
-                              isFilled: isFilled,
-                              isActive: isActive,
-                              isSuccess: _showSuccess,
-                              pulseAnimation: _pulseAnimation,
-                              outlineColor: colorScheme.outline.withValues(
-                                alpha: 0.35,
-                              ),
-                            );
-                          }),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Hidden text field
-                      SizedBox(
-                        height: 0,
-                        child: Opacity(
-                          opacity: 0,
-                          child: VirtualKeypadTextField(
-                            controller: _controller,
-                            maxLength: _pinLength,
-                            autofocus: true,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

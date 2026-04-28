@@ -2,7 +2,7 @@
 ///
 /// Import this library when you want the scoped widget workflow:
 /// [VirtualKeypadScope], [VirtualKeypadTextField], [VirtualKeypadController],
-/// and [VirtualKeypad].
+/// [VirtualKeypad], and [VirtualKeypadFloating].
 ///
 /// This library is useful when you want tighter focus routing, input-action
 /// callbacks, system keyboard blocking, and widget-level customization without

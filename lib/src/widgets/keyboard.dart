@@ -55,6 +55,7 @@ class VirtualKeypad extends StatefulWidget {
     this.customLayout,
     this.hideWhenUnfocused = false,
     this.standalone = false,
+    this.onVisibilityChanged,
     this.animationDuration = const Duration(milliseconds: 200),
     this.animationCurve = Curves.easeInOut,
   })  : assert(
@@ -136,6 +137,14 @@ class VirtualKeypad extends StatefulWidget {
   /// ```
   final bool standalone;
 
+  /// Called when the keyboard's active visibility changes.
+  ///
+  /// The callback reports whether the keyboard currently has an active target
+  /// and should be shown for input. This is useful for custom containers such
+  /// as floating or docked hosts that need to react to focus changes while
+  /// keeping the keyboard mounted.
+  final ValueChanged<bool>? onVisibilityChanged;
+
   /// Duration for show/hide animation when [hideWhenUnfocused] is true.
   final Duration animationDuration;
 
@@ -156,6 +165,8 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   // Cache the layout when keyboard is visible for smooth close animation
   KeyboardLayout? _cachedLayout;
   bool _wasVisible = false;
+  bool? _reportedVisibility;
+  bool _languagePickerVisible = false;
 
   // Standalone mode state
   StandaloneInputControl? _inputControl;
@@ -393,41 +404,51 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   }
 
   Future<void> _showLanguagePicker(Offset globalPosition) async {
-    if (!_canSwitchLanguages) return;
+    if (!_canSwitchLanguages || _languagePickerVisible) return;
+
+    if (mounted) {
+      setState(() => _languagePickerVisible = true);
+    }
 
     final overlayBox =
         Overlay.of(context).context.findRenderObject() as RenderBox;
-    final selectedLanguage = await showMenu<String>(
-      context: context,
-      position: RelativeRect.fromLTRB(
-        globalPosition.dx,
-        globalPosition.dy,
-        overlayBox.size.width - globalPosition.dx,
-        overlayBox.size.height - globalPosition.dy,
-      ),
-      items: _availableLanguages.map((language) {
-        final isCurrent = language.code ==
-            KeyboardLayoutProvider.instance.currentLanguageCode;
+    try {
+      final selectedLanguage = await showMenu<String>(
+        context: context,
+        position: RelativeRect.fromLTRB(
+          globalPosition.dx,
+          globalPosition.dy,
+          overlayBox.size.width - globalPosition.dx,
+          overlayBox.size.height - globalPosition.dy,
+        ),
+        items: _availableLanguages.map((language) {
+          final isCurrent = language.code ==
+              KeyboardLayoutProvider.instance.currentLanguageCode;
 
-        return PopupMenuItem<String>(
-          value: language.code,
-          child: Row(
-            children: [
-              Expanded(child: Text(language.nativeName)),
-              if (isCurrent) const Icon(Icons.check, size: 16),
-            ],
-          ),
-        );
-      }).toList(),
-    );
-
-    if (selectedLanguage != null) {
-      final changed = KeyboardLayoutProvider.instance.setLanguage(
-        selectedLanguage,
-        userInitiated: true,
+          return PopupMenuItem<String>(
+            value: language.code,
+            child: Row(
+              children: [
+                Expanded(child: Text(language.nativeName)),
+                if (isCurrent) const Icon(Icons.check, size: 16),
+              ],
+            ),
+          );
+        }).toList(),
       );
-      if (changed) {
-        widget.onLanguageChanged?.call(selectedLanguage);
+
+      if (selectedLanguage != null) {
+        final changed = KeyboardLayoutProvider.instance.setLanguage(
+          selectedLanguage,
+          userInitiated: true,
+        );
+        if (changed) {
+          widget.onLanguageChanged?.call(selectedLanguage);
+        }
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _languagePickerVisible = false);
       }
     }
   }
@@ -701,12 +722,16 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     final bool shouldShowKeyboard;
     if (widget.standalone) {
       shouldShowKeyboard =
-          _standaloneVisible && (_inputControl?.isAttached ?? false);
+          (_standaloneVisible && (_inputControl?.isAttached ?? false)) ||
+              _languagePickerVisible;
     } else {
       final hasController = _scope?.hasActiveController ?? false;
       final allowPhysical = _scope?.allowPhysicalKeyboard ?? false;
-      shouldShowKeyboard = hasController && !allowPhysical;
+      shouldShowKeyboard =
+          (hasController && !allowPhysical) || _languagePickerVisible;
     }
+
+    _notifyVisibilityChanged(shouldShowKeyboard);
 
     final isVisible = !widget.hideWhenUnfocused || shouldShowKeyboard;
 
@@ -800,6 +825,18 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         child: keyboardContent,
       ),
     );
+  }
+
+  void _notifyVisibilityChanged(bool visible) {
+    if (widget.onVisibilityChanged == null || _reportedVisibility == visible) {
+      return;
+    }
+
+    _reportedVisibility = visible;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      widget.onVisibilityChanged?.call(visible);
+    });
   }
 }
 

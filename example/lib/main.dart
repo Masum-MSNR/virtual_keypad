@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
+import 'package:virtual_keypad_example/example_page_layout.dart';
 import 'screens/password_entry_example.dart';
 import 'screens/numeric_input_example.dart';
 import 'screens/multi_field_example.dart';
@@ -11,6 +12,7 @@ import 'screens/email_url_example.dart';
 import 'screens/pin_pad_example.dart';
 import 'screens/standalone_example.dart';
 import 'screens/keyboard_preview_example.dart';
+import 'screens/floating_keyboard_example.dart';
 
 void main() {
   initializeKeyboardLayouts();
@@ -83,100 +85,114 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        children: [
-          const _SectionHeader(
-            title: 'Developer Tools',
-            icon: Icons.developer_mode_rounded,
-          ),
-          _ExampleCard(
-            icon: Icons.preview_rounded,
-            title: 'Keyboard Preview',
-            subtitle: 'All types & languages side by side',
-            gradient: const [Color(0xFF6C63FF), Color(0xFF8B5CF6)],
-            onTap: () => _navigate(context, const KeyboardPreviewExample()),
-          ),
-          const SizedBox(height: 4),
-          const _SectionHeader(title: 'Input Types', icon: Icons.input_rounded),
-          _ExampleCard(
-            icon: Icons.dialpad_rounded,
-            title: 'Numeric Input',
-            subtitle: 'Amount entry with quick-fill chips',
-            gradient: const [Color(0xFF667eea), Color(0xFF764ba2)],
-            onTap: () => _navigate(context, const NumericInputExample()),
-          ),
-          _ExampleCard(
-            icon: Icons.pin_outlined,
-            title: 'PIN Pad',
-            subtitle: 'Custom layout with animated dots',
-            gradient: const [Color(0xFFf093fb), Color(0xFFf5576c)],
-            onTap: () => _navigate(context, const PinPadExample()),
-          ),
-          _ExampleCard(
-            icon: Icons.lock_rounded,
-            title: 'Password Entry',
-            subtitle: 'Login form with strength indicator',
-            gradient: const [Color(0xFF4facfe), Color(0xFF00f2fe)],
-            onTap: () => _navigate(context, const PasswordEntryExample()),
-          ),
-          _ExampleCard(
-            icon: Icons.alternate_email_rounded,
-            title: 'Email & URL',
-            subtitle: 'Adaptive keyboard per input type',
-            gradient: const [Color(0xFF43e97b), Color(0xFF38f9d7)],
-            onTap: () => _navigate(context, const EmailUrlExample()),
-          ),
-          const SizedBox(height: 4),
-          const _SectionHeader(
-            title: 'Forms & Text',
-            icon: Icons.edit_document,
-          ),
-          _ExampleCard(
-            icon: Icons.assignment_outlined,
-            title: 'Multi-Field Form',
-            subtitle: 'Step-style registration with progress',
-            gradient: const [Color(0xFFfa709a), Color(0xFFfee140)],
-            onTap: () => _navigate(context, const MultiFieldExample()),
-          ),
-          _ExampleCard(
-            icon: Icons.edit_note_rounded,
-            title: 'Multiline Text',
-            subtitle: 'Note editor with word & line count',
-            gradient: const [Color(0xFFa18cd1), Color(0xFFfbc2eb)],
-            onTap: () => _navigate(context, const MultilineTextExample()),
-          ),
-          const SizedBox(height: 4),
-          const _SectionHeader(title: 'Features', icon: Icons.stars_rounded),
-          _ExampleCard(
-            icon: Icons.bolt_rounded,
-            title: 'Standalone Mode',
-            subtitle: 'Works with any Flutter TextField',
-            gradient: const [Color(0xFFFF6B6B), Color(0xFFee5a24)],
-            onTap: () => _navigate(context, const StandaloneExample()),
-          ),
-          _ExampleCard(
-            icon: Icons.keyboard_hide_rounded,
-            title: 'Auto-Hide Keyboard',
-            subtitle: 'Focus-aware animated transitions',
-            gradient: const [Color(0xFF30cfd0), Color(0xFF330867)],
-            onTap: () => _navigate(context, const AutoHideKeyboardExample()),
-          ),
-          _ExampleCard(
-            icon: Icons.palette_rounded,
-            title: 'Custom Themes',
-            subtitle: '4 gorgeous keyboard themes',
-            gradient: const [Color(0xFFf6d365), Color(0xFFfda085)],
-            onTap: () => _navigate(context, const CustomThemeExample()),
-          ),
-          _ExampleCard(
-            icon: Icons.translate_rounded,
-            title: 'Language Switching',
-            subtitle: 'Toggle English ↔ Bengali ↔ French',
-            gradient: const [Color(0xFF89f7fe), Color(0xFF66a6ff)],
-            onTap: () => _navigate(context, const LanguageSwitchingExample()),
-          ),
-        ],
+      body: ExampleScrollableContent(
+        topPadding: 12,
+        bottomPadding: 24,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const _SectionHeader(
+              title: 'Developer Tools',
+              icon: Icons.developer_mode_rounded,
+            ),
+            _ExampleCard(
+              icon: Icons.preview_rounded,
+              title: 'Keyboard Preview',
+              subtitle: 'All types & languages side by side',
+              gradient: const [Color(0xFF6C63FF), Color(0xFF8B5CF6)],
+              onTap: () => _navigate(context, const KeyboardPreviewExample()),
+            ),
+            const SizedBox(height: 4),
+            const _SectionHeader(
+              title: 'Input Types',
+              icon: Icons.input_rounded,
+            ),
+            _ExampleCard(
+              icon: Icons.dialpad_rounded,
+              title: 'Numeric Input',
+              subtitle: 'Amount entry with quick-fill chips',
+              gradient: const [Color(0xFF667eea), Color(0xFF764ba2)],
+              onTap: () => _navigate(context, const NumericInputExample()),
+            ),
+            _ExampleCard(
+              icon: Icons.pin_outlined,
+              title: 'PIN Pad',
+              subtitle: 'Custom layout with animated dots',
+              gradient: const [Color(0xFFf093fb), Color(0xFFf5576c)],
+              onTap: () => _navigate(context, const PinPadExample()),
+            ),
+            _ExampleCard(
+              icon: Icons.lock_rounded,
+              title: 'Password Entry',
+              subtitle: 'Login form with strength indicator',
+              gradient: const [Color(0xFF4facfe), Color(0xFF00f2fe)],
+              onTap: () => _navigate(context, const PasswordEntryExample()),
+            ),
+            _ExampleCard(
+              icon: Icons.alternate_email_rounded,
+              title: 'Email & URL',
+              subtitle: 'Adaptive keyboard per input type',
+              gradient: const [Color(0xFF43e97b), Color(0xFF38f9d7)],
+              onTap: () => _navigate(context, const EmailUrlExample()),
+            ),
+            const SizedBox(height: 4),
+            const _SectionHeader(
+              title: 'Forms & Text',
+              icon: Icons.edit_document,
+            ),
+            _ExampleCard(
+              icon: Icons.assignment_outlined,
+              title: 'Multi-Field Form',
+              subtitle: 'Step-style registration with progress',
+              gradient: const [Color(0xFFfa709a), Color(0xFFfee140)],
+              onTap: () => _navigate(context, const MultiFieldExample()),
+            ),
+            _ExampleCard(
+              icon: Icons.edit_note_rounded,
+              title: 'Multiline Text',
+              subtitle: 'Note editor with word & line count',
+              gradient: const [Color(0xFFa18cd1), Color(0xFFfbc2eb)],
+              onTap: () => _navigate(context, const MultilineTextExample()),
+            ),
+            const SizedBox(height: 4),
+            const _SectionHeader(title: 'Features', icon: Icons.stars_rounded),
+            _ExampleCard(
+              icon: Icons.bolt_rounded,
+              title: 'Standalone Mode',
+              subtitle: 'Works with any Flutter TextField',
+              gradient: const [Color(0xFFFF6B6B), Color(0xFFee5a24)],
+              onTap: () => _navigate(context, const StandaloneExample()),
+            ),
+            _ExampleCard(
+              icon: Icons.open_with_rounded,
+              title: 'Floating Keyboard',
+              subtitle: 'Draggable overlay for standalone and scoped flows',
+              gradient: const [Color(0xFF0ba360), Color(0xFF3cba92)],
+              onTap: () => _navigate(context, const FloatingKeyboardExample()),
+            ),
+            _ExampleCard(
+              icon: Icons.keyboard_hide_rounded,
+              title: 'Auto-Hide Keyboard',
+              subtitle: 'Focus-aware animated transitions',
+              gradient: const [Color(0xFF30cfd0), Color(0xFF330867)],
+              onTap: () => _navigate(context, const AutoHideKeyboardExample()),
+            ),
+            _ExampleCard(
+              icon: Icons.palette_rounded,
+              title: 'Custom Themes',
+              subtitle: '4 gorgeous keyboard themes',
+              gradient: const [Color(0xFFf6d365), Color(0xFFfda085)],
+              onTap: () => _navigate(context, const CustomThemeExample()),
+            ),
+            _ExampleCard(
+              icon: Icons.translate_rounded,
+              title: 'Language Switching',
+              subtitle: 'Toggle English ↔ Bengali ↔ French',
+              gradient: const [Color(0xFF89f7fe), Color(0xFF66a6ff)],
+              onTap: () => _navigate(context, const LanguageSwitchingExample()),
+            ),
+          ],
+        ),
       ),
     );
   }

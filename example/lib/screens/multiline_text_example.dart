@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:virtual_keypad_example/example_page_layout.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 class MultilineTextExample extends StatefulWidget {
@@ -80,7 +81,7 @@ class _MultilineTextExampleState extends State<MultilineTextExample> {
         body: Column(
           children: [
             Expanded(
-              child: Padding(
+              child: ExampleConstrainedContent(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

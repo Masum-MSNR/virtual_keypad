@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:virtual_keypad_example/example_page_layout.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 class NumericInputExample extends StatefulWidget {
@@ -50,12 +51,12 @@ class _NumericInputExampleState extends State<NumericInputExample> {
         body: Column(
           children: [
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: ExampleScrollableContent(
+                topPadding: 28,
+                bottomPadding: 16,
+                alignment: Alignment.topCenter,
                 child: Column(
                   children: [
-                    const SizedBox(height: 28),
-
                     // Wallet illustration
                     Container(
                       width: 80,

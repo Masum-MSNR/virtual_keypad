@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:virtual_keypad_example/example_page_layout.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
 class EmailUrlExample extends StatefulWidget {
@@ -55,176 +56,169 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
         body: Column(
           children: [
             Expanded(
-              child: GestureDetector(
+              child: ExampleScrollableContent(
                 onTap: () => FocusScope.of(context).unfocus(),
-                behavior: HitTestBehavior.opaque,
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Email section
-                      _InputCard(
-                        icon: Icons.alternate_email_rounded,
-                        gradientColors: const [
-                          Color(0xFF43e97b),
-                          Color(0xFF38f9d7),
-                        ],
-                        title: 'Email Address',
-                        description:
-                            'Shows @ and . on the primary keyboard row',
-                        isValid: _isValidEmail(_emailController.text),
-                        field: VirtualKeypadTextField(
-                          controller: _emailController,
-                          keyboardType: KeyboardType.emailAddress,
-                          onChanged: (_) => setState(() {}),
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            hintText: 'user@example.com',
-                            hintStyle: TextStyle(
-                              color: colorScheme.onSurface.withValues(
-                                alpha: 0.25,
-                              ),
+                topPadding: 20,
+                bottomPadding: 100,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Email section
+                    _InputCard(
+                      icon: Icons.alternate_email_rounded,
+                      gradientColors: const [
+                        Color(0xFF43e97b),
+                        Color(0xFF38f9d7),
+                      ],
+                      title: 'Email Address',
+                      description: 'Shows @ and . on the primary keyboard row',
+                      isValid: _isValidEmail(_emailController.text),
+                      field: VirtualKeypadTextField(
+                        controller: _emailController,
+                        keyboardType: KeyboardType.emailAddress,
+                        onChanged: (_) => setState(() {}),
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          hintText: 'user@example.com',
+                          hintStyle: TextStyle(
+                            color: colorScheme.onSurface.withValues(
+                              alpha: 0.25,
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: const BorderSide(
-                                color: Color(0xFF43e97b),
-                                width: 2,
-                              ),
-                            ),
-                            prefixIcon: const Icon(Icons.email_outlined),
-                            suffixIcon: _isValidEmail(_emailController.text)
-                                ? const _AnimatedCheckmark()
-                                : null,
-                            filled: true,
-                            fillColor: colorScheme.surfaceContainerLowest,
                           ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF43e97b),
+                              width: 2,
+                            ),
+                          ),
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          suffixIcon: _isValidEmail(_emailController.text)
+                              ? const _AnimatedCheckmark()
+                              : null,
+                          filled: true,
+                          fillColor: colorScheme.surfaceContainerLowest,
                         ),
                       ),
+                    ),
 
-                      // Separator
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      Colors.transparent,
-                                      colorScheme.outlineVariant.withValues(
-                                        alpha: 0.4,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                              ),
-                              child: Icon(
-                                Icons.more_horiz_rounded,
-                                size: 18,
-                                color: colorScheme.outlineVariant.withValues(
-                                  alpha: 0.5,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [
-                                      colorScheme.outlineVariant.withValues(
-                                        alpha: 0.4,
-                                      ),
-                                      Colors.transparent,
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // URL section
-                      _InputCard(
-                        icon: Icons.link_rounded,
-                        gradientColors: const [
-                          Color(0xFF4facfe),
-                          Color(0xFF00f2fe),
-                        ],
-                        title: 'URL Input',
-                        description:
-                            'Shows /, :, and . with a Go action button',
-                        isValid: _isValidUrl(_urlController.text),
-                        field: VirtualKeypadTextField(
-                          controller: _urlController,
-                          keyboardType: KeyboardType.url,
-                          onChanged: (_) => setState(() {}),
-                          decoration: InputDecoration(
-                            labelText: 'Website',
-                            hintText: 'https://example.com',
-                            hintStyle: TextStyle(
-                              color: colorScheme.onSurface.withValues(
-                                alpha: 0.25,
-                              ),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: const BorderSide(
-                                color: Color(0xFF4facfe),
-                                width: 2,
-                              ),
-                            ),
-                            prefixIcon: const Icon(Icons.language_rounded),
-                            suffixIcon: _isValidUrl(_urlController.text)
-                                ? const _AnimatedCheckmark()
-                                : null,
-                            filled: true,
-                            fillColor: colorScheme.surfaceContainerLowest,
-                          ),
-                          onSubmitted: (_) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.open_in_browser,
-                                      color: Colors.white,
-                                      size: 18,
+                    // Separator
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              height: 1,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.transparent,
+                                    colorScheme.outlineVariant.withValues(
+                                      alpha: 0.4,
                                     ),
-                                    const SizedBox(width: 10),
-                                    Text('Opening ${_urlController.text}'),
                                   ],
                                 ),
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            child: Icon(
+                              Icons.more_horiz_rounded,
+                              size: 18,
+                              color: colorScheme.outlineVariant.withValues(
+                                alpha: 0.5,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Container(
+                              height: 1,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    colorScheme.outlineVariant.withValues(
+                                      alpha: 0.4,
+                                    ),
+                                    Colors.transparent,
+                                  ],
                                 ),
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 100),
-                    ],
-                  ),
+                    ),
+
+                    // URL section
+                    _InputCard(
+                      icon: Icons.link_rounded,
+                      gradientColors: const [
+                        Color(0xFF4facfe),
+                        Color(0xFF00f2fe),
+                      ],
+                      title: 'URL Input',
+                      description: 'Shows /, :, and . with a Go action button',
+                      isValid: _isValidUrl(_urlController.text),
+                      field: VirtualKeypadTextField(
+                        controller: _urlController,
+                        keyboardType: KeyboardType.url,
+                        onChanged: (_) => setState(() {}),
+                        decoration: InputDecoration(
+                          labelText: 'Website',
+                          hintText: 'https://example.com',
+                          hintStyle: TextStyle(
+                            color: colorScheme.onSurface.withValues(
+                              alpha: 0.25,
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: const BorderSide(
+                              color: Color(0xFF4facfe),
+                              width: 2,
+                            ),
+                          ),
+                          prefixIcon: const Icon(Icons.language_rounded),
+                          suffixIcon: _isValidUrl(_urlController.text)
+                              ? const _AnimatedCheckmark()
+                              : null,
+                          filled: true,
+                          fillColor: colorScheme.surfaceContainerLowest,
+                        ),
+                        onSubmitted: (_) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.open_in_browser,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text('Opening ${_urlController.text}'),
+                                ],
+                              ),
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

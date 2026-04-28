@@ -587,6 +587,330 @@ void main() {
     });
   });
 
+  group('VirtualKeypadFloating', () {
+    testWidgets('supports standalone TextField input in floating mode', (
+      tester,
+    ) async {
+      final controller = TextEditingController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox.expand(
+              child: VirtualKeypadFloating(
+                standalone: true,
+                width: 280,
+                type: KeyboardType.custom,
+                customLayout: [
+                  [VirtualKey.character(text: '1')],
+                ],
+                child: Column(
+                  children: [TextField(controller: controller)],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('1'));
+      await tester.pumpAndSettle();
+
+      expect(controller.text, '1');
+    });
+
+    testWidgets('supports scoped VirtualKeypadTextField input in floating mode',
+        (
+      tester,
+    ) async {
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox.expand(
+              child: VirtualKeypadScope(
+                child: VirtualKeypadFloating(
+                  width: 280,
+                  type: KeyboardType.custom,
+                  customLayout: [
+                    [VirtualKey.character(text: 'A')],
+                  ],
+                  child: Column(
+                    children: [
+                      VirtualKeypadTextField(controller: controller),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('A'));
+      await tester.pumpAndSettle();
+
+      expect(controller.text, 'A');
+    });
+
+    testWidgets('dock controls reposition the floating panel', (tester) async {
+      final focusNode = FocusNode();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox.expand(
+              child: VirtualKeypadFloating(
+                standalone: true,
+                width: 280,
+                type: KeyboardType.custom,
+                customLayout: [
+                  [VirtualKey.character(text: '1')],
+                ],
+                child: Column(
+                  children: [TextField(focusNode: focusNode)],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+
+      final panelFinder = find.byKey(
+        const ValueKey('virtual_keypad_floating_panel'),
+      );
+      final initialTop = tester.getTopLeft(panelFinder).dy;
+
+      await tester.tap(find.byTooltip('Dock to top'));
+      await tester.pumpAndSettle();
+      final topDocked = tester.getTopLeft(panelFinder).dy;
+
+      await tester.tap(find.byTooltip('Dock to bottom'));
+      await tester.pumpAndSettle();
+      final bottomDocked = tester.getTopLeft(panelFinder).dy;
+
+      expect(topDocked, lessThan(initialTop));
+      expect(bottomDocked, greaterThan(topDocked));
+      expect(focusNode.hasFocus, isTrue);
+    });
+
+    testWidgets('close button unfocuses the active field', (tester) async {
+      final focusNode = FocusNode();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox.expand(
+              child: VirtualKeypadFloating(
+                standalone: true,
+                width: 280,
+                type: KeyboardType.custom,
+                customLayout: [
+                  [VirtualKey.character(text: '1')],
+                ],
+                child: Column(
+                  children: [TextField(focusNode: focusNode)],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+      expect(focusNode.hasFocus, isTrue);
+
+      await tester.tap(find.byTooltip('Close keyboard'));
+      await tester.pumpAndSettle();
+
+      expect(focusNode.hasFocus, isFalse);
+    });
+
+    testWidgets('persistent mode stays visible until controller hides it', (
+      tester,
+    ) async {
+      final controller = VirtualKeypadFloatingController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox.expand(
+              child: VirtualKeypadFloating(
+                controller: controller,
+                visibilityMode: VirtualKeypadFloatingVisibilityMode.persistent,
+                standalone: true,
+                width: 280,
+                type: KeyboardType.custom,
+                customLayout: [
+                  [VirtualKey.character(text: '1')],
+                ],
+                child: const Column(
+                  children: [TextField()],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final panelFinder = find.byKey(
+        const ValueKey('virtual_keypad_floating_panel'),
+      );
+      final ignorePointerFinder = find.ancestor(
+        of: panelFinder,
+        matching: find.byType(IgnorePointer),
+      );
+
+      expect(
+        tester.widget<IgnorePointer>(ignorePointerFinder.first).ignoring,
+        isTrue,
+      );
+
+      controller.show();
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.widget<IgnorePointer>(ignorePointerFinder.first).ignoring,
+        isFalse,
+      );
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('1'));
+      await tester.pumpAndSettle();
+
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.widget<IgnorePointer>(ignorePointerFinder.first).ignoring,
+        isFalse,
+      );
+
+      controller.hide();
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.widget<IgnorePointer>(ignorePointerFinder.first).ignoring,
+        isTrue,
+      );
+    });
+
+    testWidgets('applies floating panel theme and border radius', (
+      tester,
+    ) async {
+      const customTheme = VirtualKeypadTheme(
+        backgroundColor: Color(0xFF102A43),
+        keyColor: Color(0xFF1F4068),
+        actionKeyColor: Color(0xFF3E7CB1),
+        keyTextColor: Colors.white,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SizedBox.expand(
+              child: VirtualKeypadFloating(
+                standalone: true,
+                width: 280,
+                borderRadius: 26,
+                theme: customTheme,
+                type: KeyboardType.custom,
+                customLayout: [
+                  [VirtualKey.character(text: '1')],
+                ],
+                child: const Column(
+                  children: [TextField()],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+
+      final panelFinder = find.byKey(
+        const ValueKey('virtual_keypad_floating_panel'),
+      );
+      final panelMaterial = tester.widget<Material>(panelFinder);
+      final clipFinder = find.ancestor(
+        of: panelFinder,
+        matching: find.byType(ClipRRect),
+      );
+      final clip = tester.widget<ClipRRect>(clipFinder.first);
+      final borderRadius = clip.borderRadius as BorderRadius;
+
+      expect(panelMaterial.color, customTheme.backgroundColor);
+      expect(borderRadius.topLeft.x, 26);
+      expect(borderRadius.bottomRight.x, 26);
+    });
+
+    testWidgets('language picker keeps floating keyboard visible', (
+      tester,
+    ) async {
+      final provider = KeyboardLayoutProvider.instance;
+      addTearDown(provider.reset);
+      provider.reset();
+      initializeKeyboardLayouts();
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SizedBox.expand(
+              child: VirtualKeypadFloating(
+                standalone: true,
+                width: 320,
+                availableLanguages: ['en', 'bn'],
+                child: Column(
+                  children: [TextField()],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+
+      final panelFinder = find.byKey(
+        const ValueKey('virtual_keypad_floating_panel'),
+      );
+      final ignorePointerFinder = find.ancestor(
+        of: panelFinder,
+        matching: find.byType(IgnorePointer),
+      );
+
+      expect(tester.widget<IgnorePointer>(ignorePointerFinder.first).ignoring,
+          isFalse);
+
+      await tester.longPress(find.text('space'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('বাংলা'), findsOneWidget);
+      expect(tester.widget<IgnorePointer>(ignorePointerFinder.first).ignoring,
+          isFalse);
+
+      await tester.tap(find.text('বাংলা'));
+      await tester.pumpAndSettle();
+
+      expect(provider.currentLanguageCode, 'bn');
+      expect(tester.widget<IgnorePointer>(ignorePointerFinder.first).ignoring,
+          isFalse);
+    });
+  });
+
   group('VirtualKeypad configuration', () {
     final customLayout = <KeyRow>[
       [VirtualKey.character(text: '1')],
