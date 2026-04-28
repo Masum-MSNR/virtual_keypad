@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
@@ -66,6 +67,61 @@ void main() {
       controller.deleteBackward();
       expect(controller.text, 'Hello ');
       expect(controller.cursorPosition, 6);
+    });
+
+    test('deleteForward removes character after cursor', () {
+      final controller = VirtualKeypadController(text: 'Hello');
+      controller.cursorPosition = 1;
+
+      controller.deleteForward();
+
+      expect(controller.text, 'Hllo');
+      expect(controller.cursorPosition, 1);
+    });
+
+    test('cursor position falls back to text length for range selection', () {
+      final controller = VirtualKeypadController(text: 'Hello');
+      controller.selection = const TextSelection(
+        baseOffset: 1,
+        extentOffset: 4,
+      );
+
+      expect(controller.cursorPosition, 5);
+    });
+
+    test('cursor helpers clamp and move within bounds', () {
+      final controller = VirtualKeypadController(text: 'Hello');
+
+      controller.cursorPosition = -10;
+      expect(controller.cursorPosition, 0);
+
+      controller.moveCursorRight();
+      expect(controller.cursorPosition, 1);
+
+      controller.moveCursorToEnd();
+      expect(controller.cursorPosition, 5);
+
+      controller.moveCursorLeft();
+      expect(controller.cursorPosition, 4);
+
+      controller.moveCursorToStart();
+      expect(controller.cursorPosition, 0);
+
+      controller.cursorPosition = 99;
+      expect(controller.cursorPosition, 5);
+    });
+
+    test('range helpers ignore invalid bounds and insert at collapsed range', () {
+      final controller = VirtualKeypadController(text: 'Hello');
+
+      controller.deleteRange(-1, 2);
+      controller.deleteRange(4, 2);
+      controller.replaceRange(10, 11, '!');
+      expect(controller.text, 'Hello');
+
+      controller.replaceRange(2, 2, 'yy');
+      expect(controller.text, 'Heyyllo');
+      expect(controller.cursorPosition, 4);
     });
   });
 
@@ -145,6 +201,133 @@ void main() {
       final key = VirtualKey.action(action: KeyAction.backSpace);
       expect(key.isAction, true);
       expect(key.isCharacter, false);
+    });
+
+    test('action keys return the correct insert text', () {
+      expect(
+        VirtualKey.action(action: KeyAction.space).getInsertText(),
+        ' ',
+      );
+      expect(
+        VirtualKey.action(action: KeyAction.enter).getInsertText(),
+        '\n',
+      );
+      expect(
+        VirtualKey.action(action: KeyAction.done).getInsertText(),
+        '',
+      );
+      expect(
+        VirtualKey.action(action: KeyAction.shift).getDisplayText(),
+        '',
+      );
+    });
+  });
+
+  group('VirtualKeypadTheme', () {
+    test('copyWith overrides selected fields and preserves others', () {
+      const baseTheme = VirtualKeypadTheme.dark;
+
+      final updatedTheme = baseTheme.copyWith(
+        keyTextSize: 28,
+        keyBorderRadius: 14,
+        keyShadow: false,
+      );
+
+      expect(updatedTheme.backgroundColor, baseTheme.backgroundColor);
+      expect(updatedTheme.keyTextSize, 28);
+      expect(updatedTheme.keyBorderRadius, 14);
+      expect(updatedTheme.keyShadow, isFalse);
+      expect(updatedTheme.keyColor, baseTheme.keyColor);
+    });
+
+    test('decorations omit shadows when disabled', () {
+      const theme = VirtualKeypadTheme(keyShadow: false);
+
+      expect(theme.keyDecoration.boxShadow, isNull);
+      expect(theme.actionKeyDecoration.boxShadow, isNull);
+    });
+  });
+
+  group('VirtualKeypadTextField configuration', () {
+    testWidgets('defaults to virtual-only input with enforced max length', (
+      tester,
+    ) async {
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: VirtualKeypadTextField(
+                controller: controller,
+                keyboardType: KeyboardType.emailAddress,
+                maxLength: 4,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final textField = tester.widget<TextField>(find.byType(TextField));
+
+      expect(textField.readOnly, isTrue);
+      expect(textField.showCursor, isTrue);
+      expect(textField.keyboardType, TextInputType.none);
+      expect(textField.maxLengthEnforcement, MaxLengthEnforcement.enforced);
+    });
+
+    testWidgets('allows physical keyboard and maps Flutter keyboard type', (
+      tester,
+    ) async {
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: VirtualKeypadTextField(
+                controller: controller,
+                allowPhysicalKeyboard: true,
+                keyboardType: KeyboardType.numberDecimal,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final textField = tester.widget<TextField>(find.byType(TextField));
+
+      expect(textField.readOnly, isFalse);
+      expect(
+        textField.keyboardType,
+        const TextInputType.numberWithOptions(decimal: true),
+      );
+      expect(textField.maxLengthEnforcement, MaxLengthEnforcement.none);
+    });
+
+    testWidgets('explicit readOnly hides the cursor', (tester) async {
+      final controller = VirtualKeypadController(text: 'secret');
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: VirtualKeypadTextField(
+                controller: controller,
+                allowPhysicalKeyboard: true,
+                readOnly: true,
+                keyboardType: KeyboardType.name,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final textField = tester.widget<TextField>(find.byType(TextField));
+
+      expect(textField.readOnly, isTrue);
+      expect(textField.showCursor, isFalse);
+      expect(textField.keyboardType, TextInputType.name);
     });
   });
 

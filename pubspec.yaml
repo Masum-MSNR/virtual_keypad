@@ -12,6 +12,14 @@ topics:
   - multilingual-keyboard
   - flutter-keyboard
 
+screenshots:
+  - description: "On-screen keyboard demo with themed text input in a Flutter form."
+    path: images/gif1.gif
+  - description: "Numeric and action-key input flow for keypad-style Flutter screens."
+    path: images/gif2.gif
+  - description: "Multi-field virtual keyboard workflow across common Flutter input use cases."
+    path: images/gif3.gif
+
 environment:
   sdk: ^3.0.0
   flutter: ">=3.0.0"
