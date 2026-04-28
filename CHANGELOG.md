@@ -1,3 +1,21 @@
+## 0.8.0
+
+### Added
+* Opt-in emoji keyboard support on supported text layouts with `enableEmojiKey`
+* Emoji-first presentation support with `showEmojiKeyboardInitially` for inline previews and always-visible emoji surfaces
+* Embedded emoji browser powered by `emoji_picker_flutter` with categories, recents, and a keyboard-style action row
+
+### Improved
+* Example app screens now expose emoji across standalone, scoped, floating, and text-oriented demos
+* Keyboard Preview example now includes a view-only emoji keyboard preview that follows the selected language
+* Package metadata updated to describe emoji support in the release
+
+### Fixed
+* Inline keyboard width now respects parent constraints instead of assuming full screen width, avoiding overflow in constrained layouts
+* Standalone emoji mode no longer collapses unexpectedly while the emoji browser is active
+
+---
+
 ## 0.7.0
 
 ### Added

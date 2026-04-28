@@ -166,7 +166,8 @@ class HomePage extends StatelessWidget {
             _ExampleCard(
               icon: Icons.open_with_rounded,
               title: 'Floating Keyboard',
-              subtitle: 'Draggable overlay for standalone and scoped flows',
+              subtitle:
+                  'Draggable overlay with the new emoji browser and scoped search',
               gradient: const [Color(0xFF0ba360), Color(0xFF3cba92)],
               onTap: () => _navigate(context, const FloatingKeyboardExample()),
             ),

@@ -280,7 +280,10 @@ class _CustomThemeExampleState extends State<CustomThemeExample> {
                     ),
                   ),
                 ),
-                VirtualKeypad(theme: current.theme),
+                VirtualKeypad(
+                  theme: current.theme,
+                  enableEmojiKey: true,
+                ),
               ],
             ),
           ),

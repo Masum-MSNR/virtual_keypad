@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart'
+  as emoji_picker;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../controller.dart';
 import '../enums.dart';
 import '../layouts/keyboard_language.dart';
 import '../layouts/keyboard_layout_provider.dart';
@@ -12,6 +15,29 @@ import '../scope.dart';
 import '../standalone_input_control.dart';
 import '../standalone_scope.dart';
 import '../theme.dart';
+
+String _lettersLabelForLanguageCode(String languageCode) {
+  switch (languageCode) {
+    case 'bn':
+      return 'কখ';
+    case 'hi':
+      return 'अआ';
+    case 'ar':
+      return 'أب';
+    case 'ru':
+      return 'АБВ';
+    case 'ja':
+      return 'あ';
+    case 'ko':
+      return '가나';
+    case 'zh':
+      return '中';
+    case 'th':
+      return 'กข';
+    default:
+      return 'ABC';
+  }
+}
 
 /// A customizable virtual on-screen keyboard widget.
 ///
@@ -53,6 +79,8 @@ class VirtualKeypad extends StatefulWidget {
     this.initialLanguage,
     this.onLanguageChanged,
     this.customLayout,
+    this.enableEmojiKey = false,
+    this.showEmojiKeyboardInitially = false,
     this.hideWhenUnfocused = false,
     this.standalone = false,
     this.onVisibilityChanged,
@@ -118,6 +146,18 @@ class VirtualKeypad extends StatefulWidget {
   /// Custom layout when [type] is [KeyboardType.custom].
   final KeyboardLayout? customLayout;
 
+  /// When true, text-style keyboards expose an emoji page.
+  ///
+  /// This is only applied to built-in text, email, URL, password, and name
+  /// layouts. Number, phone, and custom layouts are unchanged.
+  final bool enableEmojiKey;
+
+  /// When true, supported text layouts open on the emoji page by default.
+  ///
+  /// If the active field switches to a layout that does not support emoji,
+  /// the keyboard falls back to the normal primary page.
+  final bool showEmojiKeyboardInitially;
+
   /// When true, hides the keyboard with animation when no text field is focused.
   final bool hideWhenUnfocused;
 
@@ -157,10 +197,14 @@ class VirtualKeypad extends StatefulWidget {
 
 class _VirtualKeypadState extends State<VirtualKeypad> {
   LayoutStage _layoutStage = LayoutStage.primary;
+  LayoutStage _layoutStageBeforeEmoji = LayoutStage.primary;
   bool _shift = false;
   bool _capsLock = false;
   VirtualKeypadScopeState? _scope;
   KeyboardType? _lastKeyboardType;
+  TextInputAction _lastScopedInputAction = TextInputAction.done;
+  VirtualKeypadController? _lastScopedController;
+  int? _lastScopedMaxLength;
 
   // Cache the layout when keyboard is visible for smooth close animation
   KeyboardLayout? _cachedLayout;
@@ -177,6 +221,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     super.initState();
     KeyboardLayoutProvider.instance.addListener(_onLanguageChanged);
     _syncLanguageConfiguration();
+    _resetLayoutStage();
     if (widget.standalone) {
       _initStandalone();
     }
@@ -258,7 +303,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     if (!mounted || _inputControl == null) return;
     final newType = _inputControl!.keyboardType;
     if (_lastKeyboardType != newType) {
-      _layoutStage = LayoutStage.primary;
+      _resetLayoutStage();
       _shift = false;
       _capsLock = false;
       _lastKeyboardType = newType;
@@ -287,6 +332,11 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     if (widget.availableLanguages != oldWidget.availableLanguages ||
         widget.initialLanguage != oldWidget.initialLanguage) {
       _syncLanguageConfiguration();
+    }
+    if (widget.enableEmojiKey != oldWidget.enableEmojiKey ||
+        widget.showEmojiKeyboardInitially !=
+            oldWidget.showEmojiKeyboardInitially) {
+      _resetLayoutStage();
     }
     if (widget.standalone != oldWidget.standalone) {
       if (widget.standalone) {
@@ -323,11 +373,15 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       if (isVisible) {
         final newType = _effectiveKeyboardType;
         if (_lastKeyboardType != newType) {
-          _layoutStage = LayoutStage.primary;
+          _resetLayoutStage();
           _shift = false;
           _capsLock = false;
           _lastKeyboardType = newType;
         }
+        _lastScopedController = _scope?.activeController;
+        _lastScopedMaxLength = _scope?.activeMaxLength;
+        _lastScopedInputAction =
+            _scope?.activeInputAction ?? TextInputAction.done;
         // Cache the current layout while visible
         _cachedLayout = _currentLayout;
         _wasVisible = true;
@@ -341,11 +395,30 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     _syncLanguageConfiguration();
     if (!mounted) return;
 
-    _layoutStage = LayoutStage.primary;
+    _resetLayoutStage();
     _shift = false;
     _capsLock = false;
     _cachedLayout = _currentLayout;
     setState(() {});
+  }
+
+  void _resetLayoutStage() {
+    _layoutStage = _preferredInitialLayoutStage;
+    _layoutStageBeforeEmoji = LayoutStage.primary;
+  }
+
+  LayoutStage get _preferredInitialLayoutStage {
+    if (widget.showEmojiKeyboardInitially && _supportsEmojiLayout) {
+      return LayoutStage.emoji;
+    }
+    return LayoutStage.primary;
+  }
+
+  void _setLayoutStage(LayoutStage stage) {
+    _layoutStage = stage;
+    if (stage != LayoutStage.emoji) {
+      _layoutStageBeforeEmoji = stage;
+    }
   }
 
   List<KeyboardLanguage> get _availableLanguages {
@@ -458,7 +531,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     if (widget.standalone && _inputControl != null) {
       return _inputControl!.keyboardType;
     }
-    return _scope?.activeKeyboardType ?? KeyboardType.text;
+    return _scope?.activeKeyboardType ?? _lastKeyboardType ?? KeyboardType.text;
   }
 
   TextInputAction get _effectiveInputAction {
@@ -466,7 +539,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     if (widget.standalone && _inputControl != null) {
       return _inputControl!.inputAction;
     }
-    return _scope?.activeInputAction ?? TextInputAction.done;
+    return _scope?.activeInputAction ?? _lastScopedInputAction;
   }
 
   KeyboardLayout get _currentLayout {
@@ -479,7 +552,67 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     final inputType = _toInputType(type);
     final layoutSet = KeyboardLayoutProvider.instance.getLayouts(inputType);
 
-    return _getLayoutForStage(layoutSet);
+    return _decorateLayoutWithEmojiToggle(_getLayoutForStage(layoutSet));
+  }
+
+  bool get _supportsEmojiLayout {
+    if (!widget.enableEmojiKey) return false;
+
+    switch (_effectiveKeyboardType) {
+      case KeyboardType.text:
+      case KeyboardType.multiline:
+      case KeyboardType.emailAddress:
+      case KeyboardType.url:
+      case KeyboardType.visiblePassword:
+      case KeyboardType.name:
+      case KeyboardType.streetAddress:
+        return true;
+      case KeyboardType.number:
+      case KeyboardType.numberSigned:
+      case KeyboardType.numberDecimal:
+      case KeyboardType.phone:
+      case KeyboardType.datetime:
+      case KeyboardType.none:
+      case KeyboardType.custom:
+        return false;
+    }
+  }
+
+  KeyboardLayout _decorateLayoutWithEmojiToggle(KeyboardLayout layout) {
+    if (!_supportsEmojiLayout || layout.isEmpty) {
+      return layout;
+    }
+
+    final bottomRow = layout.last;
+    if (bottomRow.any((key) => key.action == KeyAction.emoji)) {
+      return layout;
+    }
+
+    final spaceIndex = bottomRow.indexWhere(
+      (key) => key.action == KeyAction.space,
+    );
+    if (spaceIndex == -1) {
+      return layout;
+    }
+
+    final updatedRow = List<VirtualKey>.from(bottomRow);
+    final spaceKey = updatedRow[spaceIndex];
+    updatedRow[spaceIndex] = VirtualKey.action(
+      action: KeyAction.space,
+      text: spaceKey.text,
+      label: spaceKey.label,
+      altLabel: spaceKey.altLabel,
+      flex: max(1.0, spaceKey.flex - 1),
+    );
+    updatedRow.insert(
+      spaceIndex,
+      VirtualKey.action(action: KeyAction.emoji, flex: 1),
+    );
+
+    return [
+      ...layout.take(layout.length - 1),
+      updatedRow,
+    ];
   }
 
   KeyboardInputType _toInputType(KeyboardType type) {
@@ -516,7 +649,248 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         return layoutSet.secondary ?? layoutSet.primary;
       case LayoutStage.tertiary:
         return layoutSet.tertiary ?? layoutSet.secondary ?? layoutSet.primary;
+      case LayoutStage.emoji:
+        return layoutSet.primary;
     }
+  }
+
+  bool get _isEmojiPickerVisible =>
+      _layoutStage == LayoutStage.emoji && _supportsEmojiLayout;
+
+  void _insertTextIntoTarget(String text) {
+    if (widget.standalone) {
+      _inputControl?.insertText(text);
+      return;
+    }
+
+    if (_scope?.activeController != null) {
+      _scope?.insertText(text);
+      return;
+    }
+
+    final controller = _lastScopedController;
+    if (controller == null) return;
+    if (_wouldExceedLastScopedMaxLength(controller, text)) return;
+    controller.insertText(text);
+  }
+
+  bool _wouldExceedLastScopedMaxLength(
+    VirtualKeypadController controller,
+    String text,
+  ) {
+    final maxLength = _lastScopedMaxLength;
+    if (maxLength == null) return false;
+
+    final selection = controller.selection;
+    final selectedLength = selection.isValid && !selection.isCollapsed
+        ? (selection.end - selection.start).abs()
+        : 0;
+    final newLength = controller.text.length - selectedLength + text.length;
+    return newLength > maxLength;
+  }
+
+  void _deleteBackwardFromTarget() {
+    if (widget.standalone) {
+      _inputControl?.deleteBackward();
+      return;
+    }
+
+    if (_scope?.activeController != null) {
+      _scope?.deleteBackward();
+      return;
+    }
+
+    _lastScopedController?.deleteBackward();
+  }
+
+  String get _targetText {
+    if (widget.standalone) {
+      return _inputControl?.currentValue.text ?? '';
+    }
+    return _scope?.activeController?.text ?? _lastScopedController?.text ?? '';
+  }
+
+  void _notifyEmojiSelection(String emoji) {
+    final virtualKey = VirtualKey.character(text: emoji);
+    widget.onKeyPressed?.call(virtualKey);
+    widget.onKeyPressedWithText?.call(virtualKey, emoji);
+  }
+
+  Locale get _emojiLocale {
+    switch (KeyboardLayoutProvider.instance.currentLanguageCode) {
+      case 'de':
+      case 'en':
+      case 'es':
+      case 'fr':
+      case 'hi':
+      case 'ja':
+      case 'nl':
+      case 'pt':
+      case 'ru':
+      case 'zh':
+        return Locale(KeyboardLayoutProvider.instance.currentLanguageCode);
+      default:
+        return const Locale('en');
+    }
+  }
+
+  int _emojiColumnsForWidth(double width) {
+    if (width >= 900) return 12;
+    if (width >= 700) return 11;
+    if (width >= 520) return 9;
+    if (width >= 380) return 8;
+    return 7;
+  }
+
+  String get _emojiRestoreLabel {
+    final languageCode = KeyboardLayoutProvider.instance.currentLanguageCode;
+    return _layoutStageBeforeEmoji == LayoutStage.primary
+        ? _lettersLabelForLanguageCode(languageCode)
+        : '123';
+  }
+
+  bool get _enableEmojiSkinToneSelector => !widget.standalone;
+
+  Widget _buildEmojiPickerKeyboard(double width) {
+    final theme = widget.theme;
+
+    return Container(
+      width: width,
+      height: widget.height,
+      color: theme.backgroundColor,
+      child: emoji_picker.EmojiPicker(
+        onEmojiSelected: (_, emoji) {
+          _insertTextIntoTarget(emoji.emoji);
+          _notifyEmojiSelection(emoji.emoji);
+        },
+        config: emoji_picker.Config(
+          height: widget.height,
+          checkPlatformCompatibility: false,
+          locale: _emojiLocale,
+          customSearchIcon: Icon(
+            Icons.search,
+            size: theme.keyTextSize * 0.85,
+            color: theme.keyTextColor,
+          ),
+          emojiViewConfig: emoji_picker.EmojiViewConfig(
+            columns: _emojiColumnsForWidth(width),
+            emojiSizeMax: max(26, theme.keyTextSize + 8),
+            backgroundColor: theme.backgroundColor,
+            buttonMode: emoji_picker.ButtonMode.NONE,
+            gridPadding: EdgeInsets.symmetric(
+              horizontal: theme.horizontalGap,
+              vertical: theme.verticalGap / 2,
+            ),
+            noRecents: Center(
+              child: Text(
+                'Recent emoji will appear here',
+                style: TextStyle(
+                  fontSize: theme.keyTextSize * 0.65,
+                  color: theme.keyTextColor.withValues(alpha: 0.7),
+                ),
+              ),
+            ),
+          ),
+          categoryViewConfig: emoji_picker.CategoryViewConfig(
+            backgroundColor: theme.backgroundColor,
+            dividerColor: Colors.transparent,
+            initCategory: emoji_picker.Category.SMILEYS,
+            iconColor: theme.keyTextColor.withValues(alpha: 0.55),
+            iconColorSelected: theme.keyTextColor,
+            indicatorColor: theme.keyTextColor,
+            tabBarHeight: 40,
+            recentTabBehavior: emoji_picker.RecentTabBehavior.NONE,
+          ),
+          searchViewConfig: emoji_picker.SearchViewConfig(
+            backgroundColor: theme.keyColor,
+            buttonIconColor: theme.keyTextColor,
+            hintText: 'Search emoji',
+            hintTextStyle: TextStyle(
+              color: theme.keyTextColor.withValues(alpha: 0.55),
+              fontSize: theme.keyTextSize * 0.7,
+            ),
+            inputTextStyle: TextStyle(
+              color: theme.keyTextColor,
+              fontSize: theme.keyTextSize * 0.7,
+            ),
+          ),
+          skinToneConfig: emoji_picker.SkinToneConfig(
+            enabled: _enableEmojiSkinToneSelector,
+            dialogBackgroundColor: theme.keyColor,
+            indicatorColor: theme.keyTextColor.withValues(alpha: 0.35),
+          ),
+          bottomActionBarConfig: emoji_picker.BottomActionBarConfig(
+            enabled: true,
+            backgroundColor: theme.backgroundColor,
+            customBottomActionBar: (config, state, showSearchView) {
+              return _EmojiActionBar(
+                theme: theme,
+                restoreLabel: _emojiRestoreLabel,
+                showSearchButton: !widget.standalone,
+                onRestore: () => _handleAction(KeyAction.emoji),
+                onSearch: showSearchView,
+                onSpace: () => _handleAction(KeyAction.space),
+                onBackspace: () => _handleAction(KeyAction.backSpace),
+                onEnter: () => _handleAction(KeyAction.enter),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStandardKeyboard(double width, KeyboardLayout layout) {
+    final rows = layout.length;
+    final maxColumns = layout.map((row) => row.length).reduce(max);
+
+    final totalFlex = layout
+        .map((row) => row.fold(0.0, (sum, key) => sum + key.flex))
+        .reduce(max);
+
+    final usedHeight = (rows + 1) * widget.theme.verticalGap;
+    final keyHeight = (widget.height - usedHeight) / rows;
+    final usedWidth = (maxColumns + 1) * widget.theme.horizontalGap;
+    final baseKeyWidth = (width - usedWidth) / totalFlex;
+
+    return ExcludeFocus(
+      child: Container(
+        width: width,
+        height: widget.height,
+        color: widget.theme.backgroundColor,
+        padding: EdgeInsets.symmetric(
+          vertical: widget.theme.verticalGap / 2,
+          horizontal: widget.theme.horizontalGap / 2,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: layout.map((row) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: row.map((key) {
+                return _KeyWidget(
+                  key: ValueKey('${key.text ?? key.action}'),
+                  virtualKey: key,
+                  type: _effectiveKeyboardType,
+                  height: keyHeight,
+                  baseWidth: baseKeyWidth,
+                  theme: widget.theme,
+                  shift: _shift,
+                  capsLock: _capsLock,
+                  layoutStage: _layoutStage,
+                  inputAction: _effectiveInputAction,
+                  languageCode:
+                      KeyboardLayoutProvider.instance.currentLanguageCode,
+                  canOpenLanguagePicker: _canSwitchLanguages,
+                  onSpaceLongPress: _showLanguagePicker,
+                  onPressed: _onKeyPressed,
+                );
+              }).toList(),
+            );
+          }).toList(),
+        ),
+      ),
+    );
   }
 
   void _onKeyPressed(VirtualKey key) {
@@ -525,11 +899,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     if (key.isCharacter) {
       insertedText = key.getInsertText(shift: _shift, capsLock: _capsLock);
 
-      if (widget.standalone) {
-        _inputControl?.insertText(insertedText);
-      } else {
-        _scope?.insertText(insertedText);
-      }
+      _insertTextIntoTarget(insertedText);
 
       if (_shift && !_capsLock) {
         setState(() => _shift = false);
@@ -545,47 +915,25 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   void _handleAction(KeyAction action) {
     switch (action) {
       case KeyAction.backSpace:
-        if (widget.standalone) {
-          _inputControl?.deleteBackward();
-        } else {
-          _scope?.deleteBackward();
-        }
+        _deleteBackwardFromTarget();
         break;
 
       case KeyAction.enter:
         final inputAction = _effectiveInputAction;
         if (inputAction == TextInputAction.newline ||
             _effectiveKeyboardType == KeyboardType.multiline) {
-          if (widget.standalone) {
-            _inputControl?.insertText('\n');
-          } else {
-            _scope?.insertText('\n');
-          }
+          _insertTextIntoTarget('\n');
         } else {
           _submitOrTraverse(_keyActionForSubmitKey(action));
         }
         break;
 
       case KeyAction.space:
-        if (widget.standalone) {
-          _inputControl?.insertText(' ');
-          final text = _inputControl?.currentValue.text ?? '';
-          if (text.endsWith('. ') ||
-              text.endsWith('? ') ||
-              text.endsWith('! ')) {
-            if (!_shift && !_capsLock) {
-              setState(() => _shift = true);
-            }
-          }
-        } else {
-          _scope?.insertText(' ');
-          final text = _scope?.activeController?.text ?? '';
-          if (text.endsWith('. ') ||
-              text.endsWith('? ') ||
-              text.endsWith('! ')) {
-            if (!_shift && !_capsLock) {
-              setState(() => _shift = true);
-            }
+        _insertTextIntoTarget(' ');
+        final text = _targetText;
+        if (text.endsWith('. ') || text.endsWith('? ') || text.endsWith('! ')) {
+          if (!_shift && !_capsLock) {
+            setState(() => _shift = true);
           }
         }
         break;
@@ -605,10 +953,11 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
       case KeyAction.symbols:
         setState(() {
-          if (_layoutStage == LayoutStage.primary) {
-            _layoutStage = LayoutStage.secondary;
+          if (_layoutStage == LayoutStage.primary ||
+              _layoutStage == LayoutStage.emoji) {
+            _setLayoutStage(LayoutStage.secondary);
           } else {
-            _layoutStage = LayoutStage.primary;
+            _setLayoutStage(LayoutStage.primary);
           }
         });
         break;
@@ -616,9 +965,28 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       case KeyAction.symbolsAlt:
         setState(() {
           if (_layoutStage == LayoutStage.secondary) {
-            _layoutStage = LayoutStage.tertiary;
+            _setLayoutStage(LayoutStage.tertiary);
           } else {
-            _layoutStage = LayoutStage.secondary;
+            _setLayoutStage(LayoutStage.secondary);
+          }
+        });
+        break;
+
+      case KeyAction.emoji:
+        if (!_supportsEmojiLayout) break;
+
+        setState(() {
+          if (_layoutStage == LayoutStage.emoji) {
+            final restoredStage =
+                _layoutStageBeforeEmoji == LayoutStage.emoji
+                    ? LayoutStage.primary
+                    : _layoutStageBeforeEmoji;
+            _setLayoutStage(restoredStage);
+          } else {
+            _layoutStageBeforeEmoji = _layoutStage;
+            _layoutStage = LayoutStage.emoji;
+            _shift = false;
+            _capsLock = false;
           }
         });
         break;
@@ -720,15 +1088,19 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   @override
   Widget build(BuildContext context) {
     final bool shouldShowKeyboard;
+    final keepEmojiVisible = _isEmojiPickerVisible;
     if (widget.standalone) {
       shouldShowKeyboard =
           (_standaloneVisible && (_inputControl?.isAttached ?? false)) ||
+              keepEmojiVisible ||
               _languagePickerVisible;
     } else {
       final hasController = _scope?.hasActiveController ?? false;
       final allowPhysical = _scope?.allowPhysicalKeyboard ?? false;
       shouldShowKeyboard =
-          (hasController && !allowPhysical) || _languagePickerVisible;
+          (hasController && !allowPhysical) ||
+              _languagePickerVisible ||
+              keepEmojiVisible;
     }
 
     _notifyVisibilityChanged(shouldShowKeyboard);
@@ -758,72 +1130,35 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       _cachedLayout = null;
     }
 
-    final width = widget.width ?? MediaQuery.of(context).size.width;
-    final rows = layout.length;
-    final maxColumns = layout.map((row) => row.length).reduce(max);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth = constraints.hasBoundedWidth
+            ? constraints.maxWidth
+            : MediaQuery.of(context).size.width;
+        final width = widget.width != null
+            ? min(widget.width!, availableWidth)
+            : availableWidth;
 
-    final totalFlex = layout
-        .map((row) => row.fold(0.0, (sum, key) => sum + key.flex))
-        .reduce(max);
+        final keyboardContent = TextFieldTapRegion(
+          child: _isEmojiPickerVisible
+              ? _buildEmojiPickerKeyboard(width)
+              : _buildStandardKeyboard(width, layout),
+        );
 
-    final usedHeight = (rows + 1) * widget.theme.verticalGap;
-    final keyHeight = (widget.height - usedHeight) / rows;
-    final usedWidth = (maxColumns + 1) * widget.theme.horizontalGap;
-    final baseKeyWidth = (width - usedWidth) / totalFlex;
+        if (!widget.hideWhenUnfocused) {
+          return keyboardContent;
+        }
 
-    final keyboardContent = TextFieldTapRegion(
-      child: ExcludeFocus(
-        child: Container(
-          width: width,
-          height: widget.height,
-          color: widget.theme.backgroundColor,
-          padding: EdgeInsets.symmetric(
-            vertical: widget.theme.verticalGap / 2,
-            horizontal: widget.theme.horizontalGap / 2,
+        return ClipRect(
+          child: AnimatedAlign(
+            duration: widget.animationDuration,
+            curve: widget.animationCurve,
+            alignment: Alignment.topCenter,
+            heightFactor: isVisible ? 1.0 : 0.0,
+            child: keyboardContent,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: layout.map((row) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: row.map((key) {
-                  return _KeyWidget(
-                    key: ValueKey('${key.text ?? key.action}'),
-                    virtualKey: key,
-                    type: _effectiveKeyboardType,
-                    height: keyHeight,
-                    baseWidth: baseKeyWidth,
-                    theme: widget.theme,
-                    shift: _shift,
-                    capsLock: _capsLock,
-                    layoutStage: _layoutStage,
-                    inputAction: _effectiveInputAction,
-                    languageCode:
-                        KeyboardLayoutProvider.instance.currentLanguageCode,
-                    canOpenLanguagePicker: _canSwitchLanguages,
-                    onSpaceLongPress: _showLanguagePicker,
-                    onPressed: _onKeyPressed,
-                  );
-                }).toList(),
-              );
-            }).toList(),
-          ),
-        ),
-      ),
-    );
-
-    if (!widget.hideWhenUnfocused) {
-      return keyboardContent;
-    }
-
-    return ClipRect(
-      child: AnimatedAlign(
-        duration: widget.animationDuration,
-        curve: widget.animationCurve,
-        alignment: Alignment.topCenter,
-        heightFactor: isVisible ? 1.0 : 0.0,
-        child: keyboardContent,
-      ),
+        );
+      },
     );
   }
 
@@ -1078,13 +1413,18 @@ class _KeyWidgetState extends State<_KeyWidget> {
       case KeyAction.space:
         return 'Space';
       case KeyAction.symbols:
-        return widget.layoutStage == LayoutStage.primary
+        return widget.layoutStage == LayoutStage.primary ||
+                widget.layoutStage == LayoutStage.emoji
             ? 'Show symbols'
             : 'Show letters';
       case KeyAction.symbolsAlt:
         return widget.layoutStage == LayoutStage.secondary
             ? 'Show more symbols'
             : 'Show main symbols';
+      case KeyAction.emoji:
+        return widget.layoutStage == LayoutStage.emoji
+            ? 'Show letters'
+            : 'Show emoji';
       case KeyAction.done:
         return 'Done';
       case KeyAction.go:
@@ -1114,13 +1454,21 @@ class _KeyWidgetState extends State<_KeyWidget> {
         if (widget.capsLock) return 'Caps lock on';
         return widget.shift ? 'On' : 'Off';
       case KeyAction.symbols:
-        return widget.layoutStage == LayoutStage.primary
-            ? 'Letters keyboard'
-            : 'Symbols keyboard';
+        if (widget.layoutStage == LayoutStage.primary) {
+          return 'Letters keyboard';
+        }
+        if (widget.layoutStage == LayoutStage.emoji) {
+          return 'Emoji keyboard';
+        }
+        return 'Symbols keyboard';
       case KeyAction.symbolsAlt:
         return widget.layoutStage == LayoutStage.tertiary
             ? 'More symbols'
             : 'Main symbols';
+      case KeyAction.emoji:
+        return widget.layoutStage == LayoutStage.emoji
+            ? 'Emoji keyboard'
+            : null;
       default:
         return null;
     }
@@ -1154,13 +1502,18 @@ class _KeyWidgetState extends State<_KeyWidget> {
             ? 'Inserts a space. Long press to switch language.'
             : 'Inserts a space.';
       case KeyAction.symbols:
-        return widget.layoutStage == LayoutStage.primary
+        return widget.layoutStage == LayoutStage.primary ||
+                widget.layoutStage == LayoutStage.emoji
             ? 'Switches to the symbols keyboard.'
             : 'Switches back to letters.';
       case KeyAction.symbolsAlt:
         return widget.layoutStage == LayoutStage.secondary
             ? 'Shows more symbols.'
             : 'Returns to the main symbols page.';
+      case KeyAction.emoji:
+        return widget.layoutStage == LayoutStage.emoji
+            ? 'Returns to the previous keyboard.'
+            : 'Switches to the emoji keyboard.';
       case KeyAction.done:
         return 'Submits the current field.';
       case KeyAction.go:
@@ -1275,13 +1628,30 @@ class _KeyWidgetState extends State<_KeyWidget> {
 
       case KeyAction.symbols:
         return Text(
-          widget.layoutStage == LayoutStage.primary
+          widget.layoutStage == LayoutStage.primary ||
+                  widget.layoutStage == LayoutStage.emoji
               ? (widget.virtualKey.label ?? '123')
               : (widget.virtualKey.altLabel ?? _getLettersLabel()),
           style: TextStyle(
             fontSize: widget.theme.keyTextSize * 0.8,
             color: widget.theme.keyTextColor,
           ),
+        );
+
+      case KeyAction.emoji:
+        if (widget.layoutStage == LayoutStage.emoji) {
+          return Text(
+            widget.virtualKey.altLabel ?? _getLettersLabel(),
+            style: TextStyle(
+              fontSize: widget.theme.keyTextSize * 0.8,
+              color: widget.theme.keyTextColor,
+            ),
+          );
+        }
+        return Icon(
+          Icons.emoji_emotions_outlined,
+          size: widget.theme.keyTextSize,
+          color: widget.theme.keyTextColor,
         );
 
       case KeyAction.symbolsAlt:
@@ -1370,26 +1740,140 @@ class _KeyWidgetState extends State<_KeyWidget> {
   }
 
   String _getLettersLabel() {
-    switch (widget.languageCode) {
-      case 'bn':
-        return 'কখ';
-      case 'hi':
-        return 'अआ';
-      case 'ar':
-        return 'أب';
-      case 'ru':
-        return 'АБВ';
-      case 'ja':
-        return 'あ';
-      case 'ko':
-        return '가나';
-      case 'zh':
-        return '中';
-      case 'th':
-        return 'กข';
-      default:
-        return 'ABC';
-    }
+    return _lettersLabelForLanguageCode(widget.languageCode);
+  }
+}
+
+class _EmojiActionBar extends StatelessWidget {
+  const _EmojiActionBar({
+    required this.theme,
+    required this.restoreLabel,
+    required this.showSearchButton,
+    required this.onRestore,
+    required this.onSearch,
+    required this.onSpace,
+    required this.onBackspace,
+    required this.onEnter,
+  });
+
+  final VirtualKeypadTheme theme;
+  final String restoreLabel;
+  final bool showSearchButton;
+  final VoidCallback onRestore;
+  final VoidCallback onSearch;
+  final VoidCallback onSpace;
+  final VoidCallback onBackspace;
+  final VoidCallback onEnter;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: theme.backgroundColor,
+      padding: EdgeInsets.fromLTRB(
+        theme.horizontalGap,
+        theme.verticalGap / 2,
+        theme.horizontalGap,
+        theme.verticalGap,
+      ),
+      child: Row(
+        children: [
+          _EmojiActionButton(
+            theme: theme,
+            label: restoreLabel,
+            semanticLabel: 'Show letters',
+            onTap: onRestore,
+            flex: 1.2,
+          ),
+          if (showSearchButton)
+            _EmojiActionButton(
+              theme: theme,
+              icon: Icons.search,
+              semanticLabel: 'Search emoji',
+              onTap: onSearch,
+            ),
+          _EmojiActionButton(
+            theme: theme,
+            label: 'space',
+            semanticLabel: 'Space',
+            onTap: onSpace,
+            flex: 2.4,
+          ),
+          _EmojiActionButton(
+            theme: theme,
+            icon: Icons.backspace_outlined,
+            semanticLabel: 'Backspace',
+            onTap: onBackspace,
+          ),
+          _EmojiActionButton(
+            theme: theme,
+            icon: Icons.check,
+            semanticLabel: 'Done',
+            onTap: onEnter,
+            flex: 1.2,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmojiActionButton extends StatelessWidget {
+  const _EmojiActionButton({
+    required this.theme,
+    required this.semanticLabel,
+    required this.onTap,
+    this.label,
+    this.icon,
+    this.flex = 1,
+  });
+
+  final VirtualKeypadTheme theme;
+  final String semanticLabel;
+  final VoidCallback onTap;
+  final String? label;
+  final IconData? icon;
+  final double flex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: (flex * 10).round(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: theme.horizontalGap / 2),
+        child: Semantics(
+          button: true,
+          enabled: true,
+          label: semanticLabel,
+          child: Container(
+            height: 40,
+            decoration: theme.actionKeyDecoration,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                splashColor: theme.splashColor ?? VkpColors.splashColor,
+                borderRadius: BorderRadius.circular(theme.keyBorderRadius),
+                onTap: onTap,
+                child: Center(
+                  child: label != null
+                      ? Text(
+                          label!,
+                          style: TextStyle(
+                            fontSize: theme.keyTextSize * 0.68,
+                            color: theme.keyTextColor,
+                          ),
+                        )
+                      : Icon(
+                          icon,
+                          size: theme.keyTextSize * 0.9,
+                          color: theme.keyTextColor,
+                        ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

@@ -31,6 +31,7 @@ Built for kiosk apps, touchscreen and desktop input, PIN and password entry, num
 - 🔌 **Standalone Mode** - Works with any standard Flutter TextField or TextFormField
 - 🎯 **Standalone Scope** - Restrict keyboard to a widget subtree
 - 🔤 **Smart TextField** - Auto-adapts keyboard layout based on input type
+- 😀 **Emoji Support** - Opt-in emoji browser for supported text layouts
 - 🎨 **Fully Customizable** - Light, dark, or fully custom themes
 - 📱 **Cross-Platform** - Works on iOS, Android, Web, macOS, Windows, Linux
 - ✂️ **Full Editing** - Selection, copy/paste, cursor control
@@ -144,6 +145,7 @@ Use `VirtualKeypadFloating` when you want the same keyboard behavior in a movabl
 ```dart
 VirtualKeypadFloating(
   standalone: true,
+  enableEmojiKey: true,
   width: 360,
   height: 280,
   borderRadius: 20,
@@ -194,6 +196,31 @@ VirtualKeypadScope(
 ```
 
 > Floating mode is additive. Existing `VirtualKeypad()` and `VirtualKeypad(standalone: true)` usage stays unchanged.
+
+### Emoji Support
+
+Enable emoji on supported text layouts by passing `enableEmojiKey: true`:
+
+```dart
+VirtualKeypad(
+  standalone: true,
+  enableEmojiKey: true,
+)
+```
+
+That adds an emoji toggle on built-in text, multiline, email, URL, password, name, and street-address layouts.
+
+If you want an emoji-first surface, such as a preview card or always-visible dock, start directly on the emoji page:
+
+```dart
+VirtualKeypad(
+  hideWhenUnfocused: false,
+  enableEmojiKey: true,
+  showEmojiKeyboardInitially: true,
+)
+```
+
+`VirtualKeypadFloating` also supports emoji by passing `enableEmojiKey: true`.
 
 ### Which Mode Should You Use?
 

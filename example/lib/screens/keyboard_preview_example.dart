@@ -184,10 +184,21 @@ class _KeyboardPreviewExampleState extends State<KeyboardPreviewExample> {
                     horizontalPadding,
                     24,
                   ),
-                  itemCount: sections.length,
+                  itemCount: sections.length + 1,
                   separatorBuilder: (_, _) => const SizedBox(height: 16),
                   itemBuilder: (context, index) {
-                    final section = sections[index];
+                    if (index == 0) {
+                      return Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 760),
+                          child: _EmojiPreviewCard(
+                            currentLanguage: _currentLanguage,
+                          ),
+                        ),
+                      );
+                    }
+
+                    final section = sections[index - 1];
                     return Center(
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 760),
@@ -366,6 +377,12 @@ class _LayoutPreview extends StatelessWidget {
         return Text(key.label ?? '123', style: smallStyle);
       case KeyAction.symbolsAlt:
         return Text(key.label ?? '#+=', style: smallStyle);
+      case KeyAction.emoji:
+        return Icon(
+          Icons.emoji_emotions_outlined,
+          size: iconSize,
+          color: theme.keyTextColor,
+        );
       case KeyAction.done:
         return Icon(Icons.check, size: iconSize, color: theme.keyTextColor);
       case KeyAction.go:
@@ -398,5 +415,85 @@ class _LayoutPreview extends StatelessWidget {
       default:
         return const SizedBox.shrink();
     }
+  }
+}
+
+class _EmojiPreviewCard extends StatelessWidget {
+  const _EmojiPreviewCard({
+    required this.currentLanguage,
+  });
+
+  final String currentLanguage;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    const theme = VirtualKeypadTheme.light;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+          Row(
+            children: [
+              Icon(
+                Icons.emoji_emotions_outlined,
+                size: 16,
+                color: colorScheme.primary,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'Emoji',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'Live',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onPrimaryContainer,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: theme.backgroundColor,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                IgnorePointer(
+                  child: VirtualKeypad(
+                    hideWhenUnfocused: false,
+                    enableEmojiKey: true,
+                    showEmojiKeyboardInitially: true,
+                    availableLanguages: [currentLanguage],
+                    initialLanguage: currentLanguage,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
   }
 }

@@ -223,7 +223,7 @@ class _MultilineTextExampleState extends State<MultilineTextExample> {
                 ),
               ),
             ),
-            VirtualKeypad(),
+            const VirtualKeypad(enableEmojiKey: true),
           ],
         ),
       ),

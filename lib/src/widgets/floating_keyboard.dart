@@ -93,6 +93,7 @@ class VirtualKeypadFloating extends StatefulWidget {
     this.initialLanguage,
     this.onLanguageChanged,
     this.customLayout,
+    this.enableEmojiKey = false,
     this.standalone = false,
     this.controller,
     this.visibilityMode = VirtualKeypadFloatingVisibilityMode.onDemand,
@@ -159,6 +160,9 @@ class VirtualKeypadFloating extends StatefulWidget {
 
   /// Custom layout when [type] is [KeyboardType.custom].
   final KeyboardLayout? customLayout;
+
+  /// When true, text-style keyboards expose an emoji page.
+  final bool enableEmojiKey;
 
   /// When true, the keyboard works with any standard Flutter [TextField].
   final bool standalone;
@@ -398,6 +402,7 @@ class _VirtualKeypadFloatingState extends State<VirtualKeypadFloating> {
                                     initialLanguage: widget.initialLanguage,
                                     onLanguageChanged: widget.onLanguageChanged,
                                     customLayout: widget.customLayout,
+                                    enableEmojiKey: widget.enableEmojiKey,
                                     hideWhenUnfocused: false,
                                     standalone: widget.standalone,
                                     onVisibilityChanged: _setVisible,

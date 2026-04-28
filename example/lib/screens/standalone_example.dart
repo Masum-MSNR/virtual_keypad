@@ -239,7 +239,12 @@ class _StandaloneExampleState extends State<StandaloneExample> {
               ),
             ),
           ),
-          VirtualKeypad(standalone: true, hideWhenUnfocused: true),
+          VirtualKeypad(
+            standalone: true,
+            hideWhenUnfocused: false,
+            enableEmojiKey: true,
+            showEmojiKeyboardInitially: true,
+          ),
         ],
       ),
     );

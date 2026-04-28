@@ -37,7 +37,8 @@ class _FloatingKeyboardExampleState extends State<FloatingKeyboardExample> {
   _FloatingSizePreset _sizePreset = _FloatingSizePreset.regular;
   _FloatingThemePreset _themePreset = _FloatingThemePreset.light;
   _FloatingCornerPreset _cornerPreset = _FloatingCornerPreset.round;
-  String _lastEvent = 'Focus a field to open the floating keyboard';
+  String _lastEvent =
+      'Focus a field, then tap the emoji key to open the full picker';
 
   @override
   void dispose() {
@@ -96,6 +97,7 @@ class _FloatingKeyboardExampleState extends State<FloatingKeyboardExample> {
     return VirtualKeypadFloating(
       key: const ValueKey('floating-standalone-demo'),
       standalone: true,
+      enableEmojiKey: true,
       controller: _isPersistent ? _persistentController : null,
       visibilityMode: _floatingVisibilityMode,
       width: keyboardWidth,
@@ -115,11 +117,11 @@ class _FloatingKeyboardExampleState extends State<FloatingKeyboardExample> {
         context,
         title: 'Standalone Demo',
         description:
-            'Regular Flutter TextFields with text, phone, and notes input. Long-press the space bar in text fields to change language.',
+          'Regular Flutter TextFields with text, phone, and notes input. Tap the emoji key for the full scrollable picker, and long-press the space bar to change language.',
         keyboardHeight: keyboardHeight,
         formTitle: 'Try It',
         formSubtitle:
-            'Use the same floating keyboard with standard Flutter fields.',
+          'Use the same floating keyboard with standard Flutter fields, including the upgraded emoji browser.',
         fields: [
           TextField(
             controller: _standaloneSearchController,
@@ -174,6 +176,7 @@ class _FloatingKeyboardExampleState extends State<FloatingKeyboardExample> {
     return VirtualKeypadScope(
       key: const ValueKey('floating-scoped-demo'),
       child: VirtualKeypadFloating(
+        enableEmojiKey: true,
         controller: _isPersistent ? _persistentController : null,
         visibilityMode: _floatingVisibilityMode,
         width: keyboardWidth,
@@ -185,11 +188,11 @@ class _FloatingKeyboardExampleState extends State<FloatingKeyboardExample> {
           context,
           title: 'Scoped Demo',
           description:
-              'VirtualKeypadScope and VirtualKeypadTextField stay unchanged. This keeps the example simple while still showing the scoped flow.',
+            'VirtualKeypadScope and VirtualKeypadTextField stay unchanged. This mode also exposes emoji search, categories, and the flat scrollable picker.',
           keyboardHeight: keyboardHeight,
           formTitle: 'Try It',
           formSubtitle:
-              'Use lookup, amount, and approval fields with the scoped API.',
+            'Use lookup, amount, and approval fields with the scoped API and the searchable emoji picker.',
           fields: [
             VirtualKeypadTextField(
               controller: _scopedLookupController,

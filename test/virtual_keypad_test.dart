@@ -1,3 +1,4 @@
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji_picker;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -1310,6 +1311,180 @@ void main() {
       );
 
       expect(provider.currentLanguageCode, 'bn');
+    });
+  });
+
+  group('VirtualKeypad emoji support', () {
+    testWidgets('emoji key opens emoji layout and inserts emoji', (tester) async {
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(controller: controller),
+                  const VirtualKeypad(enableEmojiKey: true),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+
+      expect(find.bySemanticsLabel('Show emoji'), findsOneWidget);
+
+      await tester.tap(find.bySemanticsLabel('Show emoji'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(emoji_picker.EmojiPicker), findsOneWidget);
+      expect(find.byKey(const Key('emojiScrollView')), findsOneWidget);
+      final emojiCellFinder = find.byType(emoji_picker.EmojiCell).hitTestable();
+      expect(emojiCellFinder, findsWidgets);
+      final firstEmojiTextFinder = find.descendant(
+        of: emojiCellFinder.first,
+        matching: find.byType(Text),
+      );
+      final firstEmoji = tester.widget<Text>(firstEmojiTextFinder.first).data!;
+      expect(find.text('q'), findsNothing);
+
+      await tester.tap(emojiCellFinder.first);
+      await tester.pumpAndSettle();
+
+      expect(controller.text, firstEmoji);
+
+      await tester.tap(find.text('ABC'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('q'), findsOneWidget);
+    });
+
+    testWidgets(
+      'standalone emoji picker stays visible and disables skin tones', (
+        tester,
+      ) async {
+        final focusNode = FocusNode();
+        addTearDown(focusNode.dispose);
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Column(
+                children: [
+                  TextField(focusNode: focusNode),
+                  const Spacer(),
+                  const VirtualKeypad(
+                    standalone: true,
+                    hideWhenUnfocused: true,
+                    enableEmojiKey: true,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+
+        await tester.tap(find.byType(TextField));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.bySemanticsLabel('Show emoji'));
+        await tester.pumpAndSettle();
+
+        final picker = tester.widget<emoji_picker.EmojiPicker>(
+          find.byType(emoji_picker.EmojiPicker),
+        );
+        expect(picker.config.skinToneConfig.enabled, isFalse);
+
+        FocusManager.instance.primaryFocus?.unfocus();
+        await tester.pumpAndSettle();
+
+        expect(find.byType(emoji_picker.EmojiPicker), findsOneWidget);
+      },
+    );
+
+    testWidgets('emoji keyboard can be shown by default', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: [
+                TextField(),
+                Spacer(),
+                VirtualKeypad(
+                  standalone: true,
+                  hideWhenUnfocused: false,
+                  enableEmojiKey: true,
+                  showEmojiKeyboardInitially: true,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(emoji_picker.EmojiPicker), findsOneWidget);
+      expect(find.text('q'), findsNothing);
+    });
+
+    testWidgets('emoji keyboard can be shown by default without focus', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypad(
+              hideWhenUnfocused: false,
+              enableEmojiKey: true,
+              showEmojiKeyboardInitially: true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      expect(find.byType(emoji_picker.EmojiPicker), findsOneWidget);
+      expect(find.text('q'), findsNothing);
+    });
+
+    testWidgets('constrained standalone keyboard does not overflow', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 300,
+                height: 420,
+                child: Column(
+                  children: [
+                    TextField(),
+                    Spacer(),
+                    VirtualKeypad(
+                      standalone: true,
+                      hideWhenUnfocused: true,
+                      enableEmojiKey: true,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
     });
   });
 }

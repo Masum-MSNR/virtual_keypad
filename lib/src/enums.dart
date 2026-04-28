@@ -18,6 +18,9 @@ enum KeyAction {
   /// Switch between primary and alternate symbol layouts.
   symbolsAlt,
 
+  /// Switch between the active keyboard page and the emoji keyboard.
+  emoji,
+
   /// Switch keyboard language (reserved for future use).
   switchLanguage,
 
@@ -109,4 +112,7 @@ enum LayoutStage {
 
   /// Tertiary layout (additional symbols and special characters).
   tertiary,
+
+  /// Emoji layout.
+  emoji,
 }
