@@ -1,6 +1,6 @@
 name: virtual_keypad
-description: "A customizable Flutter virtual keyboard and keypad for kiosk, PIN, password, and TextField input. Supports standalone mode, custom layouts, 12 languages, and theming."
-version: 0.6.1
+description: "A customizable Flutter virtual keyboard with standalone, scoped, and floating modes, custom layouts, 12 languages, submit actions, and theming."
+version: 0.7.0
 homepage: https://github.com/Masum-MSNR/virtual_keypad
 repository: https://github.com/Masum-MSNR/virtual_keypad
 issue_tracker: https://github.com/Masum-MSNR/virtual_keypad/issues

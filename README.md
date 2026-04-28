@@ -156,7 +156,27 @@ VirtualKeypadFloating(
 )
 ```
 
-`VirtualKeypadFloating` supports the same keyboard theming as `VirtualKeypad`, plus floating-specific panel configuration such as `width`, `height`, and `borderRadius`.
+`VirtualKeypadFloating` supports the same keyboard theming as `VirtualKeypad`, plus floating-specific panel configuration such as `width`, `height`, `borderRadius`, and draggable toolbar controls.
+
+For manual visibility, docking, or always-on kiosk-style flows, pair it with a controller:
+
+```dart
+final floatingController = VirtualKeypadFloatingController();
+
+VirtualKeypadFloating(
+  controller: floatingController,
+  visibilityMode: VirtualKeypadFloatingVisibilityMode.persistent,
+  width: 420,
+  borderRadius: 20,
+  child: Column(
+    children: [
+      TextField(controller: controller),
+    ],
+  ),
+)
+```
+
+In persistent mode, you can keep the keyboard visible until you explicitly call `floatingController.hide()` or the user closes it from the toolbar.
 
 For scoped usage, keep `VirtualKeypadScope` exactly as-is and place `VirtualKeypadFloating` inside the scope:
 

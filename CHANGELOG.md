@@ -1,3 +1,21 @@
+## 0.7.0
+
+### Added
+* `VirtualKeypadFloating` for draggable overlay-style keyboard presentation without changing existing inline integrations
+* `VirtualKeypadFloatingController` and `VirtualKeypadFloatingVisibilityMode` for persistent manual visibility and dock controls
+* Floating keyboard configuration for panel width, height, border radius, toolbar actions, and theme-aware overlay presentation
+
+### Improved
+* Example app screens now use a centered responsive content shell for better behavior across phone, tablet, desktop, and web layouts
+* Floating keyboard example simplified into a single-scroll demo with standalone and scoped flows, size presets, theme presets, and non-round / less-round / round panel options
+* README, example docs, and API reference updated for floating mode, persistent visibility, and release-ready integration guidance
+
+### Fixed
+* Floating keyboard now stays visible while the in-keyboard language picker menu is open
+* Floating panel clipping and theming now apply consistently across the full toolbar and keyboard surface
+
+---
+
 ## 0.6.1
 
 ### Improved

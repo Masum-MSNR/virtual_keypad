@@ -11,7 +11,7 @@ IDE imports can stay focused on the surface you need.
 |--------|----------|
 | `package:virtual_keypad/virtual_keypad.dart` | Full package surface |
 | `package:virtual_keypad/widgets.dart` | Scoped widget workflows |
-| `package:virtual_keypad/standalone.dart` | Standard `TextField` / `TextFormField` integration |
+| `package:virtual_keypad/standalone.dart` | Standard `TextField` / `TextFormField` and floating standalone integration |
 | `package:virtual_keypad/layouts.dart` | Language registration and layout access |
 
 ## VirtualKeypadStandaloneScope
@@ -95,11 +95,54 @@ The on-screen keyboard widget.
 | `onKeyPressedWithText` | `void Function(VirtualKey, String?)?` | `null` | Key press callback with inserted text |
 | `onStandaloneInputAction` | `void Function(KeyAction, String)?` | `null` | Called for submit-style actions in standalone mode, including custom `call` keys |
 | `onLanguageChanged` | `ValueChanged<String>?` | `null` | Called when the user picks a language from the keyboard |
+| `onVisibilityChanged` | `ValueChanged<bool>?` | `null` | Reports whether the keyboard currently has an active target and should remain visible |
 | `animationDuration` | `Duration` | `200ms` | Show/hide duration |
 
 **Validation:** `customLayout` requires `type: KeyboardType.custom`, and `customLayout` is rejected for non-custom types.
 
 **Language switching:** When `availableLanguages` contains more than one valid code, users can long-press the space bar to switch languages. The first valid language acts as the fallback for that keyboard. The selected language is remembered for the current app run.
+
+## VirtualKeypadFloating
+
+Floating host widget that renders `VirtualKeypad` in a draggable overlay panel while keeping existing scoped and standalone routing behavior intact.
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `child` | `Widget` | *required* | Content rendered underneath the floating panel |
+| `width` | `double?` | `null` | Fixed floating panel width |
+| `maxWidth` | `double` | `680` | Max width when `width` is not provided |
+| `height` | `double` | `280` | Keyboard height inside the panel |
+| `borderRadius` | `double` | `12` | Full-panel corner radius |
+| `standalone` | `bool` | `false` | Enables standard Flutter `TextField` interception mode |
+| `controller` | `VirtualKeypadFloatingController?` | `null` | Manual visibility and docking control |
+| `visibilityMode` | `VirtualKeypadFloatingVisibilityMode` | `onDemand` | Demand-driven or persistent visibility behavior |
+| `initialAlignment` | `Alignment` | `bottomCenter` | Initial dock/alignment inside the host |
+| `margin` | `EdgeInsets` | `12 all` | Safe spacing from host edges |
+| `showToolbar` | `bool` | `true` | Shows the floating drag toolbar |
+| `showCloseButton` | `bool` | `true` | Enables the toolbar close button |
+| `showDockButtons` | `bool` | `true` | Enables toolbar dock-to-top and dock-to-bottom buttons |
+
+**Notes:** `VirtualKeypadFloating` forwards keyboard configuration such as `type`, `inputAction`, `theme`, `availableLanguages`, `initialLanguage`, `customLayout`, and key callbacks to the internal `VirtualKeypad`.
+
+## VirtualKeypadFloatingController
+
+Controller for floating keyboard visibility and docking.
+
+| Member | Type | Description |
+|--------|------|-------------|
+| `isVisible` | `bool` | Current persistent visibility state |
+| `show()` | `void` | Shows the floating panel |
+| `hide()` | `void` | Hides the floating panel |
+| `toggle()` | `void` | Toggles the floating panel |
+| `dockTop()` | `void` | Requests top docking |
+| `dockBottom()` | `void` | Requests bottom docking |
+
+## VirtualKeypadFloatingVisibilityMode
+
+| Value | Description |
+|-------|-------------|
+| `onDemand` | The floating panel appears when a target field activates the keyboard |
+| `persistent` | The floating panel stays visible until it is explicitly hidden |
 
 ## VirtualKeypadController
 
