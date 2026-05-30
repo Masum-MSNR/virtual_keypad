@@ -293,10 +293,7 @@ class _PasswordEntryExampleState extends State<PasswordEntryExample> {
                 ),
               ),
             ),
-            VirtualKeypad(
-              hideWhenUnfocused: true,
-              enableEmojiKey: true,
-            ),
+            VirtualKeypad(hideWhenUnfocused: true, enableEmojiKey: true),
           ],
         ),
       ),

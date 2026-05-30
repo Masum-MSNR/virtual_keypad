@@ -281,10 +281,7 @@ class _AutoHideKeyboardExampleState extends State<AutoHideKeyboardExample> {
                 ),
               ),
             ),
-            VirtualKeypad(
-              hideWhenUnfocused: true,
-              enableEmojiKey: true,
-            ),
+            VirtualKeypad(hideWhenUnfocused: true, enableEmojiKey: true),
           ],
         ),
       ),

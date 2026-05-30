@@ -117,11 +117,11 @@ class _FloatingKeyboardExampleState extends State<FloatingKeyboardExample> {
         context,
         title: 'Standalone Demo',
         description:
-          'Regular Flutter TextFields with text, phone, and notes input. Tap the emoji key for the full scrollable picker, and long-press the space bar to change language.',
+            'Regular Flutter TextFields with text, phone, and notes input. Tap the emoji key for the full scrollable picker, and long-press the space bar to change language.',
         keyboardHeight: keyboardHeight,
         formTitle: 'Try It',
         formSubtitle:
-          'Use the same floating keyboard with standard Flutter fields, including the upgraded emoji browser.',
+            'Use the same floating keyboard with standard Flutter fields, including the upgraded emoji browser.',
         fields: [
           TextField(
             controller: _standaloneSearchController,
@@ -188,11 +188,11 @@ class _FloatingKeyboardExampleState extends State<FloatingKeyboardExample> {
           context,
           title: 'Scoped Demo',
           description:
-            'VirtualKeypadScope and VirtualKeypadTextField stay unchanged. This mode also exposes emoji search, categories, and the flat scrollable picker.',
+              'VirtualKeypadScope and VirtualKeypadTextField stay unchanged. This mode also exposes emoji search, categories, and the flat scrollable picker.',
           keyboardHeight: keyboardHeight,
           formTitle: 'Try It',
           formSubtitle:
-            'Use lookup, amount, and approval fields with the scoped API and the searchable emoji picker.',
+              'Use lookup, amount, and approval fields with the scoped API and the searchable emoji picker.',
           fields: [
             VirtualKeypadTextField(
               controller: _scopedLookupController,

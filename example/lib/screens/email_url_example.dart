@@ -222,10 +222,7 @@ class _EmailUrlExampleState extends State<EmailUrlExample> {
                 ),
               ),
             ),
-            VirtualKeypad(
-              hideWhenUnfocused: true,
-              enableEmojiKey: true,
-            ),
+            VirtualKeypad(hideWhenUnfocused: true, enableEmojiKey: true),
           ],
         ),
       ),

@@ -419,9 +419,7 @@ class _LayoutPreview extends StatelessWidget {
 }
 
 class _EmojiPreviewCard extends StatelessWidget {
-  const _EmojiPreviewCard({
-    required this.currentLanguage,
-  });
+  const _EmojiPreviewCard({required this.currentLanguage});
 
   final String currentLanguage;
 
@@ -433,66 +431,63 @@ class _EmojiPreviewCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-          Row(
-            children: [
-              Icon(
-                Icons.emoji_emotions_outlined,
-                size: 16,
-                color: colorScheme.primary,
+        Row(
+          children: [
+            Icon(
+              Icons.emoji_emotions_outlined,
+              size: 16,
+              color: colorScheme.primary,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Emoji',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: colorScheme.onSurface,
               ),
-              const SizedBox(width: 6),
-              Text(
-                'Emoji',
+            ),
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                'Live',
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: colorScheme.onSurface,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onPrimaryContainer,
                 ),
               ),
-              const SizedBox(width: 6),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 2,
-                ),
-                decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  'Live',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onPrimaryContainer,
-                  ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: theme.backgroundColor,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              IgnorePointer(
+                child: VirtualKeypad(
+                  hideWhenUnfocused: false,
+                  enableEmojiKey: true,
+                  showEmojiKeyboardInitially: true,
+                  availableLanguages: [currentLanguage],
+                  initialLanguage: currentLanguage,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 6),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: theme.backgroundColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                IgnorePointer(
-                  child: VirtualKeypad(
-                    hideWhenUnfocused: false,
-                    enableEmojiKey: true,
-                    showEmojiKeyboardInitially: true,
-                    availableLanguages: [currentLanguage],
-                    initialLanguage: currentLanguage,
-                  ),
-                ),
-              ],
-            ),
-          ),
+        ),
       ],
     );
   }

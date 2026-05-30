@@ -180,10 +180,7 @@ class _MultiFieldExampleState extends State<MultiFieldExample> {
                 ),
               ),
             ),
-            VirtualKeypad(
-              hideWhenUnfocused: true,
-              enableEmojiKey: true,
-            ),
+            VirtualKeypad(hideWhenUnfocused: true, enableEmojiKey: true),
           ],
         ),
       ),
