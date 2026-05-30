@@ -1,3 +1,15 @@
+## 0.8.1
+
+### Improved
+* Refreshed the README and pub.dev preview media to use the new `previews/` phone and desktop demo GIFs
+* Added a dedicated floating mode guide and linked it from the API reference and README documentation section
+
+### Fixed
+* Standalone example now opens on the normal keyboard page instead of the emoji page by default
+* Package metadata now points at the current preview media instead of the removed `images/` GIF set
+
+---
+
 ## 0.8.0
 
 ### Added

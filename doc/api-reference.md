@@ -106,6 +106,8 @@ The on-screen keyboard widget.
 
 Floating host widget that renders `VirtualKeypad` in a draggable overlay panel while keeping existing scoped and standalone routing behavior intact.
 
+See [Floating Mode](floating-mode.md) for setup patterns, visibility tradeoffs, and scope integration examples.
+
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `child` | `Widget` | *required* | Content rendered underneath the floating panel |
@@ -122,7 +124,7 @@ Floating host widget that renders `VirtualKeypad` in a draggable overlay panel w
 | `showCloseButton` | `bool` | `true` | Enables the toolbar close button |
 | `showDockButtons` | `bool` | `true` | Enables toolbar dock-to-top and dock-to-bottom buttons |
 
-**Notes:** `VirtualKeypadFloating` forwards keyboard configuration such as `type`, `inputAction`, `theme`, `availableLanguages`, `initialLanguage`, `customLayout`, and key callbacks to the internal `VirtualKeypad`.
+**Notes:** Persistent visibility requires `controller`. `VirtualKeypadFloating` keeps the internal `VirtualKeypad` mounted and forwards keyboard configuration such as `type`, `inputAction`, `theme`, `availableLanguages`, `initialLanguage`, `customLayout`, and key callbacks to it.
 
 ## VirtualKeypadFloatingController
 

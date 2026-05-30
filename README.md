@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/logo.png" alt="Virtual Keypad" width="120"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/example/assets/logo.png" alt="Virtual Keypad" width="120"/>
 </p>
 
 <p align="center">
@@ -19,9 +19,17 @@ Built for kiosk apps, touchscreen and desktop input, PIN and password entry, num
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif1.gif?v=2" width="30%" alt="Demo 1"/>
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif2.gif?v=2" width="30%" alt="Demo 2"/>
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/gif3.gif?v=2" width="30%" alt="Demo 3"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/phone1.gif?v=3" width="30%" alt="Note editor keyboard demo"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/phone2.gif?v=3" width="30%" alt="Custom theme keyboard demo"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/phone3.gif?v=3" width="30%" alt="Language switching keyboard demo"/>
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/desktop1.gif?v=3" width="92%" alt="Standalone keyboard demo"/>
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/desktop2.gif?v=3" width="92%" alt="Floating keyboard demo"/>
 </p>
 
 ## Features
@@ -29,6 +37,7 @@ Built for kiosk apps, touchscreen and desktop input, PIN and password entry, num
 - 🎹 **Multiple Layouts** - Text, numeric, phone, email, URL, or fully custom
 - 🌍 **Multi-Language** - 12 built-in languages, easily extensible
 - 🔌 **Standalone Mode** - Works with any standard Flutter TextField or TextFormField
+- 🪟 **Floating Mode** - Draggable overlay keyboard for desktop, kiosk, and split-view layouts
 - 🎯 **Standalone Scope** - Restrict keyboard to a widget subtree
 - 🔤 **Smart TextField** - Auto-adapts keyboard layout based on input type
 - 😀 **Emoji Support** - Opt-in emoji browser for supported text layouts
@@ -462,7 +471,7 @@ controller.moveCursorRight();
 
 ## Examples
 
-Check out the [example](example/) directory for a complete demo app with 9 screens showcasing virtual keyboard, keypad, PIN pad, password, numeric input, and multilingual keyboard flows.
+Check out the [example](example/) directory for a complete demo app with 12 screens covering standalone, scoped, floating, numeric, PIN, password, multilingual, and theming flows.
 
 ## Common Setup Mistakes
 
@@ -473,11 +482,12 @@ Check out the [example](example/) directory for a complete demo app with 9 scree
 
 ## Documentation
 
-These guides cover virtual keyboard integration, keypad customization, multilingual layout setup, and Flutter TextField or TextFormField onboarding.
+These guides cover virtual keyboard integration, floating overlays, keypad customization, multilingual layout setup, and Flutter TextField or TextFormField onboarding.
 
 | Guide | Description |
 |-------|-------------|
 | [API Reference](doc/api-reference.md) | Complete API documentation |
+| [Floating Mode](doc/floating-mode.md) | Build draggable overlay keyboards with standalone or scoped input |
 | [Custom Layouts](doc/custom-layouts.md) | Build custom keyboard layouts |
 | [Adding Languages](doc/adding-languages.md) | Add new language support |
 | [Theming](doc/theming.md) | Customize keyboard appearance |

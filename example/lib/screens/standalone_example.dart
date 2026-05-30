@@ -243,7 +243,6 @@ class _StandaloneExampleState extends State<StandaloneExample> {
             standalone: true,
             hideWhenUnfocused: false,
             enableEmojiKey: true,
-            showEmojiKeyboardInitially: true,
           ),
         ],
       ),
