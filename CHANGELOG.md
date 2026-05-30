@@ -3,6 +3,7 @@
 ### Improved
 * Refreshed the README and pub.dev preview media to use the new `previews/` phone and desktop demo GIFs
 * Added a dedicated floating mode guide and linked it from the API reference and README documentation section
+* Added a compact static keyboard screenshot as the leading pub.dev package preview for the right-side media panel
 
 ### Fixed
 * Standalone example now opens on the normal keyboard page instead of the emoji page by default

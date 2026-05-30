@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart'
-  as emoji_picker;
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji_picker;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -977,10 +976,9 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
         setState(() {
           if (_layoutStage == LayoutStage.emoji) {
-            final restoredStage =
-                _layoutStageBeforeEmoji == LayoutStage.emoji
-                    ? LayoutStage.primary
-                    : _layoutStageBeforeEmoji;
+            final restoredStage = _layoutStageBeforeEmoji == LayoutStage.emoji
+                ? LayoutStage.primary
+                : _layoutStageBeforeEmoji;
             _setLayoutStage(restoredStage);
           } else {
             _layoutStageBeforeEmoji = _layoutStage;
@@ -1097,10 +1095,9 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     } else {
       final hasController = _scope?.hasActiveController ?? false;
       final allowPhysical = _scope?.allowPhysicalKeyboard ?? false;
-      shouldShowKeyboard =
-          (hasController && !allowPhysical) ||
-              _languagePickerVisible ||
-              keepEmojiVisible;
+      shouldShowKeyboard = (hasController && !allowPhysical) ||
+          _languagePickerVisible ||
+          keepEmojiVisible;
     }
 
     _notifyVisibilityChanged(shouldShowKeyboard);

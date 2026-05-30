@@ -13,6 +13,8 @@ topics:
   - flutter-keyboard
 
 screenshots:
+  - description: "Compact keyboard layout preview with emoji and search actions."
+    path: previews/pubdev-sidebar.png
   - description: "Note editor workflow with emoji access and inline counters."
     path: previews/phone1.gif
   - description: "Themeable keyboard preview with custom visual presets."

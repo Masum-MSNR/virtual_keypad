@@ -112,7 +112,8 @@ void main() {
       expect(controller.cursorPosition, 5);
     });
 
-    test('range helpers ignore invalid bounds and insert at collapsed range', () {
+    test('range helpers ignore invalid bounds and insert at collapsed range',
+        () {
       final controller = VirtualKeypadController(text: 'Hello');
 
       controller.deleteRange(-1, 2);
@@ -1315,7 +1316,8 @@ void main() {
   });
 
   group('VirtualKeypad emoji support', () {
-    testWidgets('emoji key opens emoji layout and inserts emoji', (tester) async {
+    testWidgets('emoji key opens emoji layout and inserts emoji',
+        (tester) async {
       final controller = VirtualKeypadController();
 
       await tester.pumpWidget(
@@ -1364,7 +1366,8 @@ void main() {
     });
 
     testWidgets(
-      'standalone emoji picker stays visible and disables skin tones', (
+      'standalone emoji picker stays visible and disables skin tones',
+      (
         tester,
       ) async {
         final focusNode = FocusNode();
