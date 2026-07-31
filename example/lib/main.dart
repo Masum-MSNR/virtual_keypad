@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
+import 'demo_presets.dart';
+import 'preview_page.dart';
+
 void main() {
   // Registers the 12 built-in languages. Required before runApp.
   initializeKeyboardLayouts();
@@ -66,30 +69,6 @@ class _ExampleAppState extends State<ExampleApp> {
   }
 }
 
-/// A 3x4 PIN pad, to show what `KeyboardType.custom` takes.
-final pinLayout = <KeyRow>[
-  [
-    VirtualKey.character(text: '1'),
-    VirtualKey.character(text: '2'),
-    VirtualKey.character(text: '3'),
-  ],
-  [
-    VirtualKey.character(text: '4'),
-    VirtualKey.character(text: '5'),
-    VirtualKey.character(text: '6'),
-  ],
-  [
-    VirtualKey.character(text: '7'),
-    VirtualKey.character(text: '8'),
-    VirtualKey.character(text: '9'),
-  ],
-  [
-    VirtualKey.action(action: KeyAction.backSpace),
-    VirtualKey.character(text: '0'),
-    VirtualKey.action(action: KeyAction.done, label: 'OK'),
-  ],
-];
-
 const _types = <String, KeyboardType>{
   'Text': KeyboardType.text,
   'Multiline': KeyboardType.multiline,
@@ -122,6 +101,7 @@ class _HomePageState extends State<HomePage> {
 
   KeyboardType _type = KeyboardType.text;
   String _language = 'en';
+  int _preset = 0;
   bool _emoji = true;
   bool _floating = false;
   bool _dpad = false;
@@ -138,8 +118,7 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  VirtualKeypadTheme get _keypadTheme =>
-      widget.dark ? VirtualKeypadTheme.dark : VirtualKeypadTheme.light;
+  VirtualKeypadTheme get _keypadTheme => keypadPresets[_preset].theme;
 
   @override
   Widget build(BuildContext context) {
@@ -155,6 +134,13 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         actions: [
+          IconButton(
+            tooltip: 'Preview gallery',
+            icon: const Icon(Icons.grid_view_rounded),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const PreviewPage()),
+            ),
+          ),
           IconButton(
             tooltip: widget.dark ? 'Switch to light' : 'Switch to dark',
             icon: Icon(
@@ -255,6 +241,19 @@ class _HomePageState extends State<HomePage> {
               KeyboardLayoutProvider.instance.setLanguage(code);
               setState(() => _language = code);
             },
+          ),
+        ),
+        const SizedBox(height: 12),
+        _Section(
+          icon: Icons.palette_rounded,
+          title: 'Keyboard theme',
+          subtitle: 'Two built in, four built with VirtualKeypadTheme',
+          child: _ChipRow(
+            labels: keypadPresets.map((p) => p.name).toList(),
+            isSelected: (name) => keypadPresets[_preset].name == name,
+            onTap: (name) => setState(
+              () => _preset = keypadPresets.indexWhere((p) => p.name == name),
+            ),
           ),
         ),
         const SizedBox(height: 12),
