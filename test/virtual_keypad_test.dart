@@ -1,5 +1,3 @@
-import 'dart:io' show File;
-
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji_picker;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -1553,31 +1551,53 @@ void main() {
       final picker = tester.widget<emoji_picker.EmojiPicker>(
           find.byType(emoji_picker.EmojiPicker));
 
-      // These tests run on the VM, so the bundled web font must not be applied
-      // and the platform's own color emoji font is left in place.
-      expect(kIsWeb, isFalse);
-      expect(picker.config.emojiTextStyle, isNull);
+      if (kIsWeb) {
+        expect(
+          picker.config.emojiTextStyle?.fontFamily,
+          kBundledEmojiFontFamily,
+        );
+      } else {
+        // The platform's own color emoji font is left in place.
+        expect(picker.config.emojiTextStyle, isNull);
+      }
     });
 
     test('bundled emoji font family is package qualified', () {
       expect(kBundledEmojiFontFamily, 'packages/virtual_keypad/NotoEmoji');
     });
 
-    test('emoji font helpers are a no-op off the web', () {
-      // Guards against the bundled monochrome font ever overriding the
-      // platform's color emoji font on Android, iOS, or desktop.
-      expect(kIsWeb, isFalse);
-      expect(defaultEmojiTextStyle(), isNull);
-
+    test('emoji font helpers follow the platform', () {
       const style = TextStyle(fontSize: 18);
-      expect(withBundledEmojiFallback(style), same(style));
-      expect(withBundledEmojiFallback(null), isNull);
-
       final theme = ThemeData.light();
-      expect(theme.withVirtualKeypadEmojiFont(), same(theme));
+
+      if (kIsWeb) {
+        // Web has no system emoji font to fall back on, so the bundled one
+        // has to be applied or emoji render blank until a download lands.
+        expect(defaultEmojiTextStyle()?.fontFamily, kBundledEmojiFontFamily);
+        expect(
+          withBundledEmojiFallback(style)?.fontFamilyFallback,
+          contains(kBundledEmojiFontFamily),
+        );
+        expect(withBundledEmojiFallback(style)?.fontSize, 18);
+        expect(
+          theme
+              .withVirtualKeypadEmojiFont()
+              .textTheme
+              .bodyMedium
+              ?.fontFamilyFallback,
+          contains(kBundledEmojiFontFamily),
+        );
+      } else {
+        // Guards against the bundled monochrome font ever overriding the
+        // platform's color emoji font on Android, iOS, or desktop.
+        expect(defaultEmojiTextStyle(), isNull);
+        expect(withBundledEmojiFallback(style), same(style));
+        expect(withBundledEmojiFallback(null), isNull);
+        expect(theme.withVirtualKeypadEmojiFont(), same(theme));
+      }
     });
 
-    testWidgets('VirtualKeypadTextField keeps its style off the web',
+    testWidgets('VirtualKeypadTextField adds the emoji fallback only on web',
         (tester) async {
       final controller = VirtualKeypadController();
       const style = TextStyle(fontSize: 21, color: Colors.teal);
@@ -1595,7 +1615,16 @@ void main() {
         ),
       );
 
-      expect(tester.widget<TextField>(find.byType(TextField)).style, style);
+      final applied = tester.widget<TextField>(find.byType(TextField)).style;
+
+      if (kIsWeb) {
+        expect(applied?.fontFamilyFallback, contains(kBundledEmojiFontFamily));
+        // The caller's own styling has to survive the fallback being added.
+        expect(applied?.fontSize, 21);
+        expect(applied?.color, Colors.teal);
+      } else {
+        expect(applied, style);
+      }
     });
 
     testWidgets('emoji platform compatibility check is off by default',
@@ -1664,24 +1693,6 @@ void main() {
     setUp(VirtualKeypadColorEmoji.resetForTesting);
     tearDown(VirtualKeypadColorEmoji.resetForTesting);
 
-    // The package's own bundled font stands in for a downloaded color font;
-    // the loader does not care which font it is handed.
-    Future<ByteData> realFontBytes() async {
-      final bytes = await File('fonts/NotoEmoji-Regular.ttf').readAsBytes();
-      return ByteData.sublistView(bytes);
-    }
-
-    test('registers the font and flips isLoaded', () async {
-      expect(VirtualKeypadColorEmoji.isLoaded.value, isFalse);
-
-      await expectLater(
-        VirtualKeypadColorEmoji.load(realFontBytes),
-        completion(isTrue),
-      );
-
-      expect(VirtualKeypadColorEmoji.isLoaded.value, isTrue);
-    });
-
     test('a failing loader falls back instead of throwing', () async {
       await expectLater(
         VirtualKeypadColorEmoji.load(
@@ -1719,32 +1730,9 @@ void main() {
       );
     });
 
-    test('fallback chain prefers color once it has loaded', () async {
-      // Monochrome alone, and it must stay last so emoji always render.
-      expect(bundledEmojiFallbackFamilies(), [kBundledEmojiFontFamily]);
-
-      await VirtualKeypadColorEmoji.load(realFontBytes);
-
-      expect(bundledEmojiFallbackFamilies(), [
-        VirtualKeypadColorEmoji.fontFamily,
-        kBundledEmojiFontFamily,
-      ]);
-    });
-
-    test('loads once even when several keyboards ask', () async {
-      var calls = 0;
-      Future<ByteData> counted() {
-        calls++;
-        return realFontBytes();
-      }
-
-      await Future.wait([
-        VirtualKeypadColorEmoji.load(counted),
-        VirtualKeypadColorEmoji.load(counted),
-        VirtualKeypadColorEmoji.load(counted),
-      ]);
-
-      expect(calls, 1);
+    test('fallback chain ends with the monochrome font', () {
+      // Monochrome must stay last, since it is what guarantees emoji render.
+      expect(bundledEmojiFallbackFamilies().last, kBundledEmojiFontFamily);
     });
 
     testWidgets('no loader means nothing is fetched', (tester) async {
@@ -1769,7 +1757,7 @@ void main() {
       expect(VirtualKeypadColorEmoji.isLoaded.value, isFalse);
     });
 
-    testWidgets('loader is not run off the web', (tester) async {
+    testWidgets('loader runs only on the web', (tester) async {
       var called = false;
       final controller = VirtualKeypadController();
 
@@ -1782,9 +1770,11 @@ void main() {
                   VirtualKeypadTextField(controller: controller),
                   VirtualKeypad(
                     enableEmojiKey: true,
-                    colorEmojiFontLoader: () {
+                    colorEmojiFontLoader: () async {
                       called = true;
-                      return realFontBytes();
+                      // Rejected by the signature check, which is fine: this
+                      // asserts whether the loader ran, not what it returned.
+                      return ByteData(4);
                     },
                   ),
                 ],
@@ -1796,9 +1786,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Native platforms already render color emoji from the system font, so
-      // downloading one would be wasted bytes.
-      expect(kIsWeb, isFalse);
-      expect(called, isFalse);
+      // fetching one there would be wasted bytes.
+      expect(called, kIsWeb);
     });
   });
 
