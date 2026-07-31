@@ -10,8 +10,9 @@ void main() {
 
 const _seed = Color(0xFF6C63FF);
 
-/// Caps the content and the keyboard at the same width, so the two line up on
-/// a desktop or browser window instead of stretching edge to edge.
+/// Caps the reading column on a desktop or browser window. The keyboard is
+/// deliberately left unconstrained, so it spans the full width like a system
+/// keyboard does.
 const _maxWidth = 980.0;
 
 class ExampleApp extends StatefulWidget {
@@ -176,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              child: Center(child: _buildKeypad()),
+              child: _buildKeypad(),
             ),
         ],
       ),
@@ -193,7 +194,6 @@ class _HomePageState extends State<HomePage> {
       enableDpadNavigation: _dpad,
       availableLanguages: _allLanguages.map((l) => l.code).toList(),
       initialLanguage: _language,
-      width: _maxWidth,
       onLanguageChanged: (code) => setState(() => _language = code),
     );
   }
