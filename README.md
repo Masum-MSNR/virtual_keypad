@@ -50,6 +50,11 @@ platform. There is no native code and no platform channel involved.
 </p>
 
 <p align="center">
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/showcase-languages.png"
+       alt="Six of the twelve built-in languages: Bengali, Hindi, Russian JCUKEN, Korean Dubeolsik, Thai Kedmanee, and French AZERTY" width="100%"/>
+</p>
+
+<p align="center">
   <sub>Every keyboard above is the same VirtualKeypad widget with different
   arguments, captured at scale against each other.</sub>
 </p>
@@ -693,12 +698,8 @@ Import only the surface you use:
 
 ## Supported languages
 
-All 12 are registered when you call `initializeKeyboardLayouts()`.
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/showcase-languages.png"
-       alt="Six of the twelve built-in languages: Bengali, Hindi, Russian JCUKEN, Korean Dubeolsik, Thai Kedmanee, and French AZERTY" width="100%"/>
-</p>
+All 12 are registered when you call `initializeKeyboardLayouts()`. Six of them
+are pictured in the [Overview](#overview).
 
 | Code | Language | Native name | Layout | Script | RTL |
 |---|---|---|---|---|---|
