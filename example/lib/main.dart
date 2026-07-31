@@ -79,13 +79,6 @@ const _types = <String, KeyboardType>{
   'PIN pad': KeyboardType.custom,
 };
 
-/// Every language registered by `initializeKeyboardLayouts()`, plus any you
-/// register yourself. Read from the provider rather than hardcoded, so this
-/// list stays correct as languages are added.
-List<KeyboardLanguage> get _allLanguages =>
-    KeyboardLayoutProvider.instance.languages.toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.dark, required this.onDarkChanged});
 
@@ -100,7 +93,6 @@ class _HomePageState extends State<HomePage> {
   final _controller = TextEditingController();
 
   KeyboardType _type = KeyboardType.text;
-  String _language = 'en';
   int _preset = 0;
   bool _emoji = true;
   bool _floating = false;
@@ -109,16 +101,28 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _controller.addListener(() => setState(() {}));
+    _controller.addListener(_repaint);
+    // The active language lives on the provider, so the chips here follow a
+    // change made in the preview gallery.
+    KeyboardLayoutProvider.instance.addListener(_repaint);
   }
 
   @override
   void dispose() {
+    KeyboardLayoutProvider.instance.removeListener(_repaint);
     _controller.dispose();
     super.dispose();
   }
 
+  void _repaint() {
+    if (mounted) setState(() {});
+  }
+
   VirtualKeypadTheme get _keypadTheme => keypadPresets[_preset].theme;
+
+  /// Read from the provider rather than held here, so switching language in
+  /// the preview gallery is reflected when you come back.
+  String get _language => KeyboardLayoutProvider.instance.currentLanguageCode;
 
   @override
   Widget build(BuildContext context) {
@@ -178,9 +182,9 @@ class _HomePageState extends State<HomePage> {
       theme: _keypadTheme,
       enableEmojiKey: _emoji,
       enableDpadNavigation: _dpad,
-      availableLanguages: _allLanguages.map((l) => l.code).toList(),
+      availableLanguages: allLanguages.map((l) => l.code).toList(),
       initialLanguage: _language,
-      onLanguageChanged: (code) => setState(() => _language = code),
+      onLanguageChanged: (_) => setState(() {}),
     );
   }
 
@@ -226,20 +230,15 @@ class _HomePageState extends State<HomePage> {
           icon: Icons.translate_rounded,
           title: 'Language',
           subtitle:
-              '${_allLanguages.length} built in. Long-press the space bar to '
+              '${allLanguages.length} built in. Long-press the space bar to '
               'switch from the keyboard',
           child: _ChipRow(
-            labels: _allLanguages.map((l) => l.code).toList(),
-            labelBuilder: (code) {
-              final language = _allLanguages.firstWhere((l) => l.code == code);
-              return language.isRTL
-                  ? '${language.nativeName}  ·  RTL'
-                  : language.nativeName;
-            },
+            labels: allLanguages.map((l) => l.code).toList(),
+            labelBuilder: languageLabel,
             isSelected: (code) => code == _language,
             onTap: (code) {
               KeyboardLayoutProvider.instance.setLanguage(code);
-              setState(() => _language = code);
+              setState(() {});
             },
           ),
         ),
@@ -311,9 +310,9 @@ class _HomePageState extends State<HomePage> {
       theme: _keypadTheme,
       enableEmojiKey: _emoji,
       enableDpadNavigation: _dpad,
-      availableLanguages: _allLanguages.map((l) => l.code).toList(),
+      availableLanguages: allLanguages.map((l) => l.code).toList(),
       initialLanguage: _language,
-      onLanguageChanged: (code) => setState(() => _language = code),
+      onLanguageChanged: (_) => setState(() {}),
       width: 380,
       borderRadius: 18,
       child: constrained,

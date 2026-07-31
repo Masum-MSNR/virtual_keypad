@@ -1,6 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
 
+/// Every language registered by `initializeKeyboardLayouts()`, plus any you
+/// register yourself. Read from the provider rather than hardcoded, so this
+/// list stays correct as languages are added.
+List<KeyboardLanguage> get allLanguages =>
+    KeyboardLayoutProvider.instance.languages.toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+
+/// Label for a language chip, marking right-to-left scripts.
+String languageLabel(String code) {
+  final language = allLanguages.firstWhere((l) => l.code == code);
+  return language.isRTL
+      ? '${language.nativeName}  ·  RTL'
+      : language.nativeName;
+}
+
 /// A 3x4 PIN pad, to show what `KeyboardType.custom` takes.
 ///
 /// Shared so the playground and the preview gallery show the same thing.
