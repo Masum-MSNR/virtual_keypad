@@ -219,9 +219,10 @@ Shipped milestones are in the
 
 A complete, runnable app lives in the
 [`example/`](https://github.com/Masum-MSNR/virtual_keypad/tree/main/example)
-directory, with 12 screens covering standalone, scoped, floating, numeric, PIN,
-password, multilingual, and theming flows. Clone the repository and run it, or
-copy any snippet from [Getting started](#getting-started) below.
+directory: one page, one file, where every option is a switch or a chip. Change
+keyboard type, language, theme, emoji, floating mode, and D-pad navigation and
+watch the same keyboard react. Clone the repository and run it, or copy any
+snippet from [Getting started](#getting-started) below.
 
 ## Other useful links
 

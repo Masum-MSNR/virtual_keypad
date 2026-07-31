@@ -1,21 +1,9 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:virtual_keypad/virtual_keypad.dart';
-import 'package:virtual_keypad_example/example_page_layout.dart';
-import 'screens/password_entry_example.dart';
-import 'screens/numeric_input_example.dart';
-import 'screens/multi_field_example.dart';
-import 'screens/custom_theme_example.dart';
-import 'screens/multiline_text_example.dart';
-import 'screens/auto_hide_keyboard_example.dart';
-import 'screens/language_switching_example.dart';
-import 'screens/email_url_example.dart';
-import 'screens/pin_pad_example.dart';
-import 'screens/standalone_example.dart';
-import 'screens/keyboard_preview_example.dart';
-import 'screens/floating_keyboard_example.dart';
-import 'screens/emoji_font_check_example.dart';
 
 void main() {
+  // Registers the 12 built-in languages. Required before runApp.
   initializeKeyboardLayouts();
   runApp(const ExampleApp());
 }
@@ -26,13 +14,10 @@ class ExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Virtual Keypad Examples',
+      title: 'virtual_keypad',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6C63FF),
-          brightness: Brightness.light,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6C63FF)),
         useMaterial3: true,
       ),
       home: const HomePage(),
@@ -40,363 +25,229 @@ class ExampleApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+/// A 3x4 PIN pad, to show what `KeyboardType.custom` takes.
+final pinLayout = <KeyRow>[
+  [
+    VirtualKey.character(text: '1'),
+    VirtualKey.character(text: '2'),
+    VirtualKey.character(text: '3'),
+  ],
+  [
+    VirtualKey.character(text: '4'),
+    VirtualKey.character(text: '5'),
+    VirtualKey.character(text: '6'),
+  ],
+  [
+    VirtualKey.character(text: '7'),
+    VirtualKey.character(text: '8'),
+    VirtualKey.character(text: '9'),
+  ],
+  [
+    VirtualKey.action(action: KeyAction.backSpace),
+    VirtualKey.character(text: '0'),
+    VirtualKey.action(action: KeyAction.done, label: 'OK'),
+  ],
+];
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final _controller = TextEditingController();
+
+  KeyboardType _type = KeyboardType.text;
+  String _language = 'en';
+  bool _emoji = true;
+  bool _dark = false;
+  bool _floating = false;
+  bool _dpad = false;
+
+  static const _languages = ['en', 'bn', 'ar', 'fr', 'hi', 'ru'];
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  VirtualKeypadTheme get _theme =>
+      _dark ? VirtualKeypadTheme.dark : VirtualKeypadTheme.light;
+
+  Widget _buildKeypad() {
+    return VirtualKeypad(
+      standalone: true,
+      type: _type,
+      customLayout: _type == KeyboardType.custom ? pinLayout : null,
+      theme: _theme,
+      enableEmojiKey: _emoji,
+      enableDpadNavigation: _dpad,
+      availableLanguages: _languages,
+      initialLanguage: _language,
+      onLanguageChanged: (code) => setState(() => _language = code),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        foregroundColor: Colors.white,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF6C63FF), Color(0xFF8B5CF6)],
+    final content = ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        TextField(
+          controller: _controller,
+          maxLines: _type == KeyboardType.multiline ? 4 : 1,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            labelText: 'Tap here, then use the keyboard',
+            suffixIcon: IconButton(
+              icon: const Icon(Icons.clear),
+              onPressed: _controller.clear,
             ),
           ),
         ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
+        const SizedBox(height: 20),
+        const _Label('Keyboard type'),
+        Wrap(
+          spacing: 8,
           children: [
-            Image.asset('assets/logo.png', width: 24, height: 24),
-            const SizedBox(width: 10),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            for (final entry in const {
+              'Text': KeyboardType.text,
+              'Multiline': KeyboardType.multiline,
+              'Number': KeyboardType.number,
+              'Phone': KeyboardType.phone,
+              'Email': KeyboardType.emailAddress,
+              'URL': KeyboardType.url,
+              'PIN pad': KeyboardType.custom,
+            }.entries)
+              ChoiceChip(
+                label: Text(entry.key),
+                selected: _type == entry.value,
+                onSelected: (_) => setState(() => _type = entry.value),
+              ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        const _Label('Language'),
+        Wrap(
+          spacing: 8,
+          children: [
+            for (final code in _languages)
+              ChoiceChip(
+                label: Text(code.toUpperCase()),
+                selected: _language == code,
+                onSelected: (_) {
+                  KeyboardLayoutProvider.instance.setLanguage(code);
+                  setState(() => _language = code);
+                },
+              ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Long-press the space bar to switch language from the keyboard.',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 12),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Emoji key'),
+          value: _emoji,
+          onChanged: (v) => setState(() => _emoji = v),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Dark keyboard theme'),
+          value: _dark,
+          onChanged: (v) => setState(() => _dark = v),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Floating mode'),
+          subtitle: const Text('Draggable panel instead of inline'),
+          value: _floating,
+          onChanged: (v) => setState(() => _floating = v),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('D-pad navigation'),
+          subtitle: const Text('Arrow keys move, Enter presses'),
+          value: _dpad,
+          onChanged: (v) => setState(() => _dpad = v),
+        ),
+        const Divider(height: 32),
+        _EmojiFontStatus(),
+      ],
+    );
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('virtual_keypad'), centerTitle: true),
+      body: _floating
+          ? VirtualKeypadFloating(
+              standalone: true,
+              theme: _theme,
+              enableEmojiKey: _emoji,
+              width: 380,
+              borderRadius: 16,
+              child: content,
+            )
+          : Column(
               children: [
-                const Text(
-                  'Virtual Keypad',
-                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
-                ),
-                Text(
-                  'Flutter on-screen keyboard',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white.withValues(alpha: 0.7),
-                  ),
-                ),
+                Expanded(child: content),
+                _buildKeypad(),
               ],
             ),
-          ],
-        ),
-      ),
-      body: ExampleScrollableContent(
-        topPadding: 12,
-        bottomPadding: 24,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const _SectionHeader(
-              title: 'Developer Tools',
-              icon: Icons.developer_mode_rounded,
-            ),
-            _ExampleCard(
-              icon: Icons.preview_rounded,
-              title: 'Keyboard Preview',
-              subtitle: 'All types & languages side by side',
-              gradient: const [Color(0xFF6C63FF), Color(0xFF8B5CF6)],
-              onTap: () => _navigate(context, const KeyboardPreviewExample()),
-            ),
-            _ExampleCard(
-              icon: Icons.emoji_emotions_rounded,
-              title: 'Emoji Font Check',
-              subtitle: 'Verify web emoji rendering & offline fallback',
-              gradient: const [Color(0xFF00B4D8), Color(0xFF0077B6)],
-              onTap: () => _navigate(context, const EmojiFontCheckExample()),
-            ),
-            const SizedBox(height: 4),
-            const _SectionHeader(
-              title: 'Input Types',
-              icon: Icons.input_rounded,
-            ),
-            _ExampleCard(
-              icon: Icons.dialpad_rounded,
-              title: 'Numeric Input',
-              subtitle: 'Amount entry with quick-fill chips',
-              gradient: const [Color(0xFF667eea), Color(0xFF764ba2)],
-              onTap: () => _navigate(context, const NumericInputExample()),
-            ),
-            _ExampleCard(
-              icon: Icons.pin_outlined,
-              title: 'PIN Pad',
-              subtitle: 'Custom layout with animated dots',
-              gradient: const [Color(0xFFf093fb), Color(0xFFf5576c)],
-              onTap: () => _navigate(context, const PinPadExample()),
-            ),
-            _ExampleCard(
-              icon: Icons.lock_rounded,
-              title: 'Password Entry',
-              subtitle: 'Login form with strength indicator',
-              gradient: const [Color(0xFF4facfe), Color(0xFF00f2fe)],
-              onTap: () => _navigate(context, const PasswordEntryExample()),
-            ),
-            _ExampleCard(
-              icon: Icons.alternate_email_rounded,
-              title: 'Email & URL',
-              subtitle: 'Adaptive keyboard per input type',
-              gradient: const [Color(0xFF43e97b), Color(0xFF38f9d7)],
-              onTap: () => _navigate(context, const EmailUrlExample()),
-            ),
-            const SizedBox(height: 4),
-            const _SectionHeader(
-              title: 'Forms & Text',
-              icon: Icons.edit_document,
-            ),
-            _ExampleCard(
-              icon: Icons.assignment_outlined,
-              title: 'Multi-Field Form',
-              subtitle: 'Step-style registration with progress',
-              gradient: const [Color(0xFFfa709a), Color(0xFFfee140)],
-              onTap: () => _navigate(context, const MultiFieldExample()),
-            ),
-            _ExampleCard(
-              icon: Icons.edit_note_rounded,
-              title: 'Multiline Text',
-              subtitle: 'Note editor with word & line count',
-              gradient: const [Color(0xFFa18cd1), Color(0xFFfbc2eb)],
-              onTap: () => _navigate(context, const MultilineTextExample()),
-            ),
-            const SizedBox(height: 4),
-            const _SectionHeader(title: 'Features', icon: Icons.stars_rounded),
-            _ExampleCard(
-              icon: Icons.bolt_rounded,
-              title: 'Standalone Mode',
-              subtitle: 'Works with any Flutter TextField',
-              gradient: const [Color(0xFFFF6B6B), Color(0xFFee5a24)],
-              onTap: () => _navigate(context, const StandaloneExample()),
-            ),
-            _ExampleCard(
-              icon: Icons.open_with_rounded,
-              title: 'Floating Keyboard',
-              subtitle:
-                  'Draggable overlay with the new emoji browser and scoped search',
-              gradient: const [Color(0xFF0ba360), Color(0xFF3cba92)],
-              onTap: () => _navigate(context, const FloatingKeyboardExample()),
-            ),
-            _ExampleCard(
-              icon: Icons.keyboard_hide_rounded,
-              title: 'Auto-Hide Keyboard',
-              subtitle: 'Focus-aware animated transitions',
-              gradient: const [Color(0xFF30cfd0), Color(0xFF330867)],
-              onTap: () => _navigate(context, const AutoHideKeyboardExample()),
-            ),
-            _ExampleCard(
-              icon: Icons.palette_rounded,
-              title: 'Custom Themes',
-              subtitle: '4 gorgeous keyboard themes',
-              gradient: const [Color(0xFFf6d365), Color(0xFFfda085)],
-              onTap: () => _navigate(context, const CustomThemeExample()),
-            ),
-            _ExampleCard(
-              icon: Icons.translate_rounded,
-              title: 'Language Switching',
-              subtitle: 'Toggle English ↔ Bengali ↔ French',
-              gradient: const [Color(0xFF89f7fe), Color(0xFF66a6ff)],
-              onTap: () => _navigate(context, const LanguageSwitchingExample()),
-            ),
-          ],
-        ),
-      ),
     );
   }
+}
 
-  void _navigate(BuildContext context, Widget page) {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => page,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-            child: SlideTransition(
-              position:
-                  Tween<Offset>(
-                    begin: const Offset(0.04, 0),
-                    end: Offset.zero,
-                  ).animate(
-                    CurvedAnimation(parent: animation, curve: Curves.easeOut),
-                  ),
-              child: child,
-            ),
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 300),
+class _Label extends StatelessWidget {
+  const _Label(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        text,
+        style: Theme.of(
+          context,
+        ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
       ),
     );
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title, required this.icon});
-
-  final String title;
-  final IconData icon;
-
+/// Shows which emoji font is in use, and why.
+///
+/// Web has no system emoji font, so the package bundles one. This is the
+/// quickest way to confirm that is working in a browser, since
+/// `flutter test --platform chrome` is broken on Windows.
+class _EmojiFontStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final style = defaultEmojiTextStyle();
+    final ok = kIsWeb
+        ? style?.fontFamily == kBundledEmojiFontFamily
+        : style == null;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 8, bottom: 12, left: 4),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 14,
-            color: colorScheme.primary.withValues(alpha: 0.7),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            title.toUpperCase(),
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
-              color: colorScheme.primary,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Divider(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.4),
-              height: 1,
-            ),
-          ),
-        ],
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(
+        ok ? Icons.check_circle : Icons.error,
+        color: ok ? Colors.green : Colors.red,
       ),
-    );
-  }
-}
-
-class _ExampleCard extends StatelessWidget {
-  const _ExampleCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.gradient,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final List<Color> gradient;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: gradient.first.withValues(alpha: 0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Material(
-          borderRadius: BorderRadius.circular(20),
-          clipBehavior: Clip.antiAlias,
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            splashColor: gradient.first.withValues(alpha: 0.08),
-            highlightColor: gradient.first.withValues(alpha: 0.04),
-            child: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    gradient.first.withValues(alpha: 0.06),
-                    gradient.last.withValues(alpha: 0.03),
-                    colorScheme.surface,
-                  ],
-                  stops: const [0.0, 0.4, 1.0],
-                ),
-                border: Border.all(
-                  color: gradient.first.withValues(alpha: 0.12),
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: gradient,
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: gradient.first.withValues(alpha: 0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Icon(icon, color: Colors.white, size: 24),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          subtitle,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: colorScheme.onSurface.withValues(
-                              alpha: 0.55,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: gradient.first.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Icon(
-                      Icons.chevron_right_rounded,
-                      size: 18,
-                      color: gradient.first.withValues(alpha: 0.6),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+      title: Text(
+        kIsWeb ? 'Web: bundled emoji font' : 'Native: system emoji font',
+      ),
+      subtitle: Text(
+        kIsWeb
+            ? 'Monochrome, renders offline. Pass colorEmojiFontLoader for color.'
+            : 'Full colour from the OS, already works offline.',
       ),
     );
   }

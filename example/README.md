@@ -1,40 +1,47 @@
 # Virtual Keypad Example
 
-This example app shows how to integrate `virtual_keypad` in real UI flows instead of isolated toy widgets.
+A single page that exercises the whole package. Every option is a switch or a
+chip, so you change one thing and watch the same keyboard react.
 
-## Run It
+## Run it
 
 ```bash
 flutter pub get
 flutter run
 ```
 
-## What It Covers
+Or in a browser:
 
-- Keyboard Preview: compare layouts, actions, and languages quickly
-- Numeric Input: amount entry with a number-focused keypad
-- PIN Pad: fully custom layout with fixed-position keys
-- Password Entry: hidden text flow with submit behavior
-- Email & URL: input-aware action keys and layout changes
-- Multi-Field Form: scoped mode with focus-driven behavior
-- Multiline Text: newline-aware keyboard behavior
-- Standalone Mode: use the keyboard with standard Flutter `TextField`s
-- Floating Keyboard: draggable overlay mode with standalone and scoped demos, size and corner options, and persistent visibility
-- Auto-Hide Keyboard: focus-aware show and hide transitions
-- Custom Themes: theme presets and custom styling
-- Language Switching: built-in multi-language support
+```bash
+flutter run -d chrome
+```
 
-## Which Screen To Open First
+## What you can change
 
-- Start with `Standalone Mode` if you want the fastest integration path.
-- Start with `Floating Keyboard` if you want overlay-style placement, manual visibility control, and responsive floating behavior in one screen.
-- Start with `Multi-Field Form` if you need structured form flows and keyboard-managed submit behavior.
-- Start with `PIN Pad` if you need a custom layout.
+| Control | What it shows |
+|---|---|
+| Keyboard type chips | Text, multiline, number, phone, email, URL, and a custom PIN pad |
+| Language chips | Live switching across English, Bengali, Arabic (RTL), French, Hindi, Russian |
+| Emoji key | The opt-in emoji page |
+| Dark keyboard theme | `VirtualKeypadTheme.dark` against the light default |
+| Floating mode | `VirtualKeypadFloating` as a draggable panel instead of an inline keyboard |
+| D-pad navigation | Arrow keys move a highlight, Enter presses the key, for TV and set-top boxes |
 
-## Architecture Guide
+The field at the top is a plain Flutter `TextField`. That is the point of
+standalone mode: no wrapper widgets, no controller swap.
 
-- Standalone mode: use standard `TextField` widgets with `VirtualKeypad(standalone: true)`.
-- Floating mode: wrap your content with `VirtualKeypadFloating(...)` when you want the keyboard in a draggable panel.
-- Scoped mode: use `VirtualKeypadScope`, `VirtualKeypadTextField`, and `VirtualKeypad()` together when you need tighter control.
+## Emoji font status
 
-The example app is intentionally broad: it is both a demo and a decision guide for choosing the right integration mode, with centered responsive layouts across the example screens.
+The bottom of the page reports which emoji font is in use.
+
+Web has no system emoji font, so the package bundles one and applies it there
+only. Native platforms already render colour emoji from the OS and are left
+alone. Run the page with `flutter run -d chrome` to confirm the web path
+works, which is worth doing because `flutter test --platform chrome` is broken
+on Windows ([flutter#162798](https://github.com/flutter/flutter/issues/162798)).
+
+## Choosing an integration mode
+
+- **Standalone**: standard `TextField` plus `VirtualKeypad(standalone: true)`. Fastest path, and what this example uses.
+- **Floating**: wrap your content in `VirtualKeypadFloating(...)` for a draggable panel.
+- **Scoped**: `VirtualKeypadScope`, `VirtualKeypadTextField`, and `VirtualKeypad()` together when you need focus routing, submit handling, or to block the system keyboard.
