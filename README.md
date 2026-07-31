@@ -19,12 +19,13 @@ It gives you a full QWERTY virtual keyboard, a numeric keypad or numpad, a phone
 dialer, and custom PIN pad or OTP layouts, on Android, iOS, Web, Windows, macOS,
 and Linux.
 
-Reach for it when the platform soft keyboard is missing, blocked, or not enough:
+Use it where the platform soft keyboard is missing, blocked, or not enough:
 kiosk and self-service terminals, ATM and point of sale (POS) screens,
-touchscreen and desktop apps, embedded displays, and secure PIN entry where you
-would rather the system keyboard stayed out of it. It drops into any standard
-`TextField` or `TextFormField` with one line, and it ships 12 languages
-including right-to-left Arabic.
+touchscreen and desktop apps, Android TV and set-top boxes driven by a D-pad
+remote, embedded displays, and secure PIN entry where you would rather the
+system keyboard stayed out of it. It drops into any standard `TextField` or
+`TextFormField` with one line, and it ships 12 languages including
+right-to-left Arabic.
 
 > ⭐ **Find this useful?** [Star it on GitHub](https://github.com/Masum-MSNR/virtual_keypad)
 > and 👍 [like it on pub.dev](https://pub.dev/packages/virtual_keypad). Stars and likes
@@ -46,12 +47,12 @@ platform. There is no native code and no platform channel involved.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/showcase-devices.png"
-       alt="Six virtual_keypad keyboards side by side: a wide desktop email layout, the colour emoji page, a dark custom PIN pad, QWERTY, Arabic right to left, and a themed numeric kiosk pad" width="100%"/>
+       alt="Six virtual_keypad on-screen keyboards side by side: a wide desktop email layout, the color emoji page, a dark custom PIN pad, phone QWERTY, Arabic right to left, and a themed numeric kiosk keypad" width="100%"/>
 </p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/showcase-languages.png"
-       alt="Six of the twelve built-in languages: Bengali, Hindi, Russian JCUKEN, Korean Dubeolsik, Thai Kedmanee, and French AZERTY" width="100%"/>
+       alt="Six of the twelve built-in multilingual keyboard layouts: Bengali, Hindi Devanagari, Russian JCUKEN Cyrillic, Korean Dubeolsik Hangul, Thai Kedmanee, and French AZERTY" width="100%"/>
 </p>
 
 <p align="center">
@@ -96,8 +97,7 @@ platform. There is no native code and no platform channel involved.
 
 ## Key features
 
-Everything you need to put a working keyboard on screen without native code.
-Expand a group for details:
+Expand a group for the full list:
 
 <details>
 <summary><b>🎹 Layouts &amp; keyboard types</b></summary>
@@ -515,8 +515,7 @@ VirtualKeypad(
 
 The keyboard paints the bundled monochrome font immediately, then swaps to color
 when the font arrives. If the fetch fails, because the device is offline or the
-request was blocked, the monochrome font stays and emoji still render. You get
-color when you can and never a blank box.
+request was blocked, the monochrome font stays and emoji still render.
 
 The package performs no fetch of its own, so nothing leaves the device unless you
 write it. Self-host the font rather than hot-linking someone else's CDN, and

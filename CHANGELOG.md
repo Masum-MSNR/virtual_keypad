@@ -1,18 +1,33 @@
-## 0.8.1
+## 1.0.0
+
+First stable release. Everything below is additive, so upgrading from 0.8.1
+needs no code changes. The API is settled from here and follows semantic
+versioning.
 
 ### Added
+* Bundled Noto Emoji font, subset to the 1271 codepoints the emoji picker uses (708 KB), applied on Flutter web only so native platforms keep their own color emoji font
 * `colorEmojiFontLoader` on `VirtualKeypad` and `VirtualKeypadFloating` for loading a color emoji font at runtime on web, so apps can have color emoji without carrying a 3.9 MB font in the bundle. The bundled monochrome font paints immediately and the keyboard swaps to color once the font arrives; a failed load keeps the monochrome font so emoji always render. Off by default, and the package performs no fetch of its own
 * `VirtualKeypadColorEmoji` with the registered family name and a memoized loader shared across keyboards. Font bytes are checked against the TrueType and OpenType signatures first, so a captive portal or error page served in place of the font is rejected instead of registering as an unrenderable font
-* D-pad and remote control navigation with `enableDpadNavigation` on `VirtualKeypad` and `VirtualKeypadFloating`, making the keyboard usable on Android TV, Fire TV, and set-top boxes. Arrow keys move a highlight, select, enter, or the primary gamepad button presses the key, and vertical moves land on the nearest key horizontally so wide keys stay reachable
-* `focusBorderColor`, `focusBorderWidth`, and `focusColor` on `VirtualKeypadTheme` for styling the D-pad highlight
-* Bundled Noto Emoji font, subset to the 1271 codepoints the emoji picker uses (708 KB), applied on Flutter web only so native platforms keep their own color emoji font
 * `kBundledEmojiFontFamily` constant and a `ThemeData.withVirtualKeypadEmojiFont()` extension for covering emoji inserted into your own `TextField` widgets in standalone mode
 * `VirtualKeypadTextField` now appends the bundled emoji font as a fallback on web automatically, so emoji inserted in scope mode render offline with no setup
 * `emojiTextStyle` on `VirtualKeypad` and `VirtualKeypadFloating` to override the emoji page font, for example to ship a color emoji font on web
 * `checkEmojiPlatformCompatibility` on `VirtualKeypad` and `VirtualKeypadFloating` to opt into filtering emoji the device cannot render (Android only, off by default)
+* D-pad and remote control navigation with `enableDpadNavigation` on `VirtualKeypad` and `VirtualKeypadFloating`, making the keyboard usable on Android TV, Fire TV, and set-top boxes. Arrow keys move a highlight, select, enter, or the primary gamepad button presses the key, and vertical moves land on the nearest key horizontally so wide keys stay reachable
+* `focusBorderColor`, `focusBorderWidth`, and `focusColor` on `VirtualKeypadTheme` for styling the D-pad highlight
 
 ### Fixed
 * Emoji rendered as blank boxes on a first offline load on Flutter web, where the CanvasKit and Skwasm renderers wait on an on-demand Noto fallback font download. The bundled font now makes the emoji page render offline with no app-side setup
+* Emoji were spread far apart on wide keyboards, because the grid was capped at 12 columns regardless of width. Column count is now derived from the available width and the emoji size
+
+### Improved
+* Example app rebuilt as a single page where keyboard type, language, theme, emoji, floating mode, and D-pad navigation are each one chip or switch
+* New package logo and two preview sheets showing the layouts and the built-in language scripts side by side, at scale against each other
+* Package description and topics reworked for pub.dev search
+* CI split into separate check, web compile, pana, and release stages, with an explicit gate at 160 pub points
+
+---
+
+## 0.8.1
 
 ### Improved
 * Refreshed the README and pub.dev preview media to use the new `previews/` phone and desktop demo GIFs
