@@ -323,6 +323,23 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   /// The keys are still built while the keyboard is collapsed, so this is what
   /// stops the D-pad handler from acting on an invisible keyboard.
   bool _dpadVisible = false;
+
+  /// The one keyboard allowed to act on D-pad events.
+  ///
+  /// Handlers registered with [HardwareKeyboard] all run for every event, so
+  /// two visible keyboards with D-pad navigation on would each insert the same
+  /// character. The first to become visible claims the D-pad and holds it until
+  /// it hides or is disposed.
+  static _VirtualKeypadState? _dpadOwner;
+
+  void _updateDpadOwnership(bool visible) {
+    if (visible && widget.enableDpadNavigation) {
+      _dpadOwner ??= this;
+    } else if (identical(_dpadOwner, this)) {
+      _dpadOwner = null;
+    }
+  }
+
   bool _wasVisible = false;
   bool? _reportedVisibility;
   bool _languagePickerVisible = false;
@@ -512,6 +529,9 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   void dispose() {
     KeyboardLayoutProvider.instance.removeListener(_onLanguageChanged);
     VirtualKeypadColorEmoji.isLoaded.removeListener(_onColorEmojiLoaded);
+    if (identical(_dpadOwner, this)) {
+      _dpadOwner = null;
+    }
     if (widget.enableDpadNavigation) {
       HardwareKeyboard.instance.removeHandler(_handleDpadKey);
     }
@@ -1080,6 +1100,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   /// Whether the highlight should respond to D-pad events right now.
   bool get _dpadActive =>
       widget.enableDpadNavigation &&
+      identical(_dpadOwner, this) &&
       _dpadVisible &&
       !_isEmojiPickerVisible &&
       !_languagePickerVisible &&
@@ -1384,9 +1405,11 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     // has to be told when it is off screen. Without this it keeps swallowing
     // arrow keys and types characters the user cannot see.
     _dpadVisible = isVisible;
+    _updateDpadOwnership(isVisible);
 
     if (_effectiveKeyboardType == KeyboardType.none) {
       _dpadVisible = false;
+      _updateDpadOwnership(false);
       return const SizedBox.shrink();
     }
 

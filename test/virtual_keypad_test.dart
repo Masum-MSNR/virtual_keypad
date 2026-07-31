@@ -1935,6 +1935,40 @@ void main() {
       expect(controller.text, isEmpty);
     });
 
+    testWidgets('only one visible keyboard consumes a D-pad press',
+        (tester) async {
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(controller: controller),
+                  const Expanded(
+                    child: VirtualKeypad(enableDpadNavigation: true),
+                  ),
+                  const Expanded(
+                    child: VirtualKeypad(enableDpadNavigation: true),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.pumpAndSettle();
+
+      // Every HardwareKeyboard handler runs for every event, so without an
+      // owner both keyboards would insert the same character.
+      expect(controller.text, 'q');
+    });
+
     testWidgets('removes its key handler on dispose', (tester) async {
       final before = HardwareKeyboard.instance.physicalKeysPressed.length;
       await pumpKeypad(tester, dpad: true);
