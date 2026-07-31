@@ -10,6 +10,10 @@ void main() {
 
 const _seed = Color(0xFF6C63FF);
 
+/// Caps the content and the keyboard at the same width, so the two line up on
+/// a desktop or browser window instead of stretching edge to edge.
+const _maxWidth = 980.0;
+
 class ExampleApp extends StatefulWidget {
   const ExampleApp({super.key});
 
@@ -95,14 +99,12 @@ const _types = <String, KeyboardType>{
   'PIN pad': KeyboardType.custom,
 };
 
-const _languages = <String, String>{
-  'en': 'English',
-  'bn': 'বাংলা',
-  'ar': 'العربية',
-  'fr': 'Français',
-  'hi': 'हिन्दी',
-  'ru': 'Русский',
-};
+/// Every language registered by `initializeKeyboardLayouts()`, plus any you
+/// register yourself. Read from the provider rather than hardcoded, so this
+/// list stays correct as languages are added.
+List<KeyboardLanguage> get _allLanguages =>
+    KeyboardLayoutProvider.instance.languages.toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.dark, required this.onDarkChanged});
@@ -174,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              child: _buildKeypad(),
+              child: Center(child: _buildKeypad()),
             ),
         ],
       ),
@@ -189,8 +191,9 @@ class _HomePageState extends State<HomePage> {
       theme: _keypadTheme,
       enableEmojiKey: _emoji,
       enableDpadNavigation: _dpad,
-      availableLanguages: _languages.keys.toList(),
+      availableLanguages: _allLanguages.map((l) => l.code).toList(),
       initialLanguage: _language,
+      width: _maxWidth,
       onLanguageChanged: (code) => setState(() => _language = code),
     );
   }
@@ -236,10 +239,17 @@ class _HomePageState extends State<HomePage> {
         _Section(
           icon: Icons.translate_rounded,
           title: 'Language',
-          subtitle: 'Long-press the space bar to switch from the keyboard',
+          subtitle:
+              '${_allLanguages.length} built in. Long-press the space bar to '
+              'switch from the keyboard',
           child: _ChipRow(
-            labels: _languages.keys.toList(),
-            labelBuilder: (code) => _languages[code]!,
+            labels: _allLanguages.map((l) => l.code).toList(),
+            labelBuilder: (code) {
+              final language = _allLanguages.firstWhere((l) => l.code == code);
+              return language.isRTL
+                  ? '${language.nativeName}  ·  RTL'
+                  : language.nativeName;
+            },
             isSelected: (code) => code == _language,
             onTap: (code) {
               KeyboardLayoutProvider.instance.setLanguage(code);
@@ -286,7 +296,7 @@ class _HomePageState extends State<HomePage> {
     // across the full window.
     final constrained = Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 640),
+        constraints: const BoxConstraints(maxWidth: _maxWidth),
         child: content,
       ),
     );
