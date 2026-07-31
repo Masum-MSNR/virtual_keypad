@@ -144,7 +144,14 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
     _focusNode = FocusNode();
     _focusNode.addListener(_onFocusChanged);
     widget.controller.addListener(_onControllerChanged);
+    // Repaint when a runtime color emoji font arrives, so text already on
+    // screen switches to color along with the emoji grid.
+    VirtualKeypadColorEmoji.isLoaded.addListener(_onEmojiFontChanged);
     _previousText = widget.controller.text;
+  }
+
+  void _onEmojiFontChanged() {
+    if (mounted) setState(() {});
   }
 
   TextInputType _toTextInputType(KeyboardType type) {
@@ -207,6 +214,7 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
     _focusNode.removeListener(_onFocusChanged);
     _focusNode.dispose();
     widget.controller.removeListener(_onControllerChanged);
+    VirtualKeypadColorEmoji.isLoaded.removeListener(_onEmojiFontChanged);
     super.dispose();
   }
 

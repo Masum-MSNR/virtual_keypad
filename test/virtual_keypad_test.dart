@@ -1719,6 +1719,18 @@ void main() {
       );
     });
 
+    test('fallback chain prefers color once it has loaded', () async {
+      // Monochrome alone, and it must stay last so emoji always render.
+      expect(bundledEmojiFallbackFamilies(), [kBundledEmojiFontFamily]);
+
+      await VirtualKeypadColorEmoji.load(realFontBytes);
+
+      expect(bundledEmojiFallbackFamilies(), [
+        VirtualKeypadColorEmoji.fontFamily,
+        kBundledEmojiFontFamily,
+      ]);
+    });
+
     test('loads once even when several keyboards ask', () async {
       var calls = 0;
       Future<ByteData> counted() {
@@ -1887,6 +1899,38 @@ void main() {
       await send(tester, LogicalKeyboardKey.arrowRight);
       await send(tester, LogicalKeyboardKey.select);
       await send(tester, LogicalKeyboardKey.enter);
+
+      expect(controller.text, isEmpty);
+    });
+
+    testWidgets('ignores the D-pad while the keyboard is hidden',
+        (tester) async {
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(controller: controller),
+                  const VirtualKeypad(
+                    enableDpadNavigation: true,
+                    hideWhenUnfocused: true,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Nothing is focused, so the keyboard is collapsed. Swallowing arrow
+      // keys or typing a character here would be invisible to the user.
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.sendKeyEvent(LogicalKeyboardKey.select);
+      await tester.pumpAndSettle();
 
       expect(controller.text, isEmpty);
     });

@@ -31,7 +31,19 @@ const String kBundledEmojiFontFamily = 'packages/virtual_keypad/NotoEmoji';
 TextStyle? defaultEmojiTextStyle() =>
     kIsWeb ? const TextStyle(fontFamily: kBundledEmojiFontFamily) : null;
 
-/// Appends [kBundledEmojiFontFamily] to [style] so emoji in that text render
+/// Emoji font families to fall back through, best first.
+///
+/// The runtime color font comes first when it has loaded, so text keeps pace
+/// with the emoji grid instead of showing color in the picker and monochrome
+/// in the field. The bundled monochrome font always ends the chain, which is
+/// what guarantees emoji render at all.
+List<String> bundledEmojiFallbackFamilies() => <String>[
+      if (VirtualKeypadColorEmoji.isLoaded.value)
+        VirtualKeypadColorEmoji.fontFamily,
+      kBundledEmojiFontFamily,
+    ];
+
+/// Appends the emoji fallback families to [style] so emoji in that text render
 /// offline on web.
 ///
 /// Returns [style] untouched off the web, where the platform already provides
@@ -39,9 +51,12 @@ TextStyle? defaultEmojiTextStyle() =>
 TextStyle? withBundledEmojiFallback(TextStyle? style) {
   if (!kIsWeb) return style;
   final existing = style?.fontFamilyFallback ?? const <String>[];
-  if (existing.contains(kBundledEmojiFontFamily)) return style;
+  final families = bundledEmojiFallbackFamilies()
+      .where((family) => !existing.contains(family))
+      .toList();
+  if (families.isEmpty) return style;
   return (style ?? const TextStyle()).copyWith(
-    fontFamilyFallback: [...existing, kBundledEmojiFontFamily],
+    fontFamilyFallback: [...existing, ...families],
   );
 }
 
@@ -163,7 +178,7 @@ extension VirtualKeypadEmojiFont on ThemeData {
   /// Returns this theme unchanged off the web.
   ThemeData withVirtualKeypadEmojiFont() {
     if (!kIsWeb) return this;
-    const fallback = <String>[kBundledEmojiFontFamily];
+    final fallback = bundledEmojiFallbackFamilies();
     return copyWith(
       textTheme: textTheme.apply(fontFamilyFallback: fallback),
       primaryTextTheme: primaryTextTheme.apply(fontFamilyFallback: fallback),

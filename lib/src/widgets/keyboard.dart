@@ -317,6 +317,12 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   /// Set during build so the key handler navigates whatever the user can
   /// actually see, including custom layouts and symbol pages.
   KeyboardLayout? _dpadLayout;
+
+  /// Whether the keyboard is currently on screen.
+  ///
+  /// The keys are still built while the keyboard is collapsed, so this is what
+  /// stops the D-pad handler from acting on an invisible keyboard.
+  bool _dpadVisible = false;
   bool _wasVisible = false;
   bool? _reportedVisibility;
   bool _languagePickerVisible = false;
@@ -1074,9 +1080,20 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   /// Whether the highlight should respond to D-pad events right now.
   bool get _dpadActive =>
       widget.enableDpadNavigation &&
+      _dpadVisible &&
       !_isEmojiPickerVisible &&
       !_languagePickerVisible &&
-      (_dpadLayout?.isNotEmpty ?? false);
+      _isDpadCursorInBounds;
+
+  /// Whether the highlight still points at a real key.
+  ///
+  /// A key event can land between a layout change and the rebuild that clamps
+  /// the highlight, so the indices are re-checked before they are used.
+  bool get _isDpadCursorInBounds {
+    final layout = _dpadLayout;
+    if (layout == null || _dpadRow >= layout.length) return false;
+    return _dpadCol < layout[_dpadRow].length;
+  }
 
   /// Normalized horizontal centre, from 0 to 1, of the key at [index].
   ///
@@ -1363,7 +1380,13 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
     final isVisible = !widget.hideWhenUnfocused || shouldShowKeyboard;
 
+    // The keyboard still builds its keys while collapsed, so the D-pad handler
+    // has to be told when it is off screen. Without this it keeps swallowing
+    // arrow keys and types characters the user cannot see.
+    _dpadVisible = isVisible;
+
     if (_effectiveKeyboardType == KeyboardType.none) {
+      _dpadVisible = false;
       return const SizedBox.shrink();
     }
 
