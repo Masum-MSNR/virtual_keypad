@@ -31,6 +31,14 @@ jobs:
       - name: Run tests
         run: flutter test
 
+      # The kIsWeb branches (bundled emoji font, fallback chain, runtime color
+      # font loader) never execute on the VM. The platform-dependent tests
+      # assert the correct behaviour for whichever platform they run on, so
+      # running the same file in a browser is what actually covers them.
+      # Runners ship Chrome preinstalled, which local machines often do not.
+      - name: Run tests on web
+        run: flutter test --platform chrome test/virtual_keypad_test.dart
+
       - name: Install example dependencies
         working-directory: example
         run: flutter pub get
