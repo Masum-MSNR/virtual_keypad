@@ -1730,6 +1730,54 @@ void main() {
       );
     });
 
+    testWidgets('emoji columns scale with width to keep density steady',
+        (tester) async {
+      Future<int> columnsAt(double width) async {
+        tester.view.physicalSize = Size(width, 900);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
+
+        final controller = VirtualKeypadController();
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: VirtualKeypadScope(
+                child: Column(
+                  children: [
+                    VirtualKeypadTextField(controller: controller),
+                    const VirtualKeypad(enableEmojiKey: true),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.tap(find.byType(TextField).first);
+        await tester.pumpAndSettle();
+        await tester.tap(find.bySemanticsLabel('Show emoji'));
+        await tester.pumpAndSettle();
+
+        final columns = tester
+            .widget<emoji_picker.EmojiPicker>(
+                find.byType(emoji_picker.EmojiPicker))
+            .config
+            .emojiViewConfig
+            .columns;
+
+        await tester.pumpWidget(const SizedBox.shrink());
+        return columns;
+      }
+
+      final narrow = await columnsAt(380);
+      final wide = await columnsAt(1900);
+
+      // The old fixed ladder capped at 12, which left ~158px cells around a
+      // ~30px glyph on a full-width desktop keyboard.
+      expect(narrow, greaterThanOrEqualTo(7));
+      expect(wide, greaterThan(narrow * 2));
+      expect(wide, lessThanOrEqualTo(32));
+    });
+
     test('fallback chain ends with the monochrome font', () {
       // Monochrome must stay last, since it is what guarantees emoji render.
       expect(bundledEmojiFallbackFamilies().last, kBundledEmojiFontFamily);

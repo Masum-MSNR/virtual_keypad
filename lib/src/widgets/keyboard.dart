@@ -914,12 +914,19 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     }
   }
 
+  /// Emoji size used in the picker grid.
+  double get _emojiSize => max(26, widget.theme.keyTextSize + 8);
+
+  /// Columns that keep emoji at a roughly constant density.
+  ///
+  /// A fixed column count makes each grid cell grow with the window, so on a
+  /// desktop or full-width web keyboard the emoji end up marooned in padding.
+  /// Deriving the count from a target cell size instead keeps the spacing the
+  /// same at every width, and only relaxes past the upper clamp, where the
+  /// alternative would be an unscannable number of columns.
   int _emojiColumnsForWidth(double width) {
-    if (width >= 900) return 12;
-    if (width >= 700) return 11;
-    if (width >= 520) return 9;
-    if (width >= 380) return 8;
-    return 7;
+    final targetCell = _emojiSize * 1.55;
+    return (width / targetCell).round().clamp(7, 32);
   }
 
   String get _emojiRestoreLabel {
@@ -955,7 +962,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
           ),
           emojiViewConfig: emoji_picker.EmojiViewConfig(
             columns: _emojiColumnsForWidth(width),
-            emojiSizeMax: max(26, theme.keyTextSize + 8),
+            emojiSizeMax: _emojiSize,
             backgroundColor: theme.backgroundColor,
             buttonMode: emoji_picker.ButtonMode.NONE,
             gridPadding: EdgeInsets.symmetric(
