@@ -1,0 +1,12 @@
+# Collapses the several git identities each person has committed under, so
+# `git shortlog`, `git log --use-mailmap`, and editor contributor panels list
+# one entry per human instead of one per machine.
+#
+# This is display only. It does not rewrite history and has no effect on
+# GitHub's own contributor graph, which keys off the account behind each email.
+
+Nurullah Al Masum <nam.cse.ruet@gmail.com>
+Nurullah Al Masum <nam.cse.ruet@gmail.com> <70331283+Masum-MSNR@users.noreply.github.com>
+
+Enguerrand Arminjon <37028599+EArminjon@users.noreply.github.com>
+Enguerrand Arminjon <37028599+EArminjon@users.noreply.github.com> <earminjon@sqli.com>
