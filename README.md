@@ -1,9 +1,4 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/logo.png"
-       alt="virtual_keypad: an on-screen virtual keyboard and keypad widget for Flutter" width="140"/>
-</p>
-
-<p align="center">
   <a href="https://pub.dev/packages/virtual_keypad"><img src="https://img.shields.io/pub/v/virtual_keypad.svg" alt="pub version"></a>
   <a href="https://pub.dev/packages/virtual_keypad/score"><img src="https://img.shields.io/pub/points/virtual_keypad" alt="pub points"></a>
   <a href="https://pub.dev/packages/virtual_keypad"><img src="https://img.shields.io/pub/likes/virtual_keypad" alt="pub likes"></a>
@@ -55,8 +50,8 @@ platform. There is no native code and no platform channel involved.
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/showcase-languages.png"
-       alt="Six of the twelve built-in languages: Bengali, Hindi, Russian, Korean, Thai, and French AZERTY" width="100%"/>
+  <sub>Every keyboard above is the same VirtualKeypad widget with different
+  arguments, captured at scale against each other.</sub>
 </p>
 
 ## Table of contents
@@ -699,6 +694,11 @@ Import only the surface you use:
 ## Supported languages
 
 All 12 are registered when you call `initializeKeyboardLayouts()`.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/showcase-languages.png"
+       alt="Six of the twelve built-in languages: Bengali, Hindi, Russian JCUKEN, Korean Dubeolsik, Thai Kedmanee, and French AZERTY" width="100%"/>
+</p>
 
 | Code | Language | Native name | Layout | Script | RTL |
 |---|---|---|---|---|---|
