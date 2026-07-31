@@ -192,7 +192,7 @@ predictable focus routing, custom submit behavior, or secure input.
 
 - ❌ No word prediction, autocorrect, or swipe typing
 - ❌ No handwriting or voice input
-- ❌ Bundled web emoji font is monochrome; pass `emojiTextStyle` to use a color font
+- ❌ Bundled web emoji font is monochrome to stay at 708 KB; bundle a color font and pass `emojiTextStyle` if you need it
 
 ## Roadmap
 
@@ -490,8 +490,16 @@ the picker uses (708 KB). It is applied **only on web**, so native platforms kee
 their own color emoji font untouched and pay nothing at render time. The bundled
 font is monochrome, which is the trade for rendering reliably offline.
 
-Override it with `emojiTextStyle` if you would rather ship a color emoji font on
-web, or reuse the bundled family elsewhere in your app:
+Monochrome is a size decision, not a technical limit. Subset to the same
+codepoints, Noto Color Emoji in COLRv1 form is about 3.9 MB against 708 KB for
+the monochrome build. Since only web is affected, and Android, iOS, and desktop
+already render color emoji from the system font, that is a steep cost to put in
+every app. If your app is web-first and you want color, bundle
+[Noto Color Emoji](https://github.com/googlefonts/noto-emoji/blob/main/fonts/Noto-COLRv1.ttf)
+yourself and point `emojiTextStyle` at it.
+
+Override it with `emojiTextStyle` to do exactly that, or reuse the bundled family
+elsewhere in your app:
 
 ```dart
 // Use your own font on the emoji page.
