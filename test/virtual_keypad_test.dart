@@ -1,3 +1,5 @@
+import 'dart:io' show File;
+
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji_picker;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -1655,6 +1657,136 @@ void main() {
       final picker = tester.widget<emoji_picker.EmojiPicker>(
           find.byType(emoji_picker.EmojiPicker));
       expect(picker.config.checkPlatformCompatibility, isTrue);
+    });
+  });
+
+  group('VirtualKeypadColorEmoji', () {
+    setUp(VirtualKeypadColorEmoji.resetForTesting);
+    tearDown(VirtualKeypadColorEmoji.resetForTesting);
+
+    // The package's own bundled font stands in for a downloaded color font;
+    // the loader does not care which font it is handed.
+    Future<ByteData> realFontBytes() async {
+      final bytes = await File('fonts/NotoEmoji-Regular.ttf').readAsBytes();
+      return ByteData.sublistView(bytes);
+    }
+
+    test('registers the font and flips isLoaded', () async {
+      expect(VirtualKeypadColorEmoji.isLoaded.value, isFalse);
+
+      await expectLater(
+        VirtualKeypadColorEmoji.load(realFontBytes),
+        completion(isTrue),
+      );
+
+      expect(VirtualKeypadColorEmoji.isLoaded.value, isTrue);
+    });
+
+    test('a failing loader falls back instead of throwing', () async {
+      await expectLater(
+        VirtualKeypadColorEmoji.load(
+          () => Future<ByteData>.error(StateError('offline')),
+        ),
+        completion(isFalse),
+      );
+
+      // The bundled monochrome font stays in place, so emoji still render.
+      expect(VirtualKeypadColorEmoji.isLoaded.value, isFalse);
+    });
+
+    test('rejects bytes that are not a font', () async {
+      // A captive portal or a 404 page served in place of the font. FontLoader
+      // would happily register this and leave emoji blank.
+      final html = ByteData.sublistView(
+        Uint8List.fromList('<!doctype html><title>404</title>'.codeUnits),
+      );
+
+      await expectLater(
+        VirtualKeypadColorEmoji.load(() async => html),
+        completion(isFalse),
+      );
+      expect(VirtualKeypadColorEmoji.isLoaded.value, isFalse);
+    });
+
+    test('rejects WOFF2, which Flutter cannot load', () async {
+      final woff2 = ByteData.sublistView(
+        Uint8List.fromList([0x77, 0x4F, 0x46, 0x32, 0, 0, 0, 0]),
+      );
+
+      await expectLater(
+        VirtualKeypadColorEmoji.load(() async => woff2),
+        completion(isFalse),
+      );
+    });
+
+    test('loads once even when several keyboards ask', () async {
+      var calls = 0;
+      Future<ByteData> counted() {
+        calls++;
+        return realFontBytes();
+      }
+
+      await Future.wait([
+        VirtualKeypadColorEmoji.load(counted),
+        VirtualKeypadColorEmoji.load(counted),
+        VirtualKeypadColorEmoji.load(counted),
+      ]);
+
+      expect(calls, 1);
+    });
+
+    testWidgets('no loader means nothing is fetched', (tester) async {
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(controller: controller),
+                  const VirtualKeypad(enableEmojiKey: true),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(VirtualKeypadColorEmoji.isLoaded.value, isFalse);
+    });
+
+    testWidgets('loader is not run off the web', (tester) async {
+      var called = false;
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(controller: controller),
+                  VirtualKeypad(
+                    enableEmojiKey: true,
+                    colorEmojiFontLoader: () {
+                      called = true;
+                      return realFontBytes();
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Native platforms already render color emoji from the system font, so
+      // downloading one would be wasted bytes.
+      expect(kIsWeb, isFalse);
+      expect(called, isFalse);
     });
   });
 

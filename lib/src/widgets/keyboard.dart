@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji_picker;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -87,6 +88,7 @@ class VirtualKeypad extends StatefulWidget {
     this.enableEmojiKey = false,
     this.showEmojiKeyboardInitially = false,
     this.emojiTextStyle,
+    this.colorEmojiFontLoader,
     this.checkEmojiPlatformCompatibility = false,
     this.enableDpadNavigation = false,
     this.hideWhenUnfocused = false,
@@ -193,7 +195,32 @@ class VirtualKeypad extends StatefulWidget {
   /// This styles the emoji grid only. Emoji inserted into your own text fields
   /// are painted by your app's text style, so on web set `fontFamilyFallback`
   /// on your theme to keep them rendering offline too.
+  ///
+  /// Pass an empty `TextStyle()` to opt out of the bundled font entirely and
+  /// let the web renderer supply its own color emoji. Those are in color, but
+  /// they arrive over the network, so they are blank until the download lands
+  /// and stay blank offline. [colorEmojiFontLoader] is usually the better way
+  /// to get color, since it keeps the offline fallback.
   final TextStyle? emojiTextStyle;
+
+  /// Loads a color emoji font at runtime, replacing the bundled monochrome one.
+  ///
+  /// Off by default. The bundled font is monochrome to keep the package small,
+  /// since a color emoji font is roughly 3.9 MB against 708 KB. Supplying a
+  /// loader gets you color without putting that in every app bundle: the
+  /// keyboard paints the monochrome font immediately, then swaps to color if
+  /// the font arrives.
+  ///
+  /// A failed load is not an error. The monochrome font stays and emoji keep
+  /// rendering, which is what makes this safe to enable on flaky connections.
+  ///
+  /// The package performs no fetch of its own, so nothing leaves the device
+  /// unless you write it. Only used on web, where the bundled font would
+  /// otherwise apply; native platforms already render color emoji from the
+  /// system font.
+  ///
+  /// See [VirtualKeypadColorEmoji] for the full rationale and an example.
+  final EmojiFontBytesLoader? colorEmojiFontLoader;
 
   /// When true, emoji the platform cannot render are filtered out of the grid.
   ///
@@ -310,6 +337,32 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     if (widget.enableDpadNavigation) {
       HardwareKeyboard.instance.addHandler(_handleDpadKey);
     }
+    _startColorEmojiLoad();
+    VirtualKeypadColorEmoji.isLoaded.addListener(_onColorEmojiLoaded);
+  }
+
+  /// Kicks off the runtime color emoji load, if the caller opted in.
+  ///
+  /// Only on web: native platforms already render color emoji from the system
+  /// font, so downloading one would be wasted bytes.
+  void _startColorEmojiLoad() {
+    final loader = widget.colorEmojiFontLoader;
+    if (!kIsWeb || loader == null) return;
+    VirtualKeypadColorEmoji.load(loader);
+  }
+
+  void _onColorEmojiLoaded() {
+    if (mounted) setState(() {});
+  }
+
+  /// Emoji style for the picker grid, in precedence order.
+  TextStyle? get _effectiveEmojiTextStyle {
+    final explicit = widget.emojiTextStyle;
+    if (explicit != null) return explicit;
+    if (kIsWeb && VirtualKeypadColorEmoji.isLoaded.value) {
+      return const TextStyle(fontFamily: VirtualKeypadColorEmoji.fontFamily);
+    }
+    return defaultEmojiTextStyle();
   }
 
   void _initStandalone() {
@@ -435,6 +488,9 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         _standaloneVisible = false;
       }
     }
+    if (widget.colorEmojiFontLoader != oldWidget.colorEmojiFontLoader) {
+      _startColorEmojiLoad();
+    }
     if (widget.enableDpadNavigation != oldWidget.enableDpadNavigation) {
       if (widget.enableDpadNavigation) {
         HardwareKeyboard.instance.addHandler(_handleDpadKey);
@@ -449,6 +505,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
   @override
   void dispose() {
     KeyboardLayoutProvider.instance.removeListener(_onLanguageChanged);
+    VirtualKeypadColorEmoji.isLoaded.removeListener(_onColorEmojiLoaded);
     if (widget.enableDpadNavigation) {
       HardwareKeyboard.instance.removeHandler(_handleDpadKey);
     }
@@ -863,7 +920,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         config: emoji_picker.Config(
           height: widget.height,
           checkPlatformCompatibility: widget.checkEmojiPlatformCompatibility,
-          emojiTextStyle: widget.emojiTextStyle ?? defaultEmojiTextStyle(),
+          emojiTextStyle: _effectiveEmojiTextStyle,
           locale: _emojiLocale,
           customSearchIcon: Icon(
             Icons.search,

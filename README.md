@@ -172,6 +172,7 @@ Expand a group for details:
 - Android, iOS, Web, Windows, macOS, and Linux
 - Pure Dart and Flutter widgets, no native code or platform channels
 - One dependency, `emoji_picker_flutter`, used only for the emoji page
+- Emoji render offline on web from a bundled 708 KB font, with optional runtime color
 - Four focused import points so you pull in only what you use
 
 </details>
@@ -192,7 +193,6 @@ predictable focus routing, custom submit behavior, or secure input.
 
 - ❌ No word prediction, autocorrect, or swipe typing
 - ❌ No handwriting or voice input
-- ❌ Bundled web emoji font is monochrome to stay at 708 KB; bundle a color font and pass `emojiTextStyle` if you need it
 
 ## Roadmap
 
@@ -490,16 +490,37 @@ the picker uses (708 KB). It is applied **only on web**, so native platforms kee
 their own color emoji font untouched and pay nothing at render time. The bundled
 font is monochrome, which is the trade for rendering reliably offline.
 
-Monochrome is a size decision, not a technical limit. Subset to the same
-codepoints, Noto Color Emoji in COLRv1 form is about 3.9 MB against 708 KB for
-the monochrome build. Since only web is affected, and Android, iOS, and desktop
-already render color emoji from the system font, that is a steep cost to put in
-every app. If your app is web-first and you want color, bundle
-[Noto Color Emoji](https://github.com/googlefonts/noto-emoji/blob/main/fonts/Noto-COLRv1.ttf)
-yourself and point `emojiTextStyle` at it.
+**Want color on web?** The bundled font is monochrome to keep the package small.
+Subset to the same codepoints, Noto Color Emoji in COLRv1 form is about 3.9 MB
+against 708 KB, because COLRv1 draws each emoji from many single-color layer
+glyphs. Putting that in every app, including the mobile ones that already get
+color emoji from the system font, is a poor trade.
 
-Override it with `emojiTextStyle` to do exactly that, or reuse the bundled family
-elsewhere in your app:
+Load it at runtime instead and you pay nothing in your bundle:
+
+```dart
+VirtualKeypad(
+  standalone: true,
+  enableEmojiKey: true,
+  colorEmojiFontLoader: () async {
+    final response = await http.get(Uri.parse(myColorEmojiFontUrl));
+    return ByteData.sublistView(response.bodyBytes);
+  },
+)
+```
+
+The keyboard paints the bundled monochrome font immediately, then swaps to color
+when the font arrives. If the fetch fails, because the device is offline or the
+request was blocked, the monochrome font stays and emoji still render. You get
+color when you can and never a blank box.
+
+The package performs no fetch of its own, so nothing leaves the device unless you
+write it. Self-host the font rather than hot-linking someone else's CDN, and
+remember that kiosk, ATM, and enterprise deployments often disallow outbound
+requests, which is why this is opt in.
+
+You can also override the font outright with `emojiTextStyle`, or reuse the
+bundled family elsewhere in your app:
 
 ```dart
 // Use your own font on the emoji page.

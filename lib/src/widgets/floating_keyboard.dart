@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../emoji_font.dart';
 import '../enums.dart';
 import '../models.dart';
 import '../theme.dart';
@@ -104,6 +105,7 @@ class VirtualKeypadFloating extends StatefulWidget {
     this.customLayout,
     this.enableEmojiKey = false,
     this.emojiTextStyle,
+    this.colorEmojiFontLoader,
     this.checkEmojiPlatformCompatibility = false,
     this.enableDpadNavigation = false,
     this.standalone = false,
@@ -182,6 +184,12 @@ class VirtualKeypadFloating extends StatefulWidget {
   /// monochrome font on web, which renders offline. See
   /// [VirtualKeypad.emojiTextStyle].
   final TextStyle? emojiTextStyle;
+
+  /// Loads a color emoji font at runtime on web, replacing the bundled
+  /// monochrome one. Off by default.
+  ///
+  /// See [VirtualKeypad.colorEmojiFontLoader].
+  final EmojiFontBytesLoader? colorEmojiFontLoader;
 
   /// When true, emoji the platform cannot render are filtered out of the grid.
   ///
@@ -435,6 +443,8 @@ class _VirtualKeypadFloatingState extends State<VirtualKeypadFloating> {
                                     customLayout: widget.customLayout,
                                     enableEmojiKey: widget.enableEmojiKey,
                                     emojiTextStyle: widget.emojiTextStyle,
+                                    colorEmojiFontLoader:
+                                        widget.colorEmojiFontLoader,
                                     checkEmojiPlatformCompatibility:
                                         widget.checkEmojiPlatformCompatibility,
                                     enableDpadNavigation:
