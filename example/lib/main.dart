@@ -303,10 +303,18 @@ class _HomePageState extends State<HomePage> {
 
     if (!_floating) return constrained;
 
+    // Floating mode takes the same configuration as the inline keyboard, so
+    // every control on the page keeps working when it is switched on.
     return VirtualKeypadFloating(
       standalone: true,
+      type: _type,
+      customLayout: _type == KeyboardType.custom ? pinLayout : null,
       theme: _keypadTheme,
       enableEmojiKey: _emoji,
+      enableDpadNavigation: _dpad,
+      availableLanguages: _allLanguages.map((l) => l.code).toList(),
+      initialLanguage: _language,
+      onLanguageChanged: (code) => setState(() => _language = code),
       width: 380,
       borderRadius: 18,
       child: constrained,
