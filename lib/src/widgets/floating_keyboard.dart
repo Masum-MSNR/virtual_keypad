@@ -9,6 +9,11 @@ import 'keyboard.dart';
 
 /// Controls the visibility and docking of [VirtualKeypadFloating].
 class VirtualKeypadFloatingController extends ChangeNotifier {
+  /// Creates a controller for a floating keyboard panel.
+  ///
+  /// Set [initialVisible] to true to show the draggable keypad immediately,
+  /// which suits kiosk, POS, and desktop screens where the on-screen keyboard
+  /// should be available before any field is focused.
   VirtualKeypadFloatingController({bool initialVisible = false})
       : _isVisible = initialVisible;
 
@@ -49,6 +54,8 @@ class VirtualKeypadFloatingController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Consumes and returns the dock alignment requested by [dockTop] or
+  /// [dockBottom], or null when no dock was requested.
   Alignment? takePendingAlignment() {
     final alignment = _pendingAlignment;
     _pendingAlignment = null;
@@ -73,8 +80,10 @@ enum VirtualKeypadFloatingVisibilityMode {
 /// work as they do today, while rendering the keyboard in a movable floating
 /// panel above [child].
 ///
-/// Use this when you want the keyboard to appear like an overlay while keeping
-/// the current package architecture intact.
+/// Use this when you want the keyboard to appear as a draggable overlay while
+/// keeping the current package architecture intact. It suits a floating keypad
+/// on a desktop, kiosk, or point of sale screen where an inline keyboard would
+/// consume too much of the layout.
 class VirtualKeypadFloating extends StatefulWidget {
   /// Creates a floating keyboard host.
   const VirtualKeypadFloating({
@@ -94,6 +103,9 @@ class VirtualKeypadFloating extends StatefulWidget {
     this.onLanguageChanged,
     this.customLayout,
     this.enableEmojiKey = false,
+    this.emojiTextStyle,
+    this.checkEmojiPlatformCompatibility = false,
+    this.enableDpadNavigation = false,
     this.standalone = false,
     this.controller,
     this.visibilityMode = VirtualKeypadFloatingVisibilityMode.onDemand,
@@ -163,6 +175,25 @@ class VirtualKeypadFloating extends StatefulWidget {
 
   /// When true, text-style keyboards expose an emoji page.
   final bool enableEmojiKey;
+
+  /// Text style used to paint the emoji glyphs in the emoji page.
+  ///
+  /// Leave null to use the platform emoji font on native and the bundled
+  /// monochrome font on web, which renders offline. See
+  /// [VirtualKeypad.emojiTextStyle].
+  final TextStyle? emojiTextStyle;
+
+  /// When true, emoji the platform cannot render are filtered out of the grid.
+  ///
+  /// Android only, and off by default. See
+  /// [VirtualKeypad.checkEmojiPlatformCompatibility].
+  final bool checkEmojiPlatformCompatibility;
+
+  /// When true, the keys can be driven with a D-pad or remote control.
+  ///
+  /// See [VirtualKeypad.enableDpadNavigation]. Note that this navigates the
+  /// keys only; dragging the floating panel itself still needs a pointer.
+  final bool enableDpadNavigation;
 
   /// When true, the keyboard works with any standard Flutter [TextField].
   final bool standalone;
@@ -403,6 +434,11 @@ class _VirtualKeypadFloatingState extends State<VirtualKeypadFloating> {
                                     onLanguageChanged: widget.onLanguageChanged,
                                     customLayout: widget.customLayout,
                                     enableEmojiKey: widget.enableEmojiKey,
+                                    emojiTextStyle: widget.emojiTextStyle,
+                                    checkEmojiPlatformCompatibility:
+                                        widget.checkEmojiPlatformCompatibility,
+                                    enableDpadNavigation:
+                                        widget.enableDpadNavigation,
                                     hideWhenUnfocused: false,
                                     standalone: widget.standalone,
                                     onVisibilityChanged: _setVisible,

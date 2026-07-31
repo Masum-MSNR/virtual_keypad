@@ -354,7 +354,7 @@ final KeyboardLayout _phoneLayout = [
   ],
 ];
 
-/// Thai (ไทย) keyboard language — Kedmanee layout.
+/// Thai (ไทย) keyboard language, Kedmanee layout.
 final KeyboardLanguage thaiLanguage = KeyboardLanguage(
   code: 'th',
   name: 'Thai',

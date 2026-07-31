@@ -42,6 +42,9 @@ class VirtualKeypadStandaloneScope extends StatefulWidget {
 /// State for [VirtualKeypadStandaloneScope].
 class VirtualKeypadStandaloneScopeState
     extends State<VirtualKeypadStandaloneScope> {
+  /// Creates the state that limits standalone keyboard routing to a subtree.
+  VirtualKeypadStandaloneScopeState();
+
   @override
   Widget build(BuildContext context) => widget.child;
 }

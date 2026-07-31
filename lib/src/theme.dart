@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 /// Theme configuration for [VirtualKeypad] appearance.
 ///
-/// Provides colors, sizes, and styling options for keyboard keys.
+/// Provides colors, sizes, and styling options for keyboard keys, so the
+/// keypad can match kiosk, POS, and branded app themes.
 /// Use [VirtualKeypadTheme.light] or [VirtualKeypadTheme.dark] for
 /// predefined themes, or create a custom theme.
 ///
@@ -28,6 +29,9 @@ class VirtualKeypadTheme {
     this.splashColor,
     this.horizontalGap = 6.0,
     this.verticalGap = 8.0,
+    this.focusBorderColor,
+    this.focusBorderWidth = 3.0,
+    this.focusColor,
   });
 
   /// Background color of the keyboard container.
@@ -59,6 +63,32 @@ class VirtualKeypadTheme {
 
   /// Vertical gap between key rows.
   final double verticalGap;
+
+  /// Border color drawn around the key highlighted by D-pad navigation.
+  ///
+  /// Only used when `VirtualKeypad.enableDpadNavigation` is true. Defaults to
+  /// [keyTextColor] when null, which reads well on both light and dark themes.
+  final Color? focusBorderColor;
+
+  /// Width of the D-pad highlight border.
+  final double focusBorderWidth;
+
+  /// Background color of the key highlighted by D-pad navigation.
+  ///
+  /// When null the key keeps its normal background and is marked by the border
+  /// alone. Set this for a stronger highlight on TV screens, which are viewed
+  /// from a distance.
+  final Color? focusColor;
+
+  /// Decoration applied on top of a key's normal decoration when it is the
+  /// current D-pad target.
+  BoxDecoration focusedDecoration(BoxDecoration base) => base.copyWith(
+        color: focusColor ?? base.color,
+        border: Border.all(
+          color: focusBorderColor ?? keyTextColor,
+          width: focusBorderWidth,
+        ),
+      );
 
   /// Decoration for character keys.
   BoxDecoration get keyDecoration => BoxDecoration(
@@ -104,6 +134,9 @@ class VirtualKeypadTheme {
     Color? splashColor,
     double? horizontalGap,
     double? verticalGap,
+    Color? focusBorderColor,
+    double? focusBorderWidth,
+    Color? focusColor,
   }) {
     return VirtualKeypadTheme(
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -116,6 +149,9 @@ class VirtualKeypadTheme {
       splashColor: splashColor ?? this.splashColor,
       horizontalGap: horizontalGap ?? this.horizontalGap,
       verticalGap: verticalGap ?? this.verticalGap,
+      focusBorderColor: focusBorderColor ?? this.focusBorderColor,
+      focusBorderWidth: focusBorderWidth ?? this.focusBorderWidth,
+      focusColor: focusColor ?? this.focusColor,
     );
   }
 

@@ -13,6 +13,8 @@ class StandaloneInputControl with TextInputControl {
   /// Called when a text field requests the keyboard to hide.
   final VoidCallback? onHide;
 
+  /// Creates a text input control that routes system keyboard show and hide
+  /// requests to a [VirtualKeypad] instead of the platform software keyboard.
   StandaloneInputControl({this.onShow, this.onHide});
 
   TextEditingValue _currentValue = TextEditingValue.empty;

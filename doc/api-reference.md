@@ -177,7 +177,7 @@ Extended `TextEditingController` with cursor and selection methods.
 | `splashColor` | `Color?` | `null` | Tap ripple color |
 
 **Presets:** `VirtualKeypadTheme.light`, `VirtualKeypadTheme.dark`
-**Methods:** `copyWith(...)` — create modified copy
+**Methods:** `copyWith(...)` creates a modified copy
 
 ## KeyboardLayoutProvider
 

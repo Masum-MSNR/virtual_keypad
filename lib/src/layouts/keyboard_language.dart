@@ -79,7 +79,7 @@ class KeyboardLanguage {
   /// Native name of the language (e.g., 'বাংলা').
   final String nativeName;
 
-  /// Whether the language is right-to-left.
+  /// Whether the language is right-to-left (RTL), such as Arabic.
   final bool isRTL;
 
   /// Layouts for general text input.

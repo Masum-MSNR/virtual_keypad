@@ -1,8 +1,9 @@
 /// Layout, language, and initialization APIs for `virtual_keypad`.
 ///
 /// Import this library when you want to work directly with built-in layouts,
-/// register custom languages, or switch languages at runtime without pulling
-/// in the full widget surface.
+/// register custom languages, or switch a multilingual keyboard between
+/// languages at runtime, including RTL scripts such as Arabic, without
+/// pulling in the full widget surface.
 ///
 /// ## Common Tasks
 ///

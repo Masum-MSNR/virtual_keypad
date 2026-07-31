@@ -34,6 +34,10 @@ import 'languages/turkish.dart';
 class KeyboardLayoutProvider {
   KeyboardLayoutProvider._();
 
+  /// The shared singleton registry used by every keyboard in the app.
+  ///
+  /// Read or change the active language here to drive a multilingual keypad at
+  /// runtime, including right-to-left (RTL) languages such as Arabic.
   static final KeyboardLayoutProvider instance = KeyboardLayoutProvider._();
 
   final Map<String, KeyboardLanguage> _languages = {};

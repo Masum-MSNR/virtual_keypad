@@ -1,102 +1,270 @@
+<!-- PLACEHOLDER IMAGE: replace images/banner.png with the final banner. -->
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/example/assets/logo.png" alt="Virtual Keypad" width="120"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/banner.png"
+       alt="virtual_keypad: an on-screen virtual keyboard and keypad widget for Flutter" width="100%"/>
 </p>
 
 <p align="center">
-  <a href="https://pub.dev/packages/virtual_keypad"><img src="https://img.shields.io/pub/v/virtual_keypad.svg" alt="pub package"></a>
+  <a href="https://pub.dev/packages/virtual_keypad"><img src="https://img.shields.io/pub/v/virtual_keypad.svg" alt="pub version"></a>
   <a href="https://pub.dev/packages/virtual_keypad/score"><img src="https://img.shields.io/pub/points/virtual_keypad" alt="pub points"></a>
-  <a href="https://pub.dev/packages/virtual_keypad/score"><img src="https://img.shields.io/pub/likes/virtual_keypad" alt="pub likes"></a>
-  <a href="https://github.com/Masum-MSNR/virtual_keypad/actions/workflows/ci.yml"><img src="https://github.com/Masum-MSNR/virtual_keypad/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://pub.dev/documentation/virtual_keypad/latest/"><img src="https://img.shields.io/badge/docs-pub.dev-0175C2" alt="Documentation"></a>
+  <a href="https://pub.dev/packages/virtual_keypad"><img src="https://img.shields.io/pub/likes/virtual_keypad" alt="pub likes"></a>
+  <a href="https://github.com/Masum-MSNR/virtual_keypad/stargazers"><img src="https://badgen.net/github/stars/Masum-MSNR/virtual_keypad?icon=github" alt="GitHub stars"></a>
+  <a href="https://github.com/Masum-MSNR/virtual_keypad/network/members"><img src="https://badgen.net/github/forks/Masum-MSNR/virtual_keypad?icon=github" alt="GitHub forks"></a>
+  <a href="https://github.com/Masum-MSNR/virtual_keypad/issues"><img src="https://badgen.net/github/open-issues/Masum-MSNR/virtual_keypad?icon=github" alt="GitHub issues"></a>
+  <a href="https://github.com/Masum-MSNR/virtual_keypad/actions/workflows/ci.yml"><img src="https://github.com/Masum-MSNR/virtual_keypad/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <a href="https://github.com/Masum-MSNR/virtual_keypad/commits/main"><img src="https://badgen.net/github/last-commit/Masum-MSNR/virtual_keypad?icon=github" alt="Last commit"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
-  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.0+-02569B?logo=flutter" alt="Platform"></a>
-  <a href="https://masum-vk.web.app"><img src="https://img.shields.io/badge/Live_Demo-masum--vk.web.app-FF6F00?logo=firebase" alt="Live Demo"></a>
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.0+-02569B?logo=flutter" alt="Flutter"></a>
 </p>
+
+# Virtual Keyboard and On-Screen Keypad for Flutter
+
+**virtual_keypad** is an on-screen keyboard widget for Flutter: a software
+keyboard you draw inside your own app instead of relying on the system keyboard.
+It gives you a full QWERTY virtual keyboard, a numeric keypad or numpad, a phone
+dialer, and custom PIN pad or OTP layouts, on Android, iOS, Web, Windows, macOS,
+and Linux.
+
+Reach for it when the platform soft keyboard is missing, blocked, or not enough:
+kiosk and self-service terminals, ATM and point of sale (POS) screens,
+touchscreen and desktop apps, embedded displays, and secure PIN entry where you
+would rather the system keyboard stayed out of it. It drops into any standard
+`TextField` or `TextFormField` with one line, and it ships 12 languages
+including right-to-left Arabic.
+
+> ⭐ **Find this useful?** [Star it on GitHub](https://github.com/Masum-MSNR/virtual_keypad)
+> and 👍 [like it on pub.dev](https://pub.dev/packages/virtual_keypad). Stars and likes
+> help other Flutter developers find a maintained on-screen keyboard package.
+
+## Overview
+
+virtual_keypad renders the keyboard as an ordinary Flutter widget, so it lives
+inside your widget tree, follows your theme, and works the same on every
+platform. There is no native code and no platform channel involved.
+
+**What you can do with it:**
+
+- Add a virtual keyboard to any existing `TextField` or `TextFormField` by passing `standalone: true`, with no other changes to your form.
+- Build a numeric keypad, PIN pad, or OTP entry screen from your own key layout.
+- Float the keyboard in a draggable panel for desktop, kiosk, and split-view screens.
+- Switch between 12 built-in languages at runtime, or register your own layout.
+- Block the system keyboard entirely when you need full control over input.
+
+<!-- PLACEHOLDER IMAGE: replace images/preview.png with the final preview. -->
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/preview.png"
+       alt="A Flutter on-screen keyboard rendered by virtual_keypad, showing a QWERTY layout with emoji and search keys above a focused text field" width="100%"/>
+</p>
+
+## Table of contents
+
+- [Virtual Keyboard and On-Screen Keypad for Flutter](#virtual-keyboard-and-on-screen-keypad-for-flutter)
+  - [Overview](#overview)
+  - [Table of contents](#table-of-contents)
+  - [Key features](#key-features)
+  - [Which mode should you use?](#which-mode-should-you-use)
+  - [Limitations](#limitations)
+  - [Roadmap](#roadmap)
+  - [Example](#example)
+  - [Other useful links](#other-useful-links)
+  - [Installation](#installation)
+  - [Getting started](#getting-started)
+    - [Standalone mode: any TextField](#standalone-mode-any-textfield)
+    - [Submit actions in standalone mode](#submit-actions-in-standalone-mode)
+    - [Scoped standalone mode](#scoped-standalone-mode)
+    - [Floating mode: a draggable keyboard panel](#floating-mode-a-draggable-keyboard-panel)
+    - [Keeping a floating keypad on screen](#keeping-a-floating-keypad-on-screen)
+    - [Scope mode: full control](#scope-mode-full-control)
+    - [Keyboard types](#keyboard-types)
+    - [Build a PIN pad or numeric keypad](#build-a-pin-pad-or-numeric-keypad)
+    - [Emoji support](#emoji-support)
+    - [Android TV and remote control](#android-tv-and-remote-control)
+    - [Theming](#theming)
+    - [Multi-language and RTL](#multi-language-and-rtl)
+    - [Add your own language](#add-your-own-language)
+    - [Drive the keyboard from code](#drive-the-keyboard-from-code)
+    - [Focused imports](#focused-imports)
+  - [Supported languages](#supported-languages)
+  - [Common setup mistakes](#common-setup-mistakes)
+  - [FAQ](#faq)
+  - [Support and feedback](#support-and-feedback)
+  - [About](#about)
+    - [Contributors](#contributors)
+
+## Key features
+
+Everything you need to put a working keyboard on screen without native code.
+Expand a group for details:
+
+<details>
+<summary><b>🎹 Layouts &amp; keyboard types</b></summary>
+
+- QWERTY text, multiline, email, URL, password, name, and street address layouts
+- Numeric keypad and numpad, signed and decimal variants
+- Phone dialer layout
+- Fully custom layouts for PIN pads, OTP entry, checkout, ATM, and POS screens
+- Layout adapts automatically to the focused field's `keyboardType`
+- Symbols and secondary or tertiary pages per language
+
+</details>
+
+<details>
+<summary><b>🔌 Integration modes</b></summary>
+
+- Standalone: works with any stock `TextField` or `TextFormField`
+- Scoped standalone: limits the keyboard to one widget subtree
+- Floating: a draggable, dockable overlay panel
+- Scope: full focus routing, submit handling, and system keyboard blocking
+- Input action callbacks for `done`, `search`, `send`, `call`, and `next`
+
+</details>
+
+<details>
+<summary><b>🌍 Languages &amp; scripts</b></summary>
+
+- 12 built-in languages registered by one call to `initializeKeyboardLayouts()`
+- Latin QWERTY, QWERTZ, and AZERTY layouts
+- Cyrillic (ЙЦУКЕН), Arabic, Bengali, Devanagari, Hangul, and Thai scripts
+- Right-to-left (RTL) input for Arabic
+- Long-press the space bar to switch language
+- Register your own `KeyboardLanguage` at runtime
+
+</details>
+
+<details>
+<summary><b>🎨 Theming &amp; appearance</b></summary>
+
+- Built-in light and dark themes
+- Full custom theme: background, key, and action key colors
+- Key text color, size, corner radius, shadow, and splash color
+- `copyWith` to tweak a built-in theme
+- Native-style key press preview popup
+
+</details>
+
+<details>
+<summary><b>✂️ Editing &amp; input control</b></summary>
+
+- Insert, backspace, select all, and clear from code
+- Cursor positioning and left/right movement
+- Text selection and copy/paste keys
+- Optional system keyboard blocking with `allowPhysicalKeyboard: false`
+- Character limits via `maxLength`, single or multi-line via `maxLines`
+- Animated show and hide on focus change
+
+</details>
+
+<details>
+<summary><b>📺 TV &amp; remote control</b></summary>
+
+- D-pad and remote navigation with `enableDpadNavigation: true`
+- Arrow keys move the highlight, select or enter presses the key
+- Up and down land on the nearest key horizontally, so space and shift stay reachable
+- Themeable highlight: border color, width, and background
+- Works on Android TV, Fire TV, and set-top boxes with no touch screen
+- The focused text field keeps focus, so the keyboard never hides mid-navigation
+
+</details>
+
+<details>
+<summary><b>📱 Platforms &amp; footprint</b></summary>
+
+- Android, iOS, Web, Windows, macOS, and Linux
+- Pure Dart and Flutter widgets, no native code or platform channels
+- One dependency, `emoji_picker_flutter`, used only for the emoji page
+- Four focused import points so you pull in only what you use
+
+</details>
+
+## Which mode should you use?
+
+| Mode | Best for | Widgets |
+|---|---|---|
+| **Standalone** | Dropping a keyboard into an existing form with the least work | `TextField` + `VirtualKeypad(standalone: true)` |
+| **Scoped standalone** | Limiting the keyboard to one panel, page, or Widgetbook story | `VirtualKeypadStandaloneScope` |
+| **Floating** | Draggable overlay keyboards on desktop, kiosk, and POS screens | `VirtualKeypadFloating` |
+| **Scope** | Submit handling, focus-driven layouts, and blocking the system keyboard | `VirtualKeypadScope` + `VirtualKeypadTextField` + `VirtualKeypad` |
+
+Standalone mode is the right default. Move to scope mode when you need
+predictable focus routing, custom submit behavior, or secure input.
+
+## Limitations
+
+- ❌ No word prediction, autocorrect, or swipe typing
+- ❌ No handwriting or voice input
+- ❌ Bundled web emoji font is monochrome; pass `emojiTextStyle` to use a color font
+
+## Roadmap
+
+What ships next is driven by user requests on the
+[issue tracker](https://github.com/Masum-MSNR/virtual_keypad/issues):
+
+- ⬜ More built-in languages and layouts (contributions welcome)
+- ⬜ D-pad navigation inside the emoji page
+- ⬜ Key sound and haptic feedback options
+
+Shipped milestones are in the
+[changelog](https://github.com/Masum-MSNR/virtual_keypad/blob/main/CHANGELOG.md).
+
+## Example
 
 <p align="center">
-A customizable virtual keyboard, on-screen keyboard, and keypad for Flutter.<br/>
-Built for kiosk apps, touchscreen and desktop input, PIN and password entry, numeric keypad and numpad flows, and custom TextField integration.
+  <a href="https://masum-vk.web.app">
+    <img src="https://img.shields.io/badge/▶%20Live%20Demo-masum--vk.web.app-FF6F00?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Open the live demo">
+  </a>
 </p>
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/phone1.gif?v=3" width="30%" alt="Note editor keyboard demo"/>
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/phone2.gif?v=3" width="30%" alt="Custom theme keyboard demo"/>
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/phone3.gif?v=3" width="30%" alt="Language switching keyboard demo"/>
-</p>
+> **[▶ Try the live demo](https://masum-vk.web.app)**: type on the keyboard,
+> switch languages, and try the floating panel in your browser. Nothing to install.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/desktop1.gif?v=3" width="92%" alt="Standalone keyboard demo"/>
-</p>
+A complete, runnable app lives in the
+[`example/`](https://github.com/Masum-MSNR/virtual_keypad/tree/main/example)
+directory, with 12 screens covering standalone, scoped, floating, numeric, PIN,
+password, multilingual, and theming flows. Clone the repository and run it, or
+copy any snippet from [Getting started](#getting-started) below.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/desktop2.gif?v=3" width="92%" alt="Floating keyboard demo"/>
-</p>
+## Other useful links
 
-## Features
-
-- 🎹 **Multiple Layouts** - Text, numeric, phone, email, URL, or fully custom
-- 🌍 **Multi-Language** - 12 built-in languages, easily extensible
-- 🔌 **Standalone Mode** - Works with any standard Flutter TextField or TextFormField
-- 🪟 **Floating Mode** - Draggable overlay keyboard for desktop, kiosk, and split-view layouts
-- 🎯 **Standalone Scope** - Restrict keyboard to a widget subtree
-- 🔤 **Smart TextField** - Auto-adapts keyboard layout based on input type
-- 😀 **Emoji Support** - Opt-in emoji browser for supported text layouts
-- 🎨 **Fully Customizable** - Light, dark, or fully custom themes
-- 📱 **Cross-Platform** - Works on iOS, Android, Web, macOS, Windows, Linux
-- ✂️ **Full Editing** - Selection, copy/paste, cursor control
-- 👆 **Key Preview** - Native-style key press popup feedback
-- 🫥 **Auto-Hide** - Animated show/hide on focus change
-
-## Common Use Cases
-
-If you're looking for a Flutter virtual keyboard, on-screen keyboard, keypad, numeric keypad, numpad, PIN pad, custom keyboard, or multilingual keyboard, this package is designed for those flows.
-
-- Use it as a kiosk keyboard, touchscreen keyboard, or desktop keyboard when the system keyboard is unavailable, unwanted, or too limited.
-- Build a numeric keypad, numpad, PIN pad, or OTP keypad for authentication, amount entry, checkout, payment, ATM, POS, and self-service input screens.
-- Create a custom keyboard for password fields, email and URL forms, search actions, send actions, call actions, and app-specific input flows.
-- Add multilingual keyboard behavior with built-in language switching, custom language registration, and direct TextField or TextFormField integration for kiosk, embedded, and enterprise Flutter apps.
-
-## Supported Languages
-
-All 12 languages are registered automatically when you call `initializeKeyboardLayouts()`.
-
-| Code | Language | Native Name | Layout | Script | RTL |
-|------|----------|-------------|--------|--------|-----|
-| `ar` | Arabic | العربية | Arabic IBM PC | Arabic | ✅ |
-| `bn` | Bengali | বাংলা | Bengali | Bengali | |
-| `de` | German | Deutsch | QWERTZ | Latin | |
-| `en` | English | English | QWERTY | Latin | |
-| `es` | Spanish | Español | QWERTY (ES) | Latin | |
-| `fr` | French | Français | AZERTY | Latin | |
-| `hi` | Hindi | हिन्दी | Devanagari | Devanagari | |
-| `ko` | Korean | 한국어 | Dubeolsik (두벌식) | Hangul | |
-| `pt` | Portuguese | Português | QWERTY (PT) | Latin | |
-| `ru` | Russian | Русский | ЙЦУКЕН (JCUKEN) | Cyrillic | |
-| `th` | Thai | ไทย | Kedmanee | Thai | |
-| `tr` | Turkish | Türkçe | QWERTY (TR) | Latin | |
-
-> **Note:** If you notice any incorrect characters, missing keys, or layout mismatches for a language you are fluent in, feel free to fix it and [create a pull request](https://github.com/Masum-MSNR/virtual_keypad/pulls). Community contributions are welcome!
+- [API reference](https://pub.dev/documentation/virtual_keypad/latest/)
+- [Source code on GitHub](https://github.com/Masum-MSNR/virtual_keypad)
+- [Changelog](https://github.com/Masum-MSNR/virtual_keypad/blob/main/CHANGELOG.md)
+- [Issue tracker](https://github.com/Masum-MSNR/virtual_keypad/issues)
+- [Floating mode guide](https://github.com/Masum-MSNR/virtual_keypad/blob/main/doc/floating-mode.md)
+- [Custom layouts guide](https://github.com/Masum-MSNR/virtual_keypad/blob/main/doc/custom-layouts.md)
+- [Adding languages guide](https://github.com/Masum-MSNR/virtual_keypad/blob/main/doc/adding-languages.md)
+- [Theming guide](https://github.com/Masum-MSNR/virtual_keypad/blob/main/doc/theming.md)
 
 ## Installation
 
-```yaml
-dependencies:
-  virtual_keypad: ^latest
+```bash
+flutter pub add virtual_keypad
 ```
 
-## Quick Start
-
-### Standalone Mode (works with any TextField or TextFormField)
+Then import it:
 
 ```dart
 import 'package:virtual_keypad/virtual_keypad.dart';
+```
 
+Call `initializeKeyboardLayouts()` once before `runApp()`. That registers all 12
+built-in languages:
+
+```dart
 void main() {
   initializeKeyboardLayouts();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
+```
 
-class MyApp extends StatelessWidget {
+## Getting started
+
+### Standalone mode: any TextField
+
+Add `standalone: true` and the keyboard finds the focused field on its own. No
+wrapper widgets, no controller swap, no changes to your existing form:
+
+```dart
+class LoginForm extends StatelessWidget {
   final controller = TextEditingController();
 
   @override
@@ -111,9 +279,13 @@ class MyApp extends StatelessWidget {
 }
 ```
 
-> Just add `standalone: true` — no wrapper widgets needed. The keyboard auto-detects focused fields and adapts layout based on `keyboardType`, making it useful for existing Flutter forms, kiosk screens, login flows, and embedded touchscreen UIs.
+The keyboard reads each field's `keyboardType` and switches layout to match, so
+an email field gets `@` and `.`, and a number field gets a numeric keypad.
 
-For custom submit-style keys in standalone mode, use `onStandaloneInputAction` to distinguish actions like `call`, `search`, or `send` at the keyboard level:
+### Submit actions in standalone mode
+
+Use `onStandaloneInputAction` to tell submit-style keys apart at the keyboard
+level, which is how you wire up a dialer or a search bar:
 
 ```dart
 VirtualKeypad(
@@ -130,9 +302,11 @@ VirtualKeypad(
 )
 ```
 
-### Scoped Standalone Mode
+### Scoped standalone mode
 
-Wrap with `VirtualKeypadStandaloneScope` to restrict the keyboard to a specific subtree (useful in Widgetbook or multi-panel UIs):
+Wrap a subtree in `VirtualKeypadStandaloneScope` and only fields inside it will
+trigger that keyboard. This keeps multi-panel layouts and Widgetbook stories
+from fighting over focus:
 
 ```dart
 VirtualKeypadStandaloneScope(
@@ -145,11 +319,10 @@ VirtualKeypadStandaloneScope(
 )
 ```
 
-> Fields outside the scope won't trigger this keyboard.
+### Floating mode: a draggable keyboard panel
 
-### Floating Mode (draggable and additive)
-
-Use `VirtualKeypadFloating` when you want the same keyboard behavior in a movable floating panel instead of an inline widget:
+`VirtualKeypadFloating` gives you the same keyboard in a movable panel that sits
+above your UI instead of taking a slice of the layout:
 
 ```dart
 VirtualKeypadFloating(
@@ -167,9 +340,13 @@ VirtualKeypadFloating(
 )
 ```
 
-`VirtualKeypadFloating` supports the same keyboard theming as `VirtualKeypad`, plus floating-specific panel configuration such as `width`, `height`, `borderRadius`, and draggable toolbar controls.
+Floating mode is additive. Existing `VirtualKeypad()` and
+`VirtualKeypad(standalone: true)` code keeps working unchanged.
 
-For manual visibility, docking, or always-on kiosk-style flows, pair it with a controller:
+### Keeping a floating keypad on screen
+
+For kiosk and POS screens where the keyboard should always be available, pair it
+with a controller and use persistent visibility:
 
 ```dart
 final floatingController = VirtualKeypadFloatingController();
@@ -187,73 +364,18 @@ VirtualKeypadFloating(
 )
 ```
 
-In persistent mode, you can keep the keyboard visible until you explicitly call `floatingController.hide()` or the user closes it from the toolbar.
+The panel then stays up until you call `floatingController.hide()` or the user
+closes it from the toolbar. `dockTop()` and `dockBottom()` snap it into place.
 
-For scoped usage, keep `VirtualKeypadScope` exactly as-is and place `VirtualKeypadFloating` inside the scope:
+### Scope mode: full control
 
-```dart
-VirtualKeypadScope(
-  child: VirtualKeypadFloating(
-    width: 360,
-    child: Column(
-      children: [
-        VirtualKeypadTextField(controller: controller),
-      ],
-    ),
-  ),
-)
-```
-
-> Floating mode is additive. Existing `VirtualKeypad()` and `VirtualKeypad(standalone: true)` usage stays unchanged.
-
-### Emoji Support
-
-Enable emoji on supported text layouts by passing `enableEmojiKey: true`:
+Three widgets work together here: `VirtualKeypadScope` wraps the subtree,
+`VirtualKeypadTextField` replaces your text fields, and `VirtualKeypad` renders
+the keys. Use it when you want selection callbacks, submit handling, and the
+system keyboard blocked:
 
 ```dart
-VirtualKeypad(
-  standalone: true,
-  enableEmojiKey: true,
-)
-```
-
-That adds an emoji toggle on built-in text, multiline, email, URL, password, name, and street-address layouts.
-
-If you want an emoji-first surface, such as a preview card or always-visible dock, start directly on the emoji page:
-
-```dart
-VirtualKeypad(
-  hideWhenUnfocused: false,
-  enableEmojiKey: true,
-  showEmojiKeyboardInitially: true,
-)
-```
-
-`VirtualKeypadFloating` also supports emoji by passing `enableEmojiKey: true`.
-
-### Which Mode Should You Use?
-
-| Mode | Best For | Use These Widgets |
-|------|----------|-------------------|
-| Standalone | Fast integration with existing `TextField` / `TextFormField` UIs | `TextField` + `VirtualKeypad(standalone: true)` |
-| Floating | Draggable overlay-style keyboards that should stay above the UI | `VirtualKeypadFloating(...)` |
-| Scoped | Full control over submit handling, focus-driven layout changes, and system keyboard blocking | `VirtualKeypadScope` + `VirtualKeypadTextField` + `VirtualKeypad()` |
-
-Choose standalone mode when you want a Flutter virtual keyboard or keypad to drop into an existing form with minimal refactoring.
-Choose floating mode when you need that same keyboard behavior in a draggable panel for kiosk, desktop, POS, or multitasking layouts.
-Choose scoped mode when you need predictable focus routing, custom submit handling, secure input behavior, or tighter control for complex form, kiosk, or authentication flows.
-
-### Scope Mode (full control)
-
-```dart
-import 'package:virtual_keypad/virtual_keypad.dart';
-
-void main() {
-  initializeKeyboardLayouts();
-  runApp(MyApp());
-}
-
-class _MyAppState extends State<MyApp> {
+class _MyFormState extends State<MyForm> {
   final controller = VirtualKeypadController();
 
   @override
@@ -263,7 +385,7 @@ class _MyAppState extends State<MyApp> {
         children: [
           VirtualKeypadTextField(
             controller: controller,
-            decoration: InputDecoration(labelText: 'Enter text'),
+            decoration: const InputDecoration(labelText: 'Enter text'),
           ),
           VirtualKeypad(),
         ],
@@ -273,32 +395,32 @@ class _MyAppState extends State<MyApp> {
 }
 ```
 
-> Three components work together: `VirtualKeypadScope` → `VirtualKeypadTextField` → `VirtualKeypad`. Use this mode for selection callbacks, submit handling, and physical keyboard blocking.
+`VirtualKeypadTextField` blocks physical and system keyboard input by default.
+Pass `allowPhysicalKeyboard: true` if you want both.
 
-## Keyboard Types
-
-Use these keyboard types to switch between general text input, email keyboard layouts, URL keyboard layouts, numeric keypad input, phone dialer input, and custom keypad flows.
+### Keyboard types
 
 ```dart
 VirtualKeypadTextField(
   controller: controller,
-  keyboardType: KeyboardType.emailAddress, // Auto-shows @ and .
+  keyboardType: KeyboardType.emailAddress, // shows @ and .
 )
 ```
 
-| Type | Use Case |
-|------|----------|
+| Type | Use case |
+|---|---|
 | `text` | General text input (QWERTY) |
-| `emailAddress` | Email fields (QWERTY + `@` `.`) |
-| `url` | URL fields (QWERTY + `/` `:` `.`) |
-| `number` | Numeric input (0-9) |
+| `emailAddress` | Email fields, with `@` and `.` on the main page |
+| `url` | URL fields, with `/`, `:`, and `.` on the main page |
+| `number` | Numeric keypad and numpad input |
 | `phone` | Phone dialer |
-| `multiline` | Text areas with newline |
-| `custom` | User-defined layouts |
+| `multiline` | Text areas with a newline key |
+| `custom` | Your own layout |
 
-## Custom Layout
+### Build a PIN pad or numeric keypad
 
-Custom layouts are useful for building a PIN pad, OTP keypad, numeric keypad, checkout keypad, ATM keypad, POS keypad, or any branded on-screen keyboard flow.
+Custom layouts are how you build a PIN pad, OTP entry, or any branded on-screen
+keypad. Checkout, ATM, and POS flows all use the same mechanism:
 
 ```dart
 final pinLayout = [
@@ -330,18 +452,116 @@ VirtualKeypad(
 )
 ```
 
-> `customLayout` must be used together with `type: KeyboardType.custom`. Invalid combinations assert immediately in debug mode so setup mistakes fail fast for custom keyboard, custom keypad, PIN pad, and numpad setups.
+`customLayout` and `type: KeyboardType.custom` must be used together. Invalid
+combinations assert immediately in debug mode so setup mistakes fail fast.
 
-## Theming
-
-The theming API helps you match the keyboard to kiosk apps, enterprise dashboards, POS interfaces, embedded displays, and branded login or checkout screens.
+### Emoji support
 
 ```dart
-// Built-in themes
+VirtualKeypad(
+  standalone: true,
+  enableEmojiKey: true,
+)
+```
+
+That adds an emoji toggle to the text, multiline, email, URL, password, name,
+and street address layouts. For an emoji-first surface such as a reaction picker
+or an always-visible dock, open straight onto the emoji page:
+
+```dart
+VirtualKeypad(
+  hideWhenUnfocused: false,
+  enableEmojiKey: true,
+  showEmojiKeyboardInitially: true,
+)
+```
+
+`VirtualKeypadFloating` takes `enableEmojiKey` too.
+
+**Emoji work offline, including on the web, with no setup.** Emoji glyphs
+normally come from the platform. That is fine on Android, iOS, Windows, macOS,
+and Linux, which all ship a system emoji font. Flutter web is different: the
+CanvasKit and Skwasm renderers ignore the browser font stack and download a Noto
+fallback font on demand, so a first load without a network connection would
+paint every emoji as a blank box.
+
+To close that gap this package bundles Noto Emoji, subset to the 1271 codepoints
+the picker uses (708 KB). It is applied **only on web**, so native platforms keep
+their own color emoji font untouched and pay nothing at render time. The bundled
+font is monochrome, which is the trade for rendering reliably offline.
+
+Override it with `emojiTextStyle` if you would rather ship a color emoji font on
+web, or reuse the bundled family elsewhere in your app:
+
+```dart
+// Use your own font on the emoji page.
+VirtualKeypad(
+  standalone: true,
+  enableEmojiKey: true,
+  emojiTextStyle: const TextStyle(fontFamily: 'NotoColorEmoji'),
+)
+
+// The bundled family, exported as a constant.
+const TextStyle(fontFamily: kBundledEmojiFontFamily)
+```
+
+Inserted emoji are covered too. `VirtualKeypadTextField` appends the bundled
+font as a fallback on web automatically, so scope mode needs nothing from you.
+
+Standalone mode drives your own `TextField`, which the package cannot restyle
+from the outside. One line on your theme closes that gap:
+
+```dart
+MaterialApp(
+  theme: ThemeData.light().withVirtualKeypadEmojiFont(),
+)
+```
+
+Both are no-ops off the web, so your platform color emoji font is never
+overridden on Android, iOS, or desktop.
+
+On Android you can also set `checkEmojiPlatformCompatibility: true` to drop
+emoji the device's system font cannot render. That check is Android only and
+adds work the first time the emoji page opens, so it is off by default.
+
+### Android TV and remote control
+
+Set `enableDpadNavigation: true` and the keyboard becomes usable with nothing but
+a directional pad, which is what Android TV, Fire TV, and set-top boxes give you:
+
+```dart
+VirtualKeypad(
+  standalone: true,
+  enableDpadNavigation: true,
+  theme: VirtualKeypadTheme.dark.copyWith(
+    focusBorderColor: Colors.amber,
+    focusBorderWidth: 4,
+  ),
+)
+```
+
+One key is highlighted at a time. Arrow keys move the highlight, and select,
+enter, or the primary gamepad button presses it. Moving up or down picks the key
+in the next row that sits closest horizontally, so wide keys such as space and
+shift stay reachable instead of being skipped.
+
+Space is deliberately not treated as a press, so pairing a Bluetooth keyboard to
+a TV still types a space rather than firing the highlighted key. At the edge of
+the grid the arrow key is left unhandled, which lets your app move focus off the
+keyboard instead of trapping the user inside it.
+
+The highlight is drawn by the keyboard rather than by Flutter's focus system, so
+the text field keeps focus and the keyboard does not hide while the user moves
+around. Style it with `focusBorderColor`, `focusBorderWidth`, and `focusColor`.
+
+### Theming
+
+```dart
+// Built-in themes.
 VirtualKeypad(theme: VirtualKeypadTheme.light)
 VirtualKeypad(theme: VirtualKeypadTheme.dark)
 
-// Custom theme
+// A custom theme.
 VirtualKeypad(
   theme: VirtualKeypadTheme(
     backgroundColor: Colors.grey[900]!,
@@ -352,7 +572,7 @@ VirtualKeypad(
   ),
 )
 
-// Modify existing theme
+// Tweak a built-in theme.
 VirtualKeypad(
   theme: VirtualKeypadTheme.dark.copyWith(
     keyBorderRadius: 12,
@@ -362,25 +582,25 @@ VirtualKeypad(
 ```
 
 | Property | Type | Default | Description |
-|----------|------|---------|-------------|
+|---|---|---|---|
 | `backgroundColor` | `Color` | `#D1D3D9` | Keyboard background |
 | `keyColor` | `Color` | `#FFFFFF` | Character key background |
 | `actionKeyColor` | `Color` | `#ADB3BC` | Action key background |
-| `keyTextColor` | `Color` | `#1C1C1E` | Text/icon color |
+| `keyTextColor` | `Color` | `#1C1C1E` | Text and icon color |
 | `keyTextSize` | `double` | `22.0` | Font size |
 | `keyBorderRadius` | `double` | `6.0` | Corner radius |
 | `keyShadow` | `bool` | `true` | Show key shadows |
 | `splashColor` | `Color?` | `null` | Tap ripple color |
+| `focusBorderColor` | `Color?` | `keyTextColor` | D-pad highlight border |
+| `focusBorderWidth` | `double` | `3.0` | D-pad highlight border width |
+| `focusColor` | `Color?` | `null` | D-pad highlight background |
 
-## Multi-Language
-
-Use multi-language support when you need a multilingual keyboard for international forms, regional kiosk deployments, localized checkout flows, or RTL input experiences.
+### Multi-language and RTL
 
 ```dart
-initializeKeyboardLayouts(); // Registers all 12 languages
+initializeKeyboardLayouts(); // registers all 12 languages
 
-// Switch language
-KeyboardLayoutProvider.instance.setLanguage('ar'); // Arabic
+KeyboardLayoutProvider.instance.setLanguage('ar'); // Arabic, RTL
 KeyboardLayoutProvider.instance.setLanguage('ko'); // Korean
 KeyboardLayoutProvider.instance.setLanguage('en'); // English
 
@@ -388,21 +608,19 @@ VirtualKeypad(
   availableLanguages: ['en', 'bn', 'ar'],
   initialLanguage: 'en',
   onLanguageChanged: (code) {
-    // Save the selected language if you want to restore it next launch.
+    // Save the code if you want to restore it on next launch.
   },
 )
 ```
 
-When `availableLanguages` contains more than one language, users can long-press
-the space bar to open the language picker. The first language in the list is the
-fallback language for that keyboard.
+When `availableLanguages` holds more than one entry, users can long-press the
+space bar to open the language picker. The first entry is the fallback for that
+keyboard.
 
-The selected language is remembered for the current app session through the
-shared keyboard layout provider. If you want to restore the same language after
-an app restart, save the code from `onLanguageChanged` and pass it back through
-`initialLanguage`.
+The selection lasts for the app session. To restore it after a restart, save the
+code from `onLanguageChanged` and pass it back as `initialLanguage`.
 
-### Adding a Custom Language
+### Add your own language
 
 ```dart
 final myLanguage = KeyboardLanguage(
@@ -420,97 +638,126 @@ KeyboardLayoutProvider.instance.registerLanguage(myLanguage);
 KeyboardLayoutProvider.instance.setLanguage('xx');
 ```
 
-## API Reference
-
-### VirtualKeypadTextField
-
-```dart
-VirtualKeypadTextField(
-  controller: controller,           // Required
-  keyboardType: KeyboardType.text,   // Layout type
-  obscureText: false,                // Password mode
-  allowPhysicalKeyboard: false,      // Block system keyboard
-  maxLength: null,                   // Character limit
-  maxLines: 1,                       // Line count (null = unlimited)
-  onChanged: (value) {},             // Text change callback
-  onSubmitted: (value) {},           // Submit callback
-)
-```
-
-### VirtualKeypad
-
-```dart
-VirtualKeypad(
-  standalone: false,                 // true = works with any TextField
-  type: null,                        // Override layout (auto if null)
-  height: 280,                       // Keyboard height
-  theme: VirtualKeypadTheme.light,   // Visual theme
-  availableLanguages: ['en', 'bn'],  // Optional in-keyboard language picker
-  initialLanguage: 'en',             // Startup language for this session
-  hideWhenUnfocused: false,          // Auto-hide animation
-  customLayout: null,                // Custom key arrangement
-  onKeyPressed: (key) {},            // Key press callback
-  onStandaloneInputAction: (action, text) {}, // Standalone submit-style action callback
-  onLanguageChanged: (code) {},      // Language switch callback
-)
-```
-
-### VirtualKeypadController
+### Drive the keyboard from code
 
 ```dart
 final controller = VirtualKeypadController();
 
-controller.insertText('Hello');    // Insert at cursor
-controller.deleteBackward();       // Delete before cursor
-controller.selectAll();            // Select all text
-controller.clear();                // Clear all
-controller.cursorPosition = 5;     // Set cursor position
-controller.moveCursorLeft();       // Move cursor
+controller.insertText('Hello');
+controller.deleteBackward();
+controller.selectAll();
+controller.clear();
+controller.cursorPosition = 5;
+controller.moveCursorLeft();
 controller.moveCursorRight();
 ```
 
-## Examples
+### Focused imports
 
-Check out the [example](example/) directory for a complete demo app with 12 screens covering standalone, scoped, floating, numeric, PIN, password, multilingual, and theming flows.
+Import only the surface you use:
 
-## Common Setup Mistakes
+| Import | Best for |
+|---|---|
+| `package:virtual_keypad/virtual_keypad.dart` | Everything: widgets, layouts, themes, helpers |
+| `package:virtual_keypad/standalone.dart` | Standard `TextField` integration |
+| `package:virtual_keypad/widgets.dart` | Scoped workflows with `VirtualKeypadScope` |
+| `package:virtual_keypad/layouts.dart` | Language registration and custom layouts |
 
-- Forgetting `initializeKeyboardLayouts()` before `runApp()`. Built-in layouts are registered there.
-- Mixing standalone mode and scoped mode in the same form without a clear reason. Pick one architecture per flow.
-- Providing `customLayout` without `type: KeyboardType.custom`, or setting `type: KeyboardType.custom` without a layout.
-- Expecting `VirtualKeypadTextField` to allow the system keyboard by default. It blocks physical/system keyboard input unless `allowPhysicalKeyboard: true`.
+## Supported languages
 
-## Documentation
+All 12 are registered when you call `initializeKeyboardLayouts()`.
 
-These guides cover virtual keyboard integration, floating overlays, keypad customization, multilingual layout setup, and Flutter TextField or TextFormField onboarding.
+| Code | Language | Native name | Layout | Script | RTL |
+|---|---|---|---|---|---|
+| `ar` | Arabic | العربية | Arabic IBM PC | Arabic | ✅ |
+| `bn` | Bengali | বাংলা | Bengali | Bengali | |
+| `de` | German | Deutsch | QWERTZ | Latin | |
+| `en` | English | English | QWERTY | Latin | |
+| `es` | Spanish | Español | QWERTY (ES) | Latin | |
+| `fr` | French | Français | AZERTY | Latin | |
+| `hi` | Hindi | हिन्दी | Devanagari | Devanagari | |
+| `ko` | Korean | 한국어 | Dubeolsik (두벌식) | Hangul | |
+| `pt` | Portuguese | Português | QWERTY (PT) | Latin | |
+| `ru` | Russian | Русский | ЙЦУКЕН (JCUKEN) | Cyrillic | |
+| `th` | Thai | ไทย | Kedmanee | Thai | |
+| `tr` | Turkish | Türkçe | QWERTY (TR) | Latin | |
 
-| Guide | Description |
-|-------|-------------|
-| [API Reference](doc/api-reference.md) | Complete API documentation |
-| [Floating Mode](doc/floating-mode.md) | Build draggable overlay keyboards with standalone or scoped input |
-| [Custom Layouts](doc/custom-layouts.md) | Build custom keyboard layouts |
-| [Adding Languages](doc/adding-languages.md) | Add new language support |
-| [Theming](doc/theming.md) | Customize keyboard appearance |
+> Spot a wrong character, a missing key, or a layout that does not match the real
+> thing for a language you speak? Please
+> [open a pull request](https://github.com/Masum-MSNR/virtual_keypad/pulls).
+> Community fixes are very welcome.
 
-### Focused Imports
+## Common setup mistakes
 
-| Import | Best For |
-|--------|----------|
-| `package:virtual_keypad/virtual_keypad.dart` | Full package surface with widgets, layouts, themes, and helpers |
-| `package:virtual_keypad/widgets.dart` | Scoped widget workflows with `VirtualKeypadScope` and `VirtualKeypadTextField` |
-| `package:virtual_keypad/standalone.dart` | Standard `TextField` integration with `VirtualKeypad(standalone: true)` |
-| `package:virtual_keypad/layouts.dart` | Language registration, layout access, and custom language setup |
+- Forgetting `initializeKeyboardLayouts()` before `runApp()`. Built-in layouts are registered there, so nothing renders without it.
+- Mixing standalone mode and scope mode in the same form. Pick one architecture per flow.
+- Passing `customLayout` without `type: KeyboardType.custom`, or the reverse.
+- Expecting `VirtualKeypadTextField` to allow the system keyboard. It blocks physical and system keyboard input unless you pass `allowPhysicalKeyboard: true`.
 
-## Contributing
+## FAQ
 
-Contributions welcome! See the [Contributing Guide](CONTRIBUTING.md).
+**Does it replace the system keyboard across the whole device?**
+No. virtual_keypad is an in-app keyboard widget, not an Android IME or an iOS
+keyboard extension. It draws inside your app and only affects your app.
 
-## License
+**Which platforms are supported?**
+Android, iOS, Web, Windows, macOS, and Linux. It is pure Dart and Flutter with
+no native code, so there is nothing to configure per platform.
 
-MIT License - see [LICENSE](LICENSE) for details.
+**Can I use it with a plain TextField?**
+Yes. Pass `standalone: true` and it attaches to any focused `TextField` or
+`TextFormField` with no other changes to your code.
 
----
+**Can I stop the system keyboard from appearing?**
+Yes. Use scope mode with `VirtualKeypadTextField`, which blocks physical and
+system keyboard input by default.
 
-<p align="center">
-  Made with ❤️ by <a href="https://github.com/Masum-MSNR">Masum</a>
-</p>
+**How do I build a PIN pad or OTP keypad?**
+Set `type: KeyboardType.custom` and pass your own `customLayout`. See
+[Build a PIN pad or numeric keypad](#build-a-pin-pad-or-numeric-keypad).
+
+**Is it good for kiosk, ATM, and POS screens?**
+That is the main use case. Floating mode with persistent visibility keeps the
+keypad available on self-service terminals where no physical keyboard exists.
+
+**Can I add a language that is not built in?**
+Yes. Build a `KeyboardLanguage` with your own `KeyboardLayoutSet` and register
+it through `KeyboardLayoutProvider.instance.registerLanguage()`.
+
+**Does it work with right-to-left languages?**
+Yes. Arabic ships with an RTL layout, and any language you register can set
+`isRTL: true`.
+
+## Support and feedback
+
+- Found a bug or want a feature? Open an issue on the
+  [issue tracker](https://github.com/Masum-MSNR/virtual_keypad/issues).
+- Questions and ideas are welcome via
+  [GitHub Discussions](https://github.com/Masum-MSNR/virtual_keypad/discussions).
+- Pull requests are welcome; see the
+  [Contributing Guide](https://github.com/Masum-MSNR/virtual_keypad/blob/main/CONTRIBUTING.md).
+
+## About
+
+virtual_keypad is an open-source, MIT-licensed on-screen keyboard and keypad
+widget for Flutter, built for apps that cannot rely on the system keyboard:
+kiosks, ATMs, point of sale terminals, touchscreen and desktop software, and
+secure PIN entry.
+
+virtual_keypad is created and owned by **Nurullah Al Masum**.
+
+It bundles [Noto Emoji](https://fonts.google.com/noto/specimen/Noto+Emoji),
+subset to the codepoints used by the emoji picker, for offline emoji rendering
+on the web. Noto Emoji is licensed under the SIL Open Font License 1.1; the full
+license text ships in
+[`fonts/OFL.txt`](https://github.com/Masum-MSNR/virtual_keypad/blob/main/fonts/OFL.txt).
+
+### Contributors
+
+virtual_keypad grows with its community; every contributor is listed here:
+
+<a href="https://github.com/Masum-MSNR/virtual_keypad/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Masum-MSNR/virtual_keypad" alt="virtual_keypad contributors"/>
+</a>
+
+Want to help? Pull requests are welcome; see [Support and feedback](#support-and-feedback).

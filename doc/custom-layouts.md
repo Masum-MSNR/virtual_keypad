@@ -17,10 +17,10 @@ KeyboardLayout myLayout = [
 ## Key Types
 
 ```dart
-// Character key — inserts text
+// Character key: inserts text
 VirtualKey.character(text: 'a', capsText: 'A', flex: 1)
 
-// Action key — performs function
+// Action key: performs a function
 VirtualKey.action(action: KeyAction.backSpace, label: '⌫', flex: 2)
 ```
 

@@ -1,6 +1,6 @@
 import 'enums.dart';
 
-/// Represents a single key on the virtual keyboard.
+/// Represents a single key on the virtual keyboard or keypad.
 ///
 /// Use [VirtualKey.character] for keys that insert text, or [VirtualKey.action]
 /// for special function keys like backspace, enter, and shift.

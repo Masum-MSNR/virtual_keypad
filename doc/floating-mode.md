@@ -163,6 +163,9 @@ Docking snaps the panel back to a stable edge-aligned position, which is useful 
 - `initialLanguage`
 - `customLayout`
 - `enableEmojiKey`
+- `emojiTextStyle`
+- `checkEmojiPlatformCompatibility`
+- `enableDpadNavigation`
 - `onKeyPressed`
 - `onKeyPressedWithText`
 - `onStandaloneInputAction`

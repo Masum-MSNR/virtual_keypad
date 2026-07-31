@@ -42,6 +42,9 @@ class VirtualKeypadScope extends StatefulWidget {
 /// Provides methods for text input routing, selection handling, and
 /// active controller management.
 class VirtualKeypadScopeState extends State<VirtualKeypadScope> {
+  /// Creates the state that routes virtual keyboard input to focused fields.
+  VirtualKeypadScopeState();
+
   VirtualKeypadController? _activeController;
   int? _activeMaxLength;
   KeyboardType _activeKeyboardType = KeyboardType.text;

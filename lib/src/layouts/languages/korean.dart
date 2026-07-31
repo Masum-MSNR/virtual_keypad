@@ -319,7 +319,7 @@ final KeyboardLayout _phoneLayout = [
   ],
 ];
 
-/// Korean (한국어) keyboard language — Dubeolsik (두벌식) layout.
+/// Korean (한국어) keyboard language, Dubeolsik (두벌식) layout.
 final KeyboardLanguage koreanLanguage = KeyboardLanguage(
   code: 'ko',
   name: 'Korean',

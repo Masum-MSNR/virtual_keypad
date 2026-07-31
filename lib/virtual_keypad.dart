@@ -1,8 +1,11 @@
-/// A Flutter package for creating customizable virtual on-screen keyboards.
+/// A Flutter package for creating customizable virtual on-screen keyboards,
+/// keypads, and PIN pads.
 ///
-/// This package provides a complete solution for custom keyboard input,
-/// including text fields that integrate seamlessly with virtual keyboards,
-/// theming support, and multiple keyboard layouts that adapt to input type.
+/// This package provides a complete solution for custom keyboard input on
+/// touchscreen, desktop, kiosk, POS, and embedded devices where the system
+/// software keyboard is unavailable or too limited. It includes text fields
+/// that integrate seamlessly with virtual keyboards, theming support, and
+/// multiple keyboard layouts that adapt to input type.
 ///
 /// ## Getting Started
 ///
@@ -64,6 +67,7 @@
 library;
 
 export 'src/controller.dart';
+export 'src/emoji_font.dart';
 export 'src/enums.dart';
 export 'src/models.dart';
 export 'src/scope.dart';

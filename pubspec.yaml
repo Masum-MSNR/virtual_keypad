@@ -1,5 +1,5 @@
 name: virtual_keypad
-description: "A customizable Flutter virtual keyboard with standalone, scoped, and floating modes, emoji support, custom layouts, 12 languages, submit actions, and theming."
+description: "On-screen virtual keyboard widget and keypad for Flutter kiosk, POS, TV, desktop and touchscreen apps. Numeric, numpad, PIN, emoji, floating and custom layouts in 12 languages."
 version: 0.8.1
 homepage: https://github.com/Masum-MSNR/virtual_keypad
 repository: https://github.com/Masum-MSNR/virtual_keypad
@@ -10,7 +10,7 @@ topics:
   - virtual-keyboard
   - onscreen-keyboard
   - multilingual-keyboard
-  - flutter-keyboard
+  - text-input
 
 screenshots:
   - description: "Compact keyboard layout preview with emoji and search actions."
@@ -39,6 +39,17 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
+flutter:
+  # Noto Emoji, subset to the 1271 codepoints the emoji picker uses.
+  # Flutter web downloads a fallback emoji font on demand, so without a bundled
+  # font the emoji page renders blank on a first offline load. This font is only
+  # applied on web; native platforms keep their own color emoji font.
+  # Licensed under the SIL Open Font License 1.1, see fonts/OFL.txt.
+  fonts:
+    - family: NotoEmoji
+      fonts:
+        - asset: fonts/NotoEmoji-Regular.ttf
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

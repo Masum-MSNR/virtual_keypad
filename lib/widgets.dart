@@ -11,6 +11,7 @@
 library;
 
 export 'src/controller.dart';
+export 'src/emoji_font.dart';
 export 'src/enums.dart';
 export 'src/models.dart';
 export 'src/scope.dart';

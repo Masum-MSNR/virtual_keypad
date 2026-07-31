@@ -65,7 +65,7 @@ enum KeyboardType {
   /// Multiline text input (shows enter key for newlines).
   multiline,
 
-  /// Numeric keypad (0-9 with decimal point).
+  /// Numeric keypad / numpad (0-9 with decimal point).
   number,
 
   /// Signed number input (includes minus sign).
@@ -86,7 +86,8 @@ enum KeyboardType {
   /// URL input (/, :, . easily accessible).
   url,
 
-  /// Password input (same as text but may show different action).
+  /// Password and PIN entry input (same layout as text, but the action key
+  /// may differ).
   visiblePassword,
 
   /// Person name input (similar to text).
@@ -98,7 +99,8 @@ enum KeyboardType {
   /// No keyboard (hidden).
   none,
 
-  /// Custom layout provided via [VirtualKeypad.customLayout].
+  /// Custom layout provided via [VirtualKeypad.customLayout], such as a PIN
+  /// pad or OTP keypad.
   custom,
 }
 

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../controller.dart';
+import '../emoji_font.dart';
 import '../enums.dart';
 import '../layouts/keyboard_language.dart';
 import '../layouts/keyboard_layout_provider.dart';
@@ -39,6 +40,11 @@ String _lettersLabelForLanguageCode(String languageCode) {
 }
 
 /// A customizable virtual on-screen keyboard widget.
+///
+/// Renders a software keyboard inside your app: QWERTY text, a numeric keypad
+/// or numpad, a phone dialer, or a custom PIN pad or OTP layout. Input keeps
+/// working on kiosk, POS, ATM, touchscreen, desktop, and embedded screens where
+/// the system keyboard is unavailable or unwanted.
 ///
 /// Automatically integrates with [VirtualKeypadScope] to send input to
 /// the focused [VirtualKeypadTextField]. The keyboard automatically adapts
@@ -80,6 +86,9 @@ class VirtualKeypad extends StatefulWidget {
     this.customLayout,
     this.enableEmojiKey = false,
     this.showEmojiKeyboardInitially = false,
+    this.emojiTextStyle,
+    this.checkEmojiPlatformCompatibility = false,
+    this.enableDpadNavigation = false,
     this.hideWhenUnfocused = false,
     this.standalone = false,
     this.onVisibilityChanged,
@@ -157,11 +166,73 @@ class VirtualKeypad extends StatefulWidget {
   /// the keyboard falls back to the normal primary page.
   final bool showEmojiKeyboardInitially;
 
+  /// Text style used to paint the emoji glyphs in the emoji page.
+  ///
+  /// Leave this null and the keyboard picks a sensible default per platform,
+  /// so emoji render correctly with no setup:
+  ///
+  /// * On Android, iOS, Windows, macOS, and Linux the platform's own emoji font
+  ///   is used. It is in color and already works offline.
+  /// * On Flutter web the bundled [kBundledEmojiFontFamily] is used. The
+  ///   CanvasKit and Skwasm renderers ignore the browser font stack and
+  ///   download a Noto fallback font on demand, so without a bundled font the
+  ///   first offline load paints every emoji as a blank box. The bundled font
+  ///   is monochrome, which is the trade for rendering reliably offline.
+  ///
+  /// Set this to override that default, for example to use a color emoji font
+  /// your app bundles on web:
+  ///
+  /// ```dart
+  /// VirtualKeypad(
+  ///   standalone: true,
+  ///   enableEmojiKey: true,
+  ///   emojiTextStyle: const TextStyle(fontFamily: 'NotoColorEmoji'),
+  /// )
+  /// ```
+  ///
+  /// This styles the emoji grid only. Emoji inserted into your own text fields
+  /// are painted by your app's text style, so on web set `fontFamilyFallback`
+  /// on your theme to keep them rendering offline too.
+  final TextStyle? emojiTextStyle;
+
+  /// When true, emoji the platform cannot render are filtered out of the grid.
+  ///
+  /// This check is Android only. It removes glyphs that would otherwise paint
+  /// as blank boxes on devices with an outdated system emoji font, at the cost
+  /// of extra work the first time the emoji page opens. It has no effect on
+  /// web, iOS, or desktop, so it is not a fix for missing emoji there. See
+  /// [emojiTextStyle] for the cross-platform option.
+  ///
+  /// Defaults to false to keep the emoji page fast to open.
+  final bool checkEmojiPlatformCompatibility;
+
+  /// When true, the keyboard can be driven with a D-pad or remote control.
+  ///
+  /// This is what makes the keyboard usable on Android TV, Fire TV, and other
+  /// set-top boxes, where there is no touch screen and every interaction comes
+  /// from a directional pad.
+  ///
+  /// One key is highlighted at a time. Arrow keys move the highlight, and
+  /// select, enter, space, or the primary gamepad button presses the
+  /// highlighted key. Moving up or down picks the key in the neighbouring row
+  /// that sits closest horizontally, so wide keys such as space and shift stay
+  /// reachable.
+  ///
+  /// The highlight is drawn by the keyboard itself rather than by the Flutter
+  /// focus system, so the focused text field keeps focus and the keyboard does
+  /// not hide while the user moves around the keys. Style it with
+  /// [VirtualKeypadTheme.focusBorderColor], [VirtualKeypadTheme.focusColor],
+  /// and [VirtualKeypadTheme.focusBorderWidth].
+  ///
+  /// Defaults to false, which leaves touch and pointer behaviour untouched.
+  final bool enableDpadNavigation;
+
   /// When true, hides the keyboard with animation when no text field is focused.
   final bool hideWhenUnfocused;
 
-  /// When true, the keyboard works with any standard Flutter [TextField]
-  /// without requiring [VirtualKeypadScope] or [VirtualKeypadTextField].
+  /// When true, the keyboard works with any standard Flutter [TextField] or
+  /// [TextFormField] without requiring [VirtualKeypadScope] or
+  /// [VirtualKeypadTextField].
   ///
   /// In standalone mode, the keyboard intercepts Flutter's text input system
   /// and routes key presses to whichever [TextField] currently has focus.
@@ -207,6 +278,18 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
   // Cache the layout when keyboard is visible for smooth close animation
   KeyboardLayout? _cachedLayout;
+
+  /// Row of the key currently highlighted for D-pad navigation.
+  int _dpadRow = 0;
+
+  /// Column of the key currently highlighted for D-pad navigation.
+  int _dpadCol = 0;
+
+  /// Layout the D-pad highlight is currently addressing.
+  ///
+  /// Set during build so the key handler navigates whatever the user can
+  /// actually see, including custom layouts and symbol pages.
+  KeyboardLayout? _dpadLayout;
   bool _wasVisible = false;
   bool? _reportedVisibility;
   bool _languagePickerVisible = false;
@@ -223,6 +306,9 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     _resetLayoutStage();
     if (widget.standalone) {
       _initStandalone();
+    }
+    if (widget.enableDpadNavigation) {
+      HardwareKeyboard.instance.addHandler(_handleDpadKey);
     }
   }
 
@@ -349,11 +435,23 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         _standaloneVisible = false;
       }
     }
+    if (widget.enableDpadNavigation != oldWidget.enableDpadNavigation) {
+      if (widget.enableDpadNavigation) {
+        HardwareKeyboard.instance.addHandler(_handleDpadKey);
+      } else {
+        HardwareKeyboard.instance.removeHandler(_handleDpadKey);
+        _dpadRow = 0;
+        _dpadCol = 0;
+      }
+    }
   }
 
   @override
   void dispose() {
     KeyboardLayoutProvider.instance.removeListener(_onLanguageChanged);
+    if (widget.enableDpadNavigation) {
+      HardwareKeyboard.instance.removeHandler(_handleDpadKey);
+    }
     if (widget.standalone) {
       _disposeStandalone();
     } else {
@@ -764,7 +862,8 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         },
         config: emoji_picker.Config(
           height: widget.height,
-          checkPlatformCompatibility: false,
+          checkPlatformCompatibility: widget.checkEmojiPlatformCompatibility,
+          emojiTextStyle: widget.emojiTextStyle ?? defaultEmojiTextStyle(),
           locale: _emojiLocale,
           customSearchIcon: Icon(
             Icons.search,
@@ -852,6 +951,10 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     final usedWidth = (maxColumns + 1) * widget.theme.horizontalGap;
     final baseKeyWidth = (width - usedWidth) / totalFlex;
 
+    if (widget.enableDpadNavigation) {
+      _syncDpadLayout(layout);
+    }
+
     return ExcludeFocus(
       child: Container(
         width: width,
@@ -863,13 +966,18 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: layout.map((row) {
+          children: List.generate(layout.length, (rowIndex) {
+            final row = layout[rowIndex];
             return Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: row.map((key) {
+              children: List.generate(row.length, (colIndex) {
+                final key = row[colIndex];
                 return _KeyWidget(
                   key: ValueKey('${key.text ?? key.action}'),
                   virtualKey: key,
+                  isDpadFocused: widget.enableDpadNavigation &&
+                      rowIndex == _dpadRow &&
+                      colIndex == _dpadCol,
                   type: _effectiveKeyboardType,
                   height: keyHeight,
                   baseWidth: baseKeyWidth,
@@ -884,12 +992,106 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
                   onSpaceLongPress: _showLanguagePicker,
                   onPressed: _onKeyPressed,
                 );
-              }).toList(),
+              }),
             );
-          }).toList(),
+          }),
         ),
       ),
     );
+  }
+
+  /// Clamps the highlight into [layout] and records it for the key handler.
+  ///
+  /// Layouts change under the highlight when the user shifts, opens the symbol
+  /// page, or switches language, and rows are not all the same length.
+  void _syncDpadLayout(KeyboardLayout layout) {
+    _dpadLayout = layout;
+    if (layout.isEmpty) return;
+    final row = _dpadRow.clamp(0, layout.length - 1);
+    final col =
+        layout[row].isEmpty ? 0 : _dpadCol.clamp(0, layout[row].length - 1);
+    _dpadRow = row;
+    _dpadCol = col;
+  }
+
+  /// Whether the highlight should respond to D-pad events right now.
+  bool get _dpadActive =>
+      widget.enableDpadNavigation &&
+      !_isEmojiPickerVisible &&
+      !_languagePickerVisible &&
+      (_dpadLayout?.isNotEmpty ?? false);
+
+  /// Normalized horizontal centre, from 0 to 1, of the key at [index].
+  ///
+  /// Rows are laid out by flex and centred, so comparing normalized centres is
+  /// what keeps wide keys such as space and shift reachable from the row above.
+  double _dpadCenter(KeyRow row, int index) {
+    final total = row.fold<double>(0, (sum, key) => sum + key.flex);
+    if (total <= 0) return 0;
+    var before = 0.0;
+    for (var i = 0; i < index; i++) {
+      before += row[i].flex;
+    }
+    return (before + row[index].flex / 2) / total;
+  }
+
+  bool _moveDpadHorizontally(int delta) {
+    final layout = _dpadLayout!;
+    final next = _dpadCol + delta;
+    // Out of bounds is left unhandled so the surrounding app can move focus
+    // off the keyboard instead of trapping the user inside it.
+    if (next < 0 || next >= layout[_dpadRow].length) return false;
+    setState(() => _dpadCol = next);
+    return true;
+  }
+
+  bool _moveDpadVertically(int delta) {
+    final layout = _dpadLayout!;
+    final targetRow = _dpadRow + delta;
+    if (targetRow < 0 || targetRow >= layout.length) return false;
+
+    final target = layout[targetRow];
+    if (target.isEmpty) return false;
+
+    final anchor = _dpadCenter(layout[_dpadRow], _dpadCol);
+    var best = 0;
+    var bestDistance = double.infinity;
+    for (var i = 0; i < target.length; i++) {
+      final distance = (_dpadCenter(target, i) - anchor).abs();
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = i;
+      }
+    }
+
+    setState(() {
+      _dpadRow = targetRow;
+      _dpadCol = best;
+    });
+    return true;
+  }
+
+  bool _handleDpadKey(KeyEvent event) {
+    if (event is KeyUpEvent) return false;
+    if (!_dpadActive) return false;
+
+    final key = event.logicalKey;
+    if (key == LogicalKeyboardKey.arrowLeft) return _moveDpadHorizontally(-1);
+    if (key == LogicalKeyboardKey.arrowRight) return _moveDpadHorizontally(1);
+    if (key == LogicalKeyboardKey.arrowUp) return _moveDpadVertically(-1);
+    if (key == LogicalKeyboardKey.arrowDown) return _moveDpadVertically(1);
+
+    // Space is deliberately left alone: on a keyboard it is a character, and
+    // hijacking it would surprise anyone pairing a Bluetooth keyboard to a TV.
+    if (key == LogicalKeyboardKey.select ||
+        key == LogicalKeyboardKey.enter ||
+        key == LogicalKeyboardKey.numpadEnter ||
+        key == LogicalKeyboardKey.gameButtonA) {
+      _onKeyPressed(_dpadLayout![_dpadRow][_dpadCol]);
+      return true;
+    }
+
+    return false;
   }
 
   void _onKeyPressed(VirtualKey key) {
@@ -1188,7 +1390,11 @@ class _KeyWidget extends StatefulWidget {
     required this.canOpenLanguagePicker,
     required this.onSpaceLongPress,
     required this.onPressed,
+    this.isDpadFocused = false,
   });
+
+  /// Whether this key is the current D-pad target and should be highlighted.
+  final bool isDpadFocused;
 
   final VirtualKey virtualKey;
   final KeyboardType type;
@@ -1333,6 +1539,9 @@ class _KeyWidgetState extends State<_KeyWidget> {
       child: Semantics(
         button: true,
         enabled: true,
+        // Left null rather than false when unfocused: passing false would mark
+        // every key isFocusable, which is wrong for a touch-only keyboard.
+        focused: widget.isDpadFocused ? true : null,
         label: _semanticLabel(),
         value: _semanticValue(),
         hint: _semanticHint(),
@@ -1348,7 +1557,9 @@ class _KeyWidgetState extends State<_KeyWidget> {
           ),
           height: widget.height,
           width: width,
-          decoration: _getDecoration(decoration),
+          decoration: widget.isDpadFocused
+              ? widget.theme.focusedDecoration(_getDecoration(decoration))
+              : _getDecoration(decoration),
           clipBehavior: Clip.antiAlias,
           child: Material(
             color: Colors.transparent,

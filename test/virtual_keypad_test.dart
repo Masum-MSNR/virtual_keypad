@@ -1,4 +1,5 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart' as emoji_picker;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -1488,6 +1489,289 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('emojiTextStyle reaches the emoji picker config',
+        (tester) async {
+      const style = TextStyle(fontFamily: 'NotoEmoji', fontSize: 30);
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(controller: controller),
+                  const VirtualKeypad(
+                    enableEmojiKey: true,
+                    emojiTextStyle: style,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.bySemanticsLabel('Show emoji'));
+      await tester.pumpAndSettle();
+
+      final picker = tester.widget<emoji_picker.EmojiPicker>(
+          find.byType(emoji_picker.EmojiPicker));
+      expect(picker.config.emojiTextStyle, style);
+    });
+
+    testWidgets('emoji style defaults to the platform font off the web',
+        (tester) async {
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(controller: controller),
+                  const VirtualKeypad(enableEmojiKey: true),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.bySemanticsLabel('Show emoji'));
+      await tester.pumpAndSettle();
+
+      final picker = tester.widget<emoji_picker.EmojiPicker>(
+          find.byType(emoji_picker.EmojiPicker));
+
+      // These tests run on the VM, so the bundled web font must not be applied
+      // and the platform's own color emoji font is left in place.
+      expect(kIsWeb, isFalse);
+      expect(picker.config.emojiTextStyle, isNull);
+    });
+
+    test('bundled emoji font family is package qualified', () {
+      expect(kBundledEmojiFontFamily, 'packages/virtual_keypad/NotoEmoji');
+    });
+
+    test('emoji font helpers are a no-op off the web', () {
+      // Guards against the bundled monochrome font ever overriding the
+      // platform's color emoji font on Android, iOS, or desktop.
+      expect(kIsWeb, isFalse);
+      expect(defaultEmojiTextStyle(), isNull);
+
+      const style = TextStyle(fontSize: 18);
+      expect(withBundledEmojiFallback(style), same(style));
+      expect(withBundledEmojiFallback(null), isNull);
+
+      final theme = ThemeData.light();
+      expect(theme.withVirtualKeypadEmojiFont(), same(theme));
+    });
+
+    testWidgets('VirtualKeypadTextField keeps its style off the web',
+        (tester) async {
+      final controller = VirtualKeypadController();
+      const style = TextStyle(fontSize: 21, color: Colors.teal);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: VirtualKeypadTextField(
+                controller: controller,
+                style: style,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.widget<TextField>(find.byType(TextField)).style, style);
+    });
+
+    testWidgets('emoji platform compatibility check is off by default',
+        (tester) async {
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(controller: controller),
+                  const VirtualKeypad(enableEmojiKey: true),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.bySemanticsLabel('Show emoji'));
+      await tester.pumpAndSettle();
+
+      final picker = tester.widget<emoji_picker.EmojiPicker>(
+          find.byType(emoji_picker.EmojiPicker));
+      expect(picker.config.checkPlatformCompatibility, isFalse);
+    });
+
+    testWidgets('emoji platform compatibility check can be opted into',
+        (tester) async {
+      final controller = VirtualKeypadController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(controller: controller),
+                  const VirtualKeypad(
+                    enableEmojiKey: true,
+                    checkEmojiPlatformCompatibility: true,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+      await tester.tap(find.bySemanticsLabel('Show emoji'));
+      await tester.pumpAndSettle();
+
+      final picker = tester.widget<emoji_picker.EmojiPicker>(
+          find.byType(emoji_picker.EmojiPicker));
+      expect(picker.config.checkPlatformCompatibility, isTrue);
+    });
+  });
+
+  group('VirtualKeypad D-pad navigation', () {
+    Future<VirtualKeypadController> pumpKeypad(
+      WidgetTester tester, {
+      required bool dpad,
+    }) async {
+      final controller = VirtualKeypadController();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: VirtualKeypadScope(
+              child: Column(
+                children: [
+                  VirtualKeypadTextField(controller: controller),
+                  VirtualKeypad(enableDpadNavigation: dpad),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byType(TextField).first);
+      await tester.pumpAndSettle();
+      return controller;
+    }
+
+    Future<void> send(WidgetTester tester, LogicalKeyboardKey key) async {
+      await tester.sendKeyEvent(key);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('select presses the highlighted key', (tester) async {
+      final controller = await pumpKeypad(tester, dpad: true);
+
+      // The highlight starts on the first key of the first row, which is 'q'
+      // on the English QWERTY layout.
+      await send(tester, LogicalKeyboardKey.select);
+
+      expect(controller.text, 'q');
+    });
+
+    testWidgets('arrow right moves along the row', (tester) async {
+      final controller = await pumpKeypad(tester, dpad: true);
+
+      await send(tester, LogicalKeyboardKey.arrowRight);
+      await send(tester, LogicalKeyboardKey.arrowRight);
+      await send(tester, LogicalKeyboardKey.enter);
+
+      expect(controller.text, 'e');
+    });
+
+    testWidgets('arrow down lands on the closest key in the next row',
+        (tester) async {
+      final controller = await pumpKeypad(tester, dpad: true);
+
+      // Row 0 starts 'qwerty', row 1 starts 'asdf'. Moving down from 'q'
+      // should reach 'a', the nearest key horizontally.
+      await send(tester, LogicalKeyboardKey.arrowDown);
+      await send(tester, LogicalKeyboardKey.select);
+
+      expect(controller.text, 'a');
+    });
+
+    testWidgets('highlight does not run past the end of a row', (tester) async {
+      final controller = await pumpKeypad(tester, dpad: true);
+
+      // Walking left from the first key is out of bounds and must not move or
+      // crash; the keyboard leaves the event for the app to handle.
+      await send(tester, LogicalKeyboardKey.arrowLeft);
+      await send(tester, LogicalKeyboardKey.arrowLeft);
+      await send(tester, LogicalKeyboardKey.select);
+
+      expect(controller.text, 'q');
+    });
+
+    testWidgets('shift key reached by D-pad still toggles case',
+        (tester) async {
+      final controller = await pumpKeypad(tester, dpad: true);
+
+      // Row 2 of QWERTY starts with shift.
+      await send(tester, LogicalKeyboardKey.arrowDown);
+      await send(tester, LogicalKeyboardKey.arrowDown);
+      await send(tester, LogicalKeyboardKey.select);
+
+      // Back up to the first row and type; shift should still be latched.
+      await send(tester, LogicalKeyboardKey.arrowUp);
+      await send(tester, LogicalKeyboardKey.arrowUp);
+      await send(tester, LogicalKeyboardKey.select);
+
+      expect(controller.text, 'Q');
+    });
+
+    testWidgets('does nothing when disabled', (tester) async {
+      final controller = await pumpKeypad(tester, dpad: false);
+
+      await send(tester, LogicalKeyboardKey.arrowRight);
+      await send(tester, LogicalKeyboardKey.select);
+      await send(tester, LogicalKeyboardKey.enter);
+
+      expect(controller.text, isEmpty);
+    });
+
+    testWidgets('removes its key handler on dispose', (tester) async {
+      final before = HardwareKeyboard.instance.physicalKeysPressed.length;
+      await pumpKeypad(tester, dpad: true);
+
+      await tester.pumpWidget(const MaterialApp(home: Scaffold()));
+      await tester.pumpAndSettle();
+
+      // A leaked handler would throw once the state is gone.
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(HardwareKeyboard.instance.physicalKeysPressed.length, before);
     });
   });
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../controller.dart';
+import '../emoji_font.dart';
 import '../enums.dart';
 import '../scope.dart';
 
@@ -430,7 +431,10 @@ class _VirtualKeypadTextFieldState extends State<VirtualKeypadTextField> {
       controller: widget.controller,
       focusNode: _focusNode,
       decoration: widget.decoration,
-      style: widget.style,
+      // On web the bundled emoji font is appended as a fallback so emoji
+      // inserted from the keyboard render without a network connection.
+      // Off the web this returns widget.style untouched.
+      style: withBundledEmojiFallback(widget.style),
       obscureText: widget.obscureText,
       obscuringCharacter: widget.obscuringCharacter,
       enabled: widget.enabled,
