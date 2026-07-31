@@ -1,9 +1,12 @@
-"""Capture each keyboard on its own, then stitch them into one image.
+"""Capture each keyboard on its own, then stitch them into sheets.
 
 Every scene renders a single keyboard at an exact size and is captured at a
-viewport to match, so a shot contains the keyboard and nothing else. They are
-composited at native scale and bottom aligned, which keeps the real size
-relationship between a 760px desktop keyboard and a 320px PIN pad.
+viewport to match, so a shot contains the keyboard and nothing else. Shots are
+composited at native scale and bottom aligned within their row, which keeps the
+real size relationship between a 760px desktop keyboard and a 320px PIN pad.
+
+Both sheets are emitted at the same canvas size so they sit together in a
+package gallery.
 
 Usage, from the package root:
 
@@ -23,21 +26,24 @@ import subprocess
 import sys
 import tempfile
 import threading
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "example" / "build" / "web"
-OUT = ROOT / "previews" / "showcase-devices.png"
+PREVIEWS = ROOT / "previews"
 PORT = 8139
 DPR = 2
 
+# Both sheets land on exactly this canvas.
+CANVAS = (2600, 1500)
+
 BG_TOP = (243, 243, 250)
-BG_BOTTOM = (232, 232, 244)
+BG_BOTTOM = (231, 231, 244)
 INK = (27, 27, 37)
-MUTED = (122, 122, 140)
+MUTED = (120, 120, 138)
 
 BROWSERS = [
     r"C:\Program Files\Google\Chrome\Application\chrome.exe",
@@ -48,7 +54,7 @@ BROWSERS = [
 ]
 
 
-@dataclass
+@dataclass(frozen=True)
 class Scene:
     key: str
     label: str
@@ -57,18 +63,52 @@ class Scene:
     height: int
 
 
-SCENES = [
-    Scene("desktop", "Desktop", "Email layout, wide", 760, 300),
-    Scene("emoji", "Emoji", "Colour emoji page", 460, 380),
-    Scene("pin", "PIN pad", "Custom layout, dark", 320, 320),
-    Scene("phone", "Phone", "QWERTY, 12 languages", 390, 280),
-    Scene("arabic", "Arabic", "Right to left", 390, 280),
-    Scene("kiosk", "Kiosk", "Numeric, themed", 460, 300),
-]
+@dataclass
+class Sheet:
+    out: str
+    rows: list[list[Scene]] = field(default_factory=list)
 
-# Two rows rather than one long strip: a 5:1 banner renders unreadably small
-# in a package gallery.
-ROWS = [["desktop", "emoji", "pin"], ["phone", "arabic", "kiosk"]]
+
+LAYOUTS = Sheet(
+    "showcase-devices.png",
+    [
+        [
+            Scene("desktop", "Desktop", "Email layout, wide", 760, 330),
+            Scene("emoji", "Emoji", "Colour emoji page", 460, 330),
+            Scene("pin", "PIN pad", "Custom layout, dark", 320, 330),
+        ],
+        [
+            Scene("phone", "Phone", "QWERTY", 390, 330),
+            Scene("arabic", "Arabic", "Right to left", 390, 330),
+            Scene("kiosk", "Kiosk", "Numeric, themed", 460, 330),
+        ],
+    ],
+)
+
+
+def _lang(code: str, label: str, note: str) -> Scene:
+    return Scene(f"lang-{code}", label, note, 430, 290)
+
+
+LANGUAGES = Sheet(
+    "showcase-languages.png",
+    [
+        [
+            # Latin layout names, not native script: the caption font has no
+            # Bengali, Devanagari, or Hangul glyphs and would render tofu.
+            _lang("bn", "Bengali", "Bengali script"),
+            _lang("hi", "Hindi", "Devanagari"),
+            _lang("ru", "Russian", "JCUKEN, Cyrillic"),
+        ],
+        [
+            _lang("ko", "Korean", "Dubeolsik, Hangul"),
+            _lang("th", "Thai", "Kedmanee"),
+            _lang("fr", "French", "AZERTY"),
+        ],
+    ],
+)
+
+SHEETS = [LAYOUTS, LANGUAGES]
 
 
 def find_browser() -> str:
@@ -82,9 +122,9 @@ def find_browser() -> str:
 
 
 def serve(directory: Path) -> socketserver.TCPServer:
-    handler = lambda *a, **kw: http.server.SimpleHTTPRequestHandler(  # noqa: E731
-        *a, directory=str(directory), **kw
-    )
+    def handler(*a, **kw):
+        return http.server.SimpleHTTPRequestHandler(*a, directory=str(directory), **kw)
+
     socketserver.TCPServer.allow_reuse_address = True
     server = socketserver.TCPServer(("127.0.0.1", PORT), handler)
     threading.Thread(target=server.serve_forever, daemon=True).start()
@@ -128,7 +168,7 @@ def shadow(size: tuple[int, int], radius: int, blur: int) -> Image.Image:
     pad = blur * 3
     layer = Image.new("RGBA", (size[0] + pad * 2, size[1] + pad * 2), (0, 0, 0, 0))
     ImageDraw.Draw(layer).rounded_rectangle(
-        [pad, pad, pad + size[0], pad + size[1]], radius=radius, fill=(0, 0, 0, 70)
+        [pad, pad, pad + size[0], pad + size[1]], radius=radius, fill=(0, 0, 0, 72)
     )
     return layer.filter(ImageFilter.GaussianBlur(blur))
 
@@ -147,6 +187,76 @@ def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
     return ImageFont.load_default(size)
 
 
+def gradient(size: tuple[int, int]) -> Image.Image:
+    column = Image.new("RGB", (1, size[1]))
+    for y in range(size[1]):
+        t = y / max(1, size[1] - 1)
+        column.putpixel(
+            (0, y), tuple(round(a + (b - a) * t) for a, b in zip(BG_TOP, BG_BOTTOM))
+        )
+    return column.resize(size)
+
+
+def compose(sheet: Sheet, shots: dict[str, Image.Image]) -> Image.Image:
+    """Lay the rows out at native scale, then fit the block to the canvas."""
+    gap_x, gap_y, label_block = 60, 96, 104
+
+    rows = [[(s, shots[s.key]) for s in row] for row in sheet.rows]
+    for row in rows:
+        heights = {i.size[1] for _, i in row}
+        assert len(heights) == 1, f"row heights differ: {heights}"
+    row_w = [sum(i.size[0] for _, i in r) + gap_x * (len(r) - 1) for r in rows]
+    row_h = [max(i.size[1] for _, i in r) for r in rows]
+
+    block_w = max(row_w)
+    block_h = sum(h + label_block for h in row_h) + gap_y * (len(rows) - 1)
+
+    block = Image.new("RGBA", (block_w, block_h), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(block)
+
+    y_cursor = 0
+    for row, width, height in zip(rows, row_w, row_h):
+        x = (block_w - width) // 2
+        baseline = y_cursor + height
+        for scene, img in row:
+            w, h = img.size
+            y = baseline - h  # bottom aligned within the row
+            sh = shadow((w, h), 22, 20)
+            block.alpha_composite(sh, (max(0, x - 60), max(0, y - 48)))
+            block.alpha_composite(rounded(img, 22), (x, y))
+
+            label_y = baseline + 22
+            bold = font(30, True)
+            draw.text((x, label_y), scene.label.upper(), font=bold, fill=INK)
+            draw.text(
+                (x + draw.textlength(scene.label.upper(), font=bold) + 14, label_y + 3),
+                f"{scene.width} x {scene.height}",
+                font=font(25),
+                fill=MUTED,
+            )
+            draw.text((x, label_y + 42), scene.note, font=font(27), fill=MUTED)
+            x += w + gap_x
+        y_cursor = baseline + label_block + gap_y
+
+    # Fill as much of the canvas as the margin allows, rather than leaving the
+    # block at whatever size the keyboards happened to add up to.
+    margin = 70
+    fit = min(
+        (CANVAS[0] - margin * 2) / block_w,
+        (CANVAS[1] - margin * 2) / block_h,
+    )
+    block = block.resize(
+        (round(block_w * fit), round(block_h * fit)), Image.LANCZOS
+    )
+
+    canvas = gradient(CANVAS).convert("RGBA")
+    canvas.alpha_composite(
+        block,
+        ((CANVAS[0] - block.size[0]) // 2, (CANVAS[1] - block.size[1]) // 2),
+    )
+    return canvas.convert("RGB")
+
+
 def main() -> None:
     if not (WEB / "index.html").exists():
         sys.exit(
@@ -160,89 +270,27 @@ def main() -> None:
     server = serve(WEB)
     tmp = Path(tempfile.mkdtemp())
     try:
-        shots = []
-        for scene in SCENES:
-            img = capture(browser, scene, tmp / f"{scene.key}.png")
-            print(f"  captured {scene.key:8} {img.size[0]}x{img.size[1]}")
-            shots.append((scene, img))
+        shots: dict[str, Image.Image] = {}
+        for sheet in SHEETS:
+            for row in sheet.rows:
+                for scene in row:
+                    img = capture(browser, scene, tmp / f"{scene.key}.png")
+                    shots[scene.key] = img
+                    print(f"  captured {scene.key:12} {img.size[0]}x{img.size[1]}")
     finally:
         server.shutdown()
 
-    by_key = {scene.key: (scene, img) for scene, img in shots}
-    rows = [[by_key[k] for k in row] for row in ROWS]
-
-    gap_x, gap_y = 56, 130
-    pad_x, pad_top, pad_bottom = 80, 200, 90
-    label_block = 110
-
-    row_w = [
-        sum(i.size[0] for _, i in r) + gap_x * (len(r) - 1) for r in rows
-    ]
-    row_h = [max(i.size[1] for _, i in r) for r in rows]
-
-    canvas_w = max(row_w) + pad_x * 2
-    canvas_h = (
-        pad_top
-        + sum(h + label_block for h in row_h)
-        + gap_y * (len(rows) - 1)
-        + pad_bottom
-    )
-
-    canvas = Image.new("RGB", (canvas_w, canvas_h), BG_TOP)
-    column = Image.new("RGB", (1, canvas_h))
-    for y in range(canvas_h):
-        t = y / canvas_h
-        column.putpixel(
-            (0, y),
-            tuple(round(a + (b - a) * t) for a, b in zip(BG_TOP, BG_BOTTOM)),
+    PREVIEWS.mkdir(parents=True, exist_ok=True)
+    for sheet in SHEETS:
+        out = PREVIEWS / sheet.out
+        image = compose(sheet, shots)
+        image.save(out, optimize=True)
+        print(
+            f"wrote {out.relative_to(ROOT)}  "
+            f"{image.size[0]}x{image.size[1]}  {out.stat().st_size / 1024:.0f} KB"
         )
-    canvas = column.resize((canvas_w, canvas_h))
 
-    draw = ImageDraw.Draw(canvas)
-    draw.text((pad_x, 74), "virtual_keypad", font=font(64, True), fill=INK)
-    draw.text(
-        (pad_x, 152),
-        "Layouts, languages, and themes. One on-screen keyboard for Flutter",
-        font=font(30),
-        fill=MUTED,
-    )
-
-    y_cursor = pad_top
-    for row, width, height in zip(rows, row_w, row_h):
-        x = (canvas_w - width) // 2
-        baseline = y_cursor + height
-        for scene, img in row:
-            w, h = img.size
-            y = baseline - h  # bottom aligned within the row
-            sh = shadow((w, h), 22, 22)
-            canvas.paste(sh, (x - 66, y - 52), sh)
-            canvas.paste(rounded(img, 22), (x, y), rounded(img, 22))
-
-            label_y = baseline + 26
-            bold = font(28, True)
-            draw.text((x, label_y), scene.label.upper(), font=bold, fill=INK)
-            draw.text(
-                (x + draw.textlength(scene.label.upper(), font=bold) + 14,
-                 label_y + 2),
-                f"{scene.width} x {scene.height}",
-                font=font(24),
-                fill=MUTED,
-            )
-            draw.text((x, label_y + 40), scene.note, font=font(26), fill=MUTED)
-            x += w + gap_x
-        y_cursor = baseline + label_block + gap_y
-
-    # Keep the final image wide but not absurd.
-    max_w = 2600
-    if canvas.size[0] > max_w:
-        h = round(canvas.size[1] * max_w / canvas.size[0])
-        canvas = canvas.resize((max_w, h), Image.LANCZOS)
-
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    canvas.save(OUT, optimize=True)
     shutil.rmtree(tmp, ignore_errors=True)
-    kb = OUT.stat().st_size / 1024
-    print(f"wrote {OUT.relative_to(ROOT)}  {canvas.size[0]}x{canvas.size[1]}  {kb:.0f} KB")
 
 
 if __name__ == "__main__":

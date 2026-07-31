@@ -17,6 +17,8 @@ screenshots:
     path: previews/showcase-portrait.png
   - description: "Six keyboards side by side: wide email layout, colour emoji page, dark PIN pad, QWERTY, Arabic right to left, and a themed numeric kiosk pad."
     path: previews/showcase-devices.png
+  - description: "Six of the 12 built-in languages: Bengali, Hindi, Russian, Korean, Thai, and French AZERTY."
+    path: previews/showcase-languages.png
   - description: "Compact keyboard layout preview with emoji and search actions."
     path: previews/pubdev-sidebar.png
 

@@ -22,13 +22,17 @@ void main() {
 /// Exact size of each scene, which is the size of the keyboard itself. The
 /// capture viewport matches, so a shot contains the keyboard and nothing else.
 const sceneSizes = <String, Size>{
-  'desktop': Size(760, 300),
-  'emoji': Size(460, 380),
-  'phone': Size(390, 280),
-  'pin': Size(320, 320),
-  'arabic': Size(390, 280),
-  'kiosk': Size(460, 300),
+  'desktop': Size(760, 330),
+  'emoji': Size(460, 330),
+  'phone': Size(390, 330),
+  'pin': Size(320, 330),
+  'arabic': Size(390, 330),
+  'kiosk': Size(460, 330),
 };
+
+/// Language scenes are addressed as `lang-<code>` and all share one size, so
+/// the sheet reads as a comparison of scripts rather than of dimensions.
+const languageSceneSize = Size(430, 290);
 
 class SceneApp extends StatelessWidget {
   const SceneApp({super.key, required this.scene});
@@ -37,7 +41,9 @@ class SceneApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = sceneSizes[scene] ?? sceneSizes['phone']!;
+    final size = scene.startsWith('lang-')
+        ? languageSceneSize
+        : (sceneSizes[scene] ?? sceneSizes['phone']!);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       // Pinned, so the layout does not depend on the capture viewport.
@@ -54,6 +60,16 @@ class SceneApp extends StatelessWidget {
   }
 
   Widget _keyboard(String scene, double height) {
+    if (scene.startsWith('lang-')) {
+      final code = scene.substring(5);
+      return Builder(
+        builder: (_) {
+          KeyboardLayoutProvider.instance.setLanguage(code);
+          return VirtualKeypad(height: height, hideWhenUnfocused: false);
+        },
+      );
+    }
+
     switch (scene) {
       case 'desktop':
         return VirtualKeypad(
