@@ -13,18 +13,10 @@ topics:
   - text-input
 
 screenshots:
+  - description: "QWERTY text keyboard, dark custom PIN pad, and the colour emoji page."
+    path: previews/showcase-portrait.png
   - description: "Compact keyboard layout preview with emoji and search actions."
     path: previews/pubdev-sidebar.png
-  - description: "Note editor workflow with emoji access and inline counters."
-    path: previews/phone1.gif
-  - description: "Themeable keyboard preview with custom visual presets."
-    path: previews/phone2.gif
-  - description: "Multilingual keyboard flow with live language switching."
-    path: previews/phone3.gif
-  - description: "Standalone integration with standard Flutter TextFields."
-    path: previews/desktop1.gif
-  - description: "Floating keyboard overlay with draggable toolbar controls."
-    path: previews/desktop2.gif
 
 environment:
   sdk: ^3.0.0
