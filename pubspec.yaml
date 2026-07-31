@@ -15,6 +15,8 @@ topics:
 screenshots:
   - description: "QWERTY text keyboard, dark custom PIN pad, and the colour emoji page."
     path: previews/showcase-portrait.png
+  - description: "The same keyboard at desktop, tablet, and phone widths, reflowing to fit each one."
+    path: previews/showcase-sizes.png
   - description: "Compact keyboard layout preview with emoji and search actions."
     path: previews/pubdev-sidebar.png
 
