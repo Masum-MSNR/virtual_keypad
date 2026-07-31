@@ -13,6 +13,7 @@ import 'screens/pin_pad_example.dart';
 import 'screens/standalone_example.dart';
 import 'screens/keyboard_preview_example.dart';
 import 'screens/floating_keyboard_example.dart';
+import 'screens/emoji_font_check_example.dart';
 
 void main() {
   initializeKeyboardLayouts();
@@ -101,6 +102,13 @@ class HomePage extends StatelessWidget {
               subtitle: 'All types & languages side by side',
               gradient: const [Color(0xFF6C63FF), Color(0xFF8B5CF6)],
               onTap: () => _navigate(context, const KeyboardPreviewExample()),
+            ),
+            _ExampleCard(
+              icon: Icons.emoji_emotions_rounded,
+              title: 'Emoji Font Check',
+              subtitle: 'Verify web emoji rendering & offline fallback',
+              gradient: const [Color(0xFF00B4D8), Color(0xFF0077B6)],
+              onTap: () => _navigate(context, const EmojiFontCheckExample()),
             ),
             const SizedBox(height: 4),
             const _SectionHeader(
