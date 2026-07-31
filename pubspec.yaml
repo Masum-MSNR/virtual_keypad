@@ -13,14 +13,12 @@ topics:
   - text-input
 
 screenshots:
-  - description: "QWERTY text keyboard, dark custom PIN pad, and the colour emoji page."
-    path: previews/showcase-portrait.png
+  - description: "The virtual_keypad logo."
+    path: images/logo.png
   - description: "Six keyboards side by side: wide email layout, colour emoji page, dark PIN pad, QWERTY, Arabic right to left, and a themed numeric kiosk pad."
     path: previews/showcase-devices.png
   - description: "Six of the 12 built-in languages: Bengali, Hindi, Russian, Korean, Thai, and French AZERTY."
     path: previews/showcase-languages.png
-  - description: "Compact keyboard layout preview with emoji and search actions."
-    path: previews/pubdev-sidebar.png
 
 environment:
   sdk: ^3.0.0

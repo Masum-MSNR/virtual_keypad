@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <radialGradient id="bg" cx="46%" cy="42%" r="80%">
+      <stop offset="0%" stop-color="#3E3760"/>
+      <stop offset="55%" stop-color="#242038"/>
+      <stop offset="100%" stop-color="#0F0D18"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FBFBFF"/>
+      <stop offset="100%" stop-color="#DFE3F2"/>
+    </linearGradient>
+    <linearGradient id="key" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#EFF1FA"/>
+    </linearGradient>
+    <linearGradient id="mod" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C3C8DE"/>
+      <stop offset="100%" stop-color="#AAB0CB"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8F86FF"/>
+      <stop offset="55%" stop-color="#6C63FF"/>
+      <stop offset="100%" stop-color="#5348DC"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="58"/>
+    </filter>
+    <filter id="drop" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="lift" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+  </defs>
+
+  <!-- dark background -->
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!-- glow behind the mark -->
+  <ellipse cx="512" cy="548" rx="360" ry="300" fill="#FFFFFF" opacity="0.34" filter="url(#glow)"/>
+  <ellipse cx="512" cy="300" rx="150" ry="130" fill="#8F86FF" opacity="0.55" filter="url(#glow)"/>
+
+  <!-- keyboard body -->
+  <rect x="146" y="344" width="732" height="418" rx="58" fill="#0C0A14" opacity="0.42" filter="url(#drop)"/>
+  <rect x="152" y="336" width="720" height="414" rx="56" fill="url(#body)"/>
+
+  <!-- row 1 -->
+  <g fill="url(#key)">
+    <rect x="192" y="378" width="76" height="76" rx="20"/>
+    <rect x="286" y="378" width="76" height="76" rx="20"/>
+    <rect x="474" y="378" width="76" height="76" rx="20"/>
+    <rect x="568" y="378" width="76" height="76" rx="20"/>
+    <rect x="662" y="378" width="76" height="76" rx="20"/>
+    <rect x="756" y="378" width="76" height="76" rx="20"/>
+  </g>
+
+  <!-- row 2 -->
+  <g fill="url(#key)">
+    <rect x="192" y="472" width="76" height="76" rx="20"/>
+    <rect x="286" y="472" width="76" height="76" rx="20"/>
+    <rect x="380" y="472" width="76" height="76" rx="20"/>
+    <rect x="474" y="472" width="76" height="76" rx="20"/>
+    <rect x="568" y="472" width="76" height="76" rx="20"/>
+    <rect x="662" y="472" width="76" height="76" rx="20"/>
+    <rect x="756" y="472" width="76" height="76" rx="20"/>
+  </g>
+
+  <!-- row 3, shift and backspace sit darker like modifier keys -->
+  <g>
+    <rect x="192" y="566" width="76" height="76" rx="20" fill="url(#mod)"/>
+    <rect x="286" y="566" width="76" height="76" rx="20" fill="url(#key)"/>
+    <rect x="380" y="566" width="76" height="76" rx="20" fill="url(#key)"/>
+    <rect x="474" y="566" width="76" height="76" rx="20" fill="url(#key)"/>
+    <rect x="568" y="566" width="76" height="76" rx="20" fill="url(#key)"/>
+    <rect x="662" y="566" width="76" height="76" rx="20" fill="url(#key)"/>
+    <rect x="756" y="566" width="76" height="76" rx="20" fill="url(#mod)"/>
+  </g>
+
+  <!-- row 4, space bar with the accent enter key -->
+  <g>
+    <rect x="192" y="660" width="76" height="56" rx="18" fill="url(#mod)"/>
+    <rect x="286" y="660" width="358" height="56" rx="18" fill="url(#key)"/>
+    <rect x="662" y="660" width="170" height="56" rx="18" fill="url(#accent)"/>
+  </g>
+
+  <!-- the pressed key, lifted out of the third slot on row 1 -->
+  <ellipse cx="418" cy="332" rx="86" ry="34" fill="#0C0A14" opacity="0.5" filter="url(#lift)"/>
+  <rect x="356" y="212" width="124" height="124" rx="32" fill="url(#accent)"/>
+  <rect x="356" y="212" width="124" height="124" rx="32" fill="#FFFFFF" opacity="0.14"/>
+
+  <!-- caret on the pressed key, the input cue -->
+  <rect x="410" y="248" width="16" height="52" rx="8" fill="#FFFFFF"/>
+</svg>

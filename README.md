@@ -1,7 +1,6 @@
-<!-- PLACEHOLDER IMAGE: replace images/banner.png with the final banner. -->
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/banner.png"
-       alt="virtual_keypad: an on-screen virtual keyboard and keypad widget for Flutter" width="100%"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/logo.png"
+       alt="virtual_keypad: an on-screen virtual keyboard and keypad widget for Flutter" width="140"/>
 </p>
 
 <p align="center">
@@ -50,10 +49,14 @@ platform. There is no native code and no platform channel involved.
 - Switch between 12 built-in languages at runtime, or register your own layout.
 - Block the system keyboard entirely when you need full control over input.
 
-<!-- PLACEHOLDER IMAGE: replace images/preview.png with the final preview. -->
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/images/preview.png"
-       alt="A Flutter on-screen keyboard rendered by virtual_keypad, showing a QWERTY layout with emoji and search keys above a focused text field" width="100%"/>
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/showcase-devices.png"
+       alt="Six virtual_keypad keyboards side by side: a wide desktop email layout, the colour emoji page, a dark custom PIN pad, QWERTY, Arabic right to left, and a themed numeric kiosk pad" width="100%"/>
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/showcase-languages.png"
+       alt="Six of the twelve built-in languages: Bengali, Hindi, Russian, Korean, Thai, and French AZERTY" width="100%"/>
 </p>
 
 ## Table of contents
