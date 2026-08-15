@@ -2,11 +2,11 @@
   <a href="https://pub.dev/packages/virtual_keypad"><img src="https://img.shields.io/pub/v/virtual_keypad.svg" alt="pub version"></a>
   <a href="https://pub.dev/packages/virtual_keypad/score"><img src="https://img.shields.io/pub/points/virtual_keypad" alt="pub points"></a>
   <a href="https://pub.dev/packages/virtual_keypad"><img src="https://img.shields.io/pub/likes/virtual_keypad" alt="pub likes"></a>
-  <a href="https://github.com/Masum-MSNR/virtual_keypad/stargazers"><img src="https://badgen.net/github/stars/Masum-MSNR/virtual_keypad?icon=github" alt="GitHub stars"></a>
-  <a href="https://github.com/Masum-MSNR/virtual_keypad/network/members"><img src="https://badgen.net/github/forks/Masum-MSNR/virtual_keypad?icon=github" alt="GitHub forks"></a>
-  <a href="https://github.com/Masum-MSNR/virtual_keypad/issues"><img src="https://badgen.net/github/open-issues/Masum-MSNR/virtual_keypad?icon=github" alt="GitHub issues"></a>
-  <a href="https://github.com/Masum-MSNR/virtual_keypad/actions/workflows/ci.yml"><img src="https://github.com/Masum-MSNR/virtual_keypad/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
-  <a href="https://github.com/Masum-MSNR/virtual_keypad/commits/main"><img src="https://badgen.net/github/last-commit/Masum-MSNR/virtual_keypad?icon=github" alt="Last commit"></a>
+  <a href="https://github.com/almasumdev/virtual_keypad/stargazers"><img src="https://badgen.net/github/stars/almasumdev/virtual_keypad?icon=github" alt="GitHub stars"></a>
+  <a href="https://github.com/almasumdev/virtual_keypad/network/members"><img src="https://badgen.net/github/forks/almasumdev/virtual_keypad?icon=github" alt="GitHub forks"></a>
+  <a href="https://github.com/almasumdev/virtual_keypad/issues"><img src="https://badgen.net/github/open-issues/almasumdev/virtual_keypad?icon=github" alt="GitHub issues"></a>
+  <a href="https://github.com/almasumdev/virtual_keypad/actions/workflows/ci.yml"><img src="https://github.com/almasumdev/virtual_keypad/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <a href="https://github.com/almasumdev/virtual_keypad/commits/main"><img src="https://badgen.net/github/last-commit/almasumdev/virtual_keypad?icon=github" alt="Last commit"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-3.0+-02569B?logo=flutter" alt="Flutter"></a>
 </p>
@@ -27,7 +27,7 @@ system keyboard stayed out of it. It drops into any standard `TextField` or
 `TextFormField` with one line, and it ships 12 languages including
 right-to-left Arabic.
 
-> ⭐ **Find this useful?** [Star it on GitHub](https://github.com/Masum-MSNR/virtual_keypad)
+> ⭐ **Find this useful?** [Star it on GitHub](https://github.com/almasumdev/virtual_keypad)
 > and 👍 [like it on pub.dev](https://pub.dev/packages/virtual_keypad). Stars and likes
 > help other Flutter developers find a maintained on-screen keyboard package.
 
@@ -46,12 +46,12 @@ platform. There is no native code and no platform channel involved.
 - Block the system keyboard entirely when you need full control over input.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/showcase-devices.png"
+  <img src="https://raw.githubusercontent.com/almasumdev/virtual_keypad/main/previews/showcase-devices.png"
        alt="Six virtual_keypad on-screen keyboards side by side: a wide desktop email layout, the color emoji page, a dark custom PIN pad, phone QWERTY, Arabic right to left, and a themed numeric kiosk keypad" width="100%"/>
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Masum-MSNR/virtual_keypad/main/previews/showcase-languages.png"
+  <img src="https://raw.githubusercontent.com/almasumdev/virtual_keypad/main/previews/showcase-languages.png"
        alt="Six of the twelve built-in multilingual keyboard layouts: Bengali, Hindi Devanagari, Russian JCUKEN Cyrillic, Korean Dubeolsik Hangul, Thai Kedmanee, and French AZERTY" width="100%"/>
 </p>
 
@@ -200,14 +200,14 @@ predictable focus routing, custom submit behavior, or secure input.
 ## Roadmap
 
 What ships next is driven by user requests on the
-[issue tracker](https://github.com/Masum-MSNR/virtual_keypad/issues):
+[issue tracker](https://github.com/almasumdev/virtual_keypad/issues):
 
 - ⬜ More built-in languages and layouts (contributions welcome)
 - ⬜ D-pad navigation inside the emoji page
 - ⬜ Key sound and haptic feedback options
 
 Shipped milestones are in the
-[changelog](https://github.com/Masum-MSNR/virtual_keypad/blob/main/CHANGELOG.md).
+[changelog](https://github.com/almasumdev/virtual_keypad/blob/main/CHANGELOG.md).
 
 ## Example
 
@@ -221,7 +221,7 @@ Shipped milestones are in the
 > switch languages, and try the floating panel in your browser. Nothing to install.
 
 A complete, runnable app lives in the
-[`example/`](https://github.com/Masum-MSNR/virtual_keypad/tree/main/example)
+[`example/`](https://github.com/almasumdev/virtual_keypad/tree/main/example)
 directory: one page, one file, where every option is a switch or a chip. Change
 keyboard type, language, theme, emoji, floating mode, and D-pad navigation and
 watch the same keyboard react. Clone the repository and run it, or copy any
@@ -230,13 +230,13 @@ snippet from [Getting started](#getting-started) below.
 ## Other useful links
 
 - [API reference](https://pub.dev/documentation/virtual_keypad/latest/)
-- [Source code on GitHub](https://github.com/Masum-MSNR/virtual_keypad)
-- [Changelog](https://github.com/Masum-MSNR/virtual_keypad/blob/main/CHANGELOG.md)
-- [Issue tracker](https://github.com/Masum-MSNR/virtual_keypad/issues)
-- [Floating mode guide](https://github.com/Masum-MSNR/virtual_keypad/blob/main/doc/floating-mode.md)
-- [Custom layouts guide](https://github.com/Masum-MSNR/virtual_keypad/blob/main/doc/custom-layouts.md)
-- [Adding languages guide](https://github.com/Masum-MSNR/virtual_keypad/blob/main/doc/adding-languages.md)
-- [Theming guide](https://github.com/Masum-MSNR/virtual_keypad/blob/main/doc/theming.md)
+- [Source code on GitHub](https://github.com/almasumdev/virtual_keypad)
+- [Changelog](https://github.com/almasumdev/virtual_keypad/blob/main/CHANGELOG.md)
+- [Issue tracker](https://github.com/almasumdev/virtual_keypad/issues)
+- [Floating mode guide](https://github.com/almasumdev/virtual_keypad/blob/main/doc/floating-mode.md)
+- [Custom layouts guide](https://github.com/almasumdev/virtual_keypad/blob/main/doc/custom-layouts.md)
+- [Adding languages guide](https://github.com/almasumdev/virtual_keypad/blob/main/doc/adding-languages.md)
+- [Theming guide](https://github.com/almasumdev/virtual_keypad/blob/main/doc/theming.md)
 
 ## Installation
 
@@ -717,7 +717,7 @@ are pictured in the [Overview](#overview).
 
 > Spot a wrong character, a missing key, or a layout that does not match the real
 > thing for a language you speak? Please
-> [open a pull request](https://github.com/Masum-MSNR/virtual_keypad/pulls).
+> [open a pull request](https://github.com/almasumdev/virtual_keypad/pulls).
 > Community fixes are very welcome.
 
 ## Common setup mistakes
@@ -764,11 +764,11 @@ Yes. Arabic ships with an RTL layout, and any language you register can set
 ## Support and feedback
 
 - Found a bug or want a feature? Open an issue on the
-  [issue tracker](https://github.com/Masum-MSNR/virtual_keypad/issues).
+  [issue tracker](https://github.com/almasumdev/virtual_keypad/issues).
 - Questions and ideas are welcome via
-  [GitHub Discussions](https://github.com/Masum-MSNR/virtual_keypad/discussions).
+  [GitHub Discussions](https://github.com/almasumdev/virtual_keypad/discussions).
 - Pull requests are welcome; see the
-  [Contributing Guide](https://github.com/Masum-MSNR/virtual_keypad/blob/main/CONTRIBUTING.md).
+  [Contributing Guide](https://github.com/almasumdev/virtual_keypad/blob/main/CONTRIBUTING.md).
 
 ## About
 
@@ -783,14 +783,14 @@ It bundles [Noto Emoji](https://fonts.google.com/noto/specimen/Noto+Emoji),
 subset to the codepoints used by the emoji picker, for offline emoji rendering
 on the web. Noto Emoji is licensed under the SIL Open Font License 1.1; the full
 license text ships in
-[`fonts/OFL.txt`](https://github.com/Masum-MSNR/virtual_keypad/blob/main/fonts/OFL.txt).
+[`fonts/OFL.txt`](https://github.com/almasumdev/virtual_keypad/blob/main/fonts/OFL.txt).
 
 ### Contributors
 
 virtual_keypad grows with its community; every contributor is listed here:
 
-<a href="https://github.com/Masum-MSNR/virtual_keypad/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Masum-MSNR/virtual_keypad" alt="virtual_keypad contributors"/>
+<a href="https://github.com/almasumdev/virtual_keypad/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=almasumdev/virtual_keypad" alt="virtual_keypad contributors"/>
 </a>
 
 Want to help? Pull requests are welcome; see [Support and feedback](#support-and-feedback).

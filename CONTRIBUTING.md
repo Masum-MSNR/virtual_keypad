@@ -95,7 +95,7 @@ See [Theming Guide](doc/theming.md)
 
 ## Reporting Issues
 
-- Use the [issue tracker](https://github.com/Masum-MSNR/virtual_keypad/issues)
+- Use the [issue tracker](https://github.com/almasumdev/virtual_keypad/issues)
 - Include Flutter version (`flutter --version`)
 - Provide minimal reproduction code
 - Include screenshots/videos if UI-related
