@@ -1,3 +1,12 @@
+## 1.0.1
+
+### Improved
+* Restored `customizable` as an indexed keyword. The 1.0.0 description traded it for the kiosk, POS, and numpad terms and no other file carried the word, so pub.dev stopped returning the package for "customizable keyboard" entirely
+* Repository links now point at `almasumdev/virtual_keypad`, the current location, instead of relying on GitHub's redirect from the old path
+* Added a `.mailmap` so the several git identities behind each contributor collapse to one entry
+
+---
+
 ## 1.0.0
 
 First stable release. Everything below is additive, so upgrading from 0.8.1
