@@ -16,6 +16,17 @@ linter:
     - use_super_parameters
 
 analyzer:
+  # Kept in sync with the flutter_tools analysis_options migration, which
+  # otherwise rewrites this file during `flutter pub get` and leaves the tree
+  # dirty enough to fail `pub publish --dry-run` in CI.
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
   errors:
     # Treat these as info/ignore for existing codebase compatibility
     prefer_const_constructors: info
