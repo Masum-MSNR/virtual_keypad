@@ -33,8 +33,8 @@ right-to-left Arabic.
 
 ## Overview
 
-virtual_keypad renders the keyboard as an ordinary Flutter widget, so it lives
-inside your widget tree, follows your theme, and works the same on every
+virtual_keypad renders the keyboard as a customizable Flutter widget, so it
+lives inside your widget tree, follows your theme, and works the same on every
 platform. There is no native code and no platform channel involved.
 
 **What you can do with it:**
@@ -83,7 +83,7 @@ platform. There is no native code and no platform channel involved.
     - [Build a PIN pad or numeric keypad](#build-a-pin-pad-or-numeric-keypad)
     - [Emoji support](#emoji-support)
     - [Android TV and remote control](#android-tv-and-remote-control)
-    - [Theming](#theming)
+    - [Theming and customization](#theming-and-customization)
     - [Multi-language and RTL](#multi-language-and-rtl)
     - [Add your own language](#add-your-own-language)
     - [Drive the keyboard from code](#drive-the-keyboard-from-code)
@@ -138,7 +138,7 @@ Expand a group for the full list:
 <summary><b>🎨 Theming &amp; appearance</b></summary>
 
 - Built-in light and dark themes
-- Full custom theme: background, key, and action key colors
+- Fully customizable theme: background, key, and action key colors
 - Key text color, size, corner radius, shadow, and splash color
 - `copyWith` to tweak a built-in theme
 - Native-style key press preview popup
@@ -586,7 +586,7 @@ The highlight is drawn by the keyboard rather than by Flutter's focus system, so
 the text field keeps focus and the keyboard does not hide while the user moves
 around. Style it with `focusBorderColor`, `focusBorderWidth`, and `focusColor`.
 
-### Theming
+### Theming and customization
 
 ```dart
 // Built-in themes.
