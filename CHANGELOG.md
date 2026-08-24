@@ -1,3 +1,11 @@
+## 1.1.1
+
+### Changed
+
+- The documentation website moved to https://virtual-keypad-docs.web.app.
+  1.1.0 shipped pointing at the previous address, which still works and now
+  redirects here, so no link is broken either way.
+
 ## 1.1.0
 
 Key press feedback, and a documentation website.

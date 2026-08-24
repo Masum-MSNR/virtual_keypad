@@ -19,7 +19,7 @@ def emit_asset(src, name, ext):
 
 BASE    = "https://virtual-keypad-docs.web.app"
 OUT     = "site"
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 # IndexNow verification key. Must stay in step with the file emitted
 # at the site root, or Bing and Yandex reject the submission.
 INDEXNOW_KEY = "5e83b1d0c74a29f6ab35ed80c1927f4b"

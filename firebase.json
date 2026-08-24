@@ -96,6 +96,22 @@
           "destination": "/troubleshooting.html"
         }
       ]
+    },
+    {
+      "site": "virtualkeypad",
+      "public": "site_redirect",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "redirects": [
+        {
+          "regex": "^/(?P<rest>.*)$",
+          "destination": "https://virtual-keypad-docs.web.app/:rest",
+          "type": 301
+        }
+      ]
     }
   ]
 }
