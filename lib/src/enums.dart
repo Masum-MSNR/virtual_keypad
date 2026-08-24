@@ -118,3 +118,43 @@ enum LayoutStage {
   /// Emoji layout.
   emoji,
 }
+
+/// How a key press is confirmed to the user, beyond the visual key preview.
+///
+/// A touchscreen gives no tactile confirmation on its own, which is why every
+/// system keyboard ships some form of this. On a kiosk or POS terminal it is
+/// often the only signal that a tap registered at all.
+///
+/// Defaults to [sound], which is what the keyboard has always done: Material's
+/// ink response plays the platform key click on Android. Setting this now also
+/// covers D-pad activation, which the ink response never reached, so the
+/// confirmation no longer depends on how the key was pressed.
+///
+/// Both effects are handled by the platform, so there is no asset to bundle and
+/// nothing to configure. Where a platform has no vibration motor or no key
+/// click the effect is skipped rather than failing, and both follow the user's
+/// system settings including silent mode.
+///
+/// ```dart
+/// VirtualKeypad(feedback: KeyFeedback.both)   // click and a light vibration
+/// VirtualKeypad(feedback: KeyFeedback.none)   // silent and still
+/// ```
+enum KeyFeedback {
+  /// No haptic and no sound.
+  ///
+  /// Worth choosing for a kiosk in a quiet room, or where the app plays its
+  /// own confirmation sound and two would collide.
+  none,
+
+  /// A light vibration on each key press, and no sound.
+  ///
+  /// Android and iOS honour the user's system-wide haptics setting, so someone
+  /// who has turned vibration off still gets what they asked for.
+  haptic,
+
+  /// The platform's key click sound, and no vibration. The default.
+  sound,
+
+  /// Both a light vibration and the key click sound.
+  both,
+}

@@ -96,6 +96,7 @@ class VirtualKeypadFloating extends StatefulWidget {
     this.width,
     this.maxWidth = 680,
     this.theme = VirtualKeypadTheme.light,
+    this.feedback = KeyFeedback.sound,
     this.onKeyPressed,
     this.onKeyPressedWithText,
     this.onStandaloneInputAction,
@@ -153,6 +154,12 @@ class VirtualKeypadFloating extends StatefulWidget {
 
   /// Visual theme for the keyboard.
   final VirtualKeypadTheme theme;
+
+  /// Haptic and sound confirmation for each key press.
+  ///
+  /// Defaults to [KeyFeedback.sound]. Forwarded to the keypad inside the
+  /// floating panel; see [KeyFeedback].
+  final KeyFeedback feedback;
 
   /// Optional callback invoked when any key is pressed.
   final void Function(VirtualKey key)? onKeyPressed;
@@ -431,6 +438,7 @@ class _VirtualKeypadFloatingState extends State<VirtualKeypadFloating> {
                                     height: widget.height,
                                     width: effectiveWidth,
                                     theme: widget.theme,
+                                    feedback: widget.feedback,
                                     onKeyPressed: widget.onKeyPressed,
                                     onKeyPressedWithText:
                                         widget.onKeyPressedWithText,

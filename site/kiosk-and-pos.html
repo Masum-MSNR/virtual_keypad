@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>An On-Screen Keyboard for Flutter Kiosk and POS Apps</title>
+<meta name="description" content="Set up a virtual keyboard for a Flutter kiosk, POS terminal or self-service screen, where there is no system keyboard and the layout must never move.">
+<link rel="canonical" href="https://virtualkeypad.web.app/kiosk-and-pos">
+<meta property="og:type" content="article">
+<meta property="og:title" content="An On-Screen Keyboard for Flutter Kiosk and POS Apps">
+<meta property="og:description" content="Set up a virtual keyboard for a Flutter kiosk, POS terminal or self-service screen, where there is no system keyboard and the layout must never move.">
+<meta property="og:url" content="https://virtualkeypad.web.app/kiosk-and-pos">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.503e9f0ddd.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Kiosk and POS", "description": "Set up a virtual keyboard for a Flutter kiosk, POS terminal or self-service screen, where there is no system keyboard and the layout must never move.", "url": "https://virtualkeypad.web.app/kiosk-and-pos", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I add a keyboard to a Flutter kiosk app?", "acceptedAnswer": {"@type": "Answer", "text": "Use VirtualKeypadFloating with a controller and persistent visibility, or a docked VirtualKeypad with standalone: true. Neither needs a system keyboard to be present."}}, {"@type": "Question", "name": "Why is there no keyboard on my kiosk device?", "acceptedAnswer": {"@type": "Answer", "text": "A device locked to one app often has no system keyboard available at all. Drawing your own with a widget is the reliable way to accept input there."}}, {"@type": "Question", "name": "How do I make keys easier to hit on a terminal?", "acceptedAnswer": {"@type": "Answer", "text": "Raise the keyboard height and the theme's keyTextSize, and widen horizontalGap and verticalGap. Defaults assume a phone held close, not someone standing at a screen."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<header class="topbar">
+  <button class="menu" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar"><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">virtual_keypad</a>
+  <span class="ver">v1.1.0</span>
+  <div class="grow"></div>
+  <a class="ext" href="https://pub.dev/packages/virtual_keypad"><span>pub.dev</span></a>
+  <a class="ext" href="https://github.com/almasumdev/virtual_keypad" aria-label="Source on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>GitHub</span></a>
+</header>
+
+<div class="scrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Documentation"><h2>Start here</h2><ul><li><a href="/">Introduction</a></li><li><a href="/standalone-mode">Use any TextField</a></li><li><a href="/numeric-keypad-pin">Numeric and PIN pads</a></li></ul><h2>Modes</h2><ul><li><a href="/floating-keyboard">Floating panel</a></li><li><a href="/kiosk-and-pos" aria-current="page">Kiosk and POS</a></li><li><a href="/android-tv">Android TV and D-pad</a></li></ul><h2>Customizing</h2><ul><li><a href="/custom-layouts">Custom layouts</a></li><li><a href="/theming">Theming</a></li><li><a href="/languages-and-rtl">Languages and RTL</a></li><li><a href="/emoji-keyboard">Emoji</a></li></ul><h2>Help</h2><ul><li><a href="/troubleshooting">Troubleshooting</a></li></ul></nav>
+
+  <main class="content" id="content">
+    <article>
+      <h1>Kiosk and POS</h1>
+      <p class="lede">Fullscreen terminals have no system keyboard, so the input has to come from a widget you control.</p>
+      <h2 id="install">Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>flutter pub add virtual_keypad</code></pre></div>
+<div class="codeblock"><pre><code>import 'package:virtual_keypad/virtual_keypad.dart';</code></pre></div>
+<h2 id="what-makes-a-kiosk-different">What makes a kiosk different<a class="anchor" href="#what-makes-a-kiosk-different" aria-label="Link to this section">#</a></h2>
+<p>Three things, and they push in the same direction. There is often no system keyboard at all, because the device is locked to one app. The screen is fixed, so a keyboard that slides in and pushes the layout is worse than one that is simply always there. And the user is a stranger who will not persist through a confusing screen.</p>
+
+<h2 id="an-always-visible-pad">An always-visible pad<a class="anchor" href="#an-always-visible-pad" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>final floating = VirtualKeypadFloatingController(initialVisible: true);
+
+VirtualKeypadFloating(
+  controller: floating,
+  visibilityMode: VirtualKeypadFloatingVisibilityMode.persistent,
+  standalone: true,
+  width: 720,
+  maxWidth: 720,
+  theme: VirtualKeypadTheme.dark,
+  feedback: KeyFeedback.both,
+  child: OrderScreen(),
+)</code></pre></div>
+<p>Persistent visibility means the keyboard does not appear and disappear with focus, which on a terminal reads as the screen glitching rather than as a feature.</p>
+
+<h2 id="confirm-every-press">Confirm every press<a class="anchor" href="#confirm-every-press" aria-label="Link to this section">#</a></h2>
+<p>A kiosk screen is often behind glass, under bright light, and touched by someone wearing gloves. The visual key preview may be the only confirmation, and it is easy to miss.</p>
+<div class="codeblock"><pre><code>VirtualKeypad(feedback: KeyFeedback.both)</code></pre></div>
+<p>Both effects follow the device's own settings, so a terminal with sound disabled stays silent and one with no vibration motor skips the haptic rather than failing.</p>
+
+<h2 id="size-the-keys-for-standing-users">Size the keys for standing users<a class="anchor" href="#size-the-keys-for-standing-users" aria-label="Link to this section">#</a></h2>
+<p>Default key sizing assumes a phone held close. Someone standing at a terminal is further away and less accurate, so bigger keys and wider gaps reduce mistypes more than any other single change.</p>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  height: 340,
+  theme: VirtualKeypadTheme.light.copyWith(
+    keyTextSize: 26,
+    keyBorderRadius: 10,
+    horizontalGap: 8,
+    verticalGap: 8,
+  ),
+)</code></pre></div>
+<h2 id="numbers-only-where-that-is-all-you-need">Numbers only, where that is all you need<a class="anchor" href="#numbers-only-where-that-is-all-you-need" aria-label="Link to this section">#</a></h2>
+<p>An order number, a table number or a PIN does not need QWERTY. A <a href="/numeric-keypad-pin">custom numeric layout</a> is faster to use and far harder to get wrong.</p>
+
+<h2 id="more-than-one-language">More than one language<a class="anchor" href="#more-than-one-language" aria-label="Link to this section">#</a></h2>
+<p>Public terminals rarely serve one language. Pass the ones you support and users reach the picker by long-pressing space.</p>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  availableLanguages: ['en', 'ar', 'fr'],
+  initialLanguage: 'en',
+)</code></pre></div>
+<p>See <a href="/languages-and-rtl">languages and RTL</a> for what is built in and how right to left is handled.</p>
+<nav class="next" aria-label="Related guides"><a href="/floating-keyboard">Floating panel</a><a href="/numeric-keypad-pin">Numeric and PIN pads</a></nav>
+      <footer class="pagefoot">
+        virtual_keypad is open source under the MIT licence.
+        <a href="https://pub.dev/packages/virtual_keypad">pub.dev</a> &middot;
+        <a href="https://github.com/almasumdev/virtual_keypad">Source</a> &middot;
+        <a href="https://pub.dev/documentation/virtual_keypad/latest/">API reference</a>
+      </footer>
+    </article>
+  </main>
+
+  <aside class="toc"><nav aria-labelledby="toc-h"><h2 id="toc-h">On this page</h2><ul><li><a href="#install">Install</a></li><li><a href="#what-makes-a-kiosk-different">What makes a kiosk different</a></li><li><a href="#an-always-visible-pad">An always-visible pad</a></li><li><a href="#confirm-every-press">Confirm every press</a></li><li><a href="#size-the-keys-for-standing-users">Size the keys for standing users</a></li><li><a href="#numbers-only-where-that-is-all-you-need">Numbers only, where that is all you need</a></li><li><a href="#more-than-one-language">More than one language</a></li></ul></nav></aside>
+</div>
+
+<script src="/docs.029eb910a1.js" defer></script>
+</body>
+</html>

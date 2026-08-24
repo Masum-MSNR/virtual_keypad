@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A Multi-Language and RTL Virtual Keyboard in Flutter</title>
+<meta name="description" content="Switch a Flutter on-screen keyboard between 12 built-in languages including Arabic right to left, offer a language picker, and register a layout of your own.">
+<link rel="canonical" href="https://virtualkeypad.web.app/languages-and-rtl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A Multi-Language and RTL Virtual Keyboard in Flutter">
+<meta property="og:description" content="Switch a Flutter on-screen keyboard between 12 built-in languages including Arabic right to left, offer a language picker, and register a layout of your own.">
+<meta property="og:url" content="https://virtualkeypad.web.app/languages-and-rtl">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.503e9f0ddd.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Languages and RTL", "description": "Switch a Flutter on-screen keyboard between 12 built-in languages including Arabic right to left, offer a language picker, and register a layout of your own.", "url": "https://virtualkeypad.web.app/languages-and-rtl", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I add another language to the Flutter keyboard?", "acceptedAnswer": {"@type": "Answer", "text": "Call initializeKeyboardLayouts at startup for the 12 built-ins, then pass availableLanguages. For a language that is not built in, register a KeyboardLayoutSet under its code."}}, {"@type": "Question", "name": "Does the on-screen keyboard support Arabic and right to left?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. RTL layouts lay their keys out in the correct direction and work inside an LTR app without wrapping anything in a Directionality widget."}}, {"@type": "Question", "name": "Why does switching language do nothing?", "acceptedAnswer": {"@type": "Answer", "text": "initializeKeyboardLayouts was probably never called, so only English is registered. Call it once at startup before the keyboard is built."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<header class="topbar">
+  <button class="menu" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar"><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">virtual_keypad</a>
+  <span class="ver">v1.1.0</span>
+  <div class="grow"></div>
+  <a class="ext" href="https://pub.dev/packages/virtual_keypad"><span>pub.dev</span></a>
+  <a class="ext" href="https://github.com/almasumdev/virtual_keypad" aria-label="Source on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>GitHub</span></a>
+</header>
+
+<div class="scrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Documentation"><h2>Start here</h2><ul><li><a href="/">Introduction</a></li><li><a href="/standalone-mode">Use any TextField</a></li><li><a href="/numeric-keypad-pin">Numeric and PIN pads</a></li></ul><h2>Modes</h2><ul><li><a href="/floating-keyboard">Floating panel</a></li><li><a href="/kiosk-and-pos">Kiosk and POS</a></li><li><a href="/android-tv">Android TV and D-pad</a></li></ul><h2>Customizing</h2><ul><li><a href="/custom-layouts">Custom layouts</a></li><li><a href="/theming">Theming</a></li><li><a href="/languages-and-rtl" aria-current="page">Languages and RTL</a></li><li><a href="/emoji-keyboard">Emoji</a></li></ul><h2>Help</h2><ul><li><a href="/troubleshooting">Troubleshooting</a></li></ul></nav>
+
+  <main class="content" id="content">
+    <article>
+      <h1>Languages and RTL</h1>
+      <p class="lede">Twelve layouts are built in, right to left included, and adding a thirteenth takes a map.</p>
+      <h2 id="install">Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>flutter pub add virtual_keypad</code></pre></div>
+<div class="codeblock"><pre><code>import 'package:virtual_keypad/virtual_keypad.dart';</code></pre></div>
+<h2 id="registering-the-built-in-layouts">Registering the built-in layouts<a class="anchor" href="#registering-the-built-in-layouts" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>void main() {
+  initializeKeyboardLayouts();   // registers all 12 languages
+  runApp(const MyApp());
+}</code></pre></div>
+<p>Call it once at startup. Without it the keyboard falls back to English, which is the most common reason a language switch appears to do nothing.</p>
+
+<h2 id="switching">Switching<a class="anchor" href="#switching" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>KeyboardLayoutProvider.instance.setLanguage('ar');   // Arabic, right to left
+KeyboardLayoutProvider.instance.setLanguage('ko');   // Korean
+KeyboardLayoutProvider.instance.setLanguage('en');   // English</code></pre></div>
+<h2 id="letting-the-user-choose">Letting the user choose<a class="anchor" href="#letting-the-user-choose" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  availableLanguages: ['en', 'bn', 'ar'],
+  initialLanguage: 'en',
+  onLanguageChanged: (code) {
+    prefs.setString('keyboardLanguage', code);
+  },
+)</code></pre></div>
+<p>With more than one entry, a long press on the space bar opens the picker. The first entry is that keyboard's fallback.</p>
+<p>The selection lasts for the app session and is not persisted for you. Save the code from <code>onLanguageChanged</code> and pass it back as <code>initialLanguage</code> to restore it after a restart.</p>
+
+<h2 id="right-to-left">Right to left<a class="anchor" href="#right-to-left" aria-label="Link to this section">#</a></h2>
+<p>Arabic and other right to left layouts lay their keys out in the correct direction, and text goes into the field the way the field already handles direction. That means an RTL layout works inside an LTR app without wrapping anything in a <code>Directionality</code> widget.</p>
+
+<h2 id="adding-your-own">Adding your own<a class="anchor" href="#adding-your-own" aria-label="Link to this section">#</a></h2>
+<p>A layout is rows of keys, the same structure a <a href="/custom-layouts">custom layout</a> uses, registered under a language code.</p>
+<div class="codeblock"><pre><code>KeyboardLayoutProvider.instance.registerLanguage(
+  const KeyboardLanguage(
+    code: 'sv',
+    name: 'Swedish',
+    nativeName: 'Svenska',
+    textLayouts: KeyboardLayoutSet(
+      primary: [
+        [
+          VirtualKey.character(text: 'q'),
+          VirtualKey.character(text: 'w'),
+          // ... the rest of the row
+        ],
+      ],
+      secondary: numberSymbolRows,   // the numbers page
+    ),
+  ),
+);</code></pre></div>
+<p>Only <code>textLayouts</code> is required. Leave <code>emailLayouts</code>, <code>urlLayouts</code>, <code>numberLayouts</code> and the rest off and the language falls back for those field types. Set <code>isRTL: true</code> for a right to left script.</p>
+<p>Register before the keyboard is built, then include the code in <code>availableLanguages</code>. A contribution back to the package is welcome if the layout is a standard one for that language.</p>
+
+<h2 id="shifted-characters">Shifted characters<a class="anchor" href="#shifted-characters" aria-label="Link to this section">#</a></h2>
+<p><code>capsText</code> is what a key inserts while shift or caps lock is on.</p>
+<div class="codeblock"><pre><code>VirtualKey.character(text: 'a', capsText: 'A')</code></pre></div>
+<p>Without it a shifted key falls back to the uppercase form of its text, which is right for Latin scripts and wrong for any script where shift reaches a different character rather than a taller one.</p>
+<nav class="next" aria-label="Related guides"><a href="/custom-layouts">Custom layouts</a><a href="/emoji-keyboard">Emoji</a></nav>
+      <footer class="pagefoot">
+        virtual_keypad is open source under the MIT licence.
+        <a href="https://pub.dev/packages/virtual_keypad">pub.dev</a> &middot;
+        <a href="https://github.com/almasumdev/virtual_keypad">Source</a> &middot;
+        <a href="https://pub.dev/documentation/virtual_keypad/latest/">API reference</a>
+      </footer>
+    </article>
+  </main>
+
+  <aside class="toc"><nav aria-labelledby="toc-h"><h2 id="toc-h">On this page</h2><ul><li><a href="#install">Install</a></li><li><a href="#registering-the-built-in-layouts">Registering the built-in layouts</a></li><li><a href="#switching">Switching</a></li><li><a href="#letting-the-user-choose">Letting the user choose</a></li><li><a href="#right-to-left">Right to left</a></li><li><a href="#adding-your-own">Adding your own</a></li><li><a href="#shifted-characters">Shifted characters</a></li></ul></nav></aside>
+</div>
+
+<script src="/docs.029eb910a1.js" defer></script>
+</body>
+</html>

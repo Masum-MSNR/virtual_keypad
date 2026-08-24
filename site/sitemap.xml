@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://virtualkeypad.web.app/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://virtualkeypad.web.app/standalone-mode</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://virtualkeypad.web.app/numeric-keypad-pin</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://virtualkeypad.web.app/floating-keyboard</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://virtualkeypad.web.app/kiosk-and-pos</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://virtualkeypad.web.app/android-tv</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://virtualkeypad.web.app/custom-layouts</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://virtualkeypad.web.app/theming</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://virtualkeypad.web.app/languages-and-rtl</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://virtualkeypad.web.app/emoji-keyboard</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://virtualkeypad.web.app/troubleshooting</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+</urlset>

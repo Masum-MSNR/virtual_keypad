@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flutter Virtual Keyboard Problems and How to Fix Them</title>
+<meta name="description" content="Fixes for a Flutter on-screen keyboard that does not appear, types into the wrong field, shows the system keyboard as well, or renders blank emoji.">
+<link rel="canonical" href="https://virtualkeypad.web.app/troubleshooting">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flutter Virtual Keyboard Problems and How to Fix Them">
+<meta property="og:description" content="Fixes for a Flutter on-screen keyboard that does not appear, types into the wrong field, shows the system keyboard as well, or renders blank emoji.">
+<meta property="og:url" content="https://virtualkeypad.web.app/troubleshooting">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.503e9f0ddd.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Troubleshooting", "description": "Fixes for a Flutter on-screen keyboard that does not appear, types into the wrong field, shows the system keyboard as well, or renders blank emoji.", "url": "https://virtualkeypad.web.app/troubleshooting", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Why does the system keyboard still open in Flutter?", "acceptedAnswer": {"@type": "Answer", "text": "The keypad is probably missing standalone: true, so it never takes over the field. Avoid readOnly, which also removes the caret and selection."}}, {"@type": "Question", "name": "Why does my virtual keyboard have no height?", "acceptedAnswer": {"@type": "Answer", "text": "It is inside an unbounded parent, usually a Column in a SingleChildScrollView. Give it a bounded box or move it outside the scroll view."}}, {"@type": "Question", "name": "Why does changing the keyboard language do nothing?", "acceptedAnswer": {"@type": "Answer", "text": "initializeKeyboardLayouts was never called, so only English is registered. Call it once at startup before the keyboard is built."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<header class="topbar">
+  <button class="menu" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar"><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">virtual_keypad</a>
+  <span class="ver">v1.1.0</span>
+  <div class="grow"></div>
+  <a class="ext" href="https://pub.dev/packages/virtual_keypad"><span>pub.dev</span></a>
+  <a class="ext" href="https://github.com/almasumdev/virtual_keypad" aria-label="Source on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>GitHub</span></a>
+</header>
+
+<div class="scrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Documentation"><h2>Start here</h2><ul><li><a href="/">Introduction</a></li><li><a href="/standalone-mode">Use any TextField</a></li><li><a href="/numeric-keypad-pin">Numeric and PIN pads</a></li></ul><h2>Modes</h2><ul><li><a href="/floating-keyboard">Floating panel</a></li><li><a href="/kiosk-and-pos">Kiosk and POS</a></li><li><a href="/android-tv">Android TV and D-pad</a></li></ul><h2>Customizing</h2><ul><li><a href="/custom-layouts">Custom layouts</a></li><li><a href="/theming">Theming</a></li><li><a href="/languages-and-rtl">Languages and RTL</a></li><li><a href="/emoji-keyboard">Emoji</a></li></ul><h2>Help</h2><ul><li><a href="/troubleshooting" aria-current="page">Troubleshooting</a></li></ul></nav>
+
+  <main class="content" id="content">
+    <article>
+      <h1>Troubleshooting</h1>
+      <p class="lede">The failures that come up most, and what each one usually turns out to be.</p>
+      <h2 id="install">Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>flutter pub add virtual_keypad</code></pre></div>
+<div class="codeblock"><pre><code>import 'package:virtual_keypad/virtual_keypad.dart';</code></pre></div>
+<h2 id="both-keyboards-appear">Both keyboards appear<a class="anchor" href="#both-keyboards-appear" aria-label="Link to this section">#</a></h2>
+<p>The system keyboard opens alongside the on-screen one. Almost always a missing <code>standalone: true</code>: without it the keypad does not take over the field, so the platform opens its own.</p>
+<div class="codeblock"><pre><code>VirtualKeypad(standalone: true)</code></pre></div>
+<p>Do not reach for <code>readOnly: true</code> to silence the system keyboard. It works, and it also removes the caret and text selection, which users notice.</p>
+
+<h2 id="nothing-types">Nothing types<a class="anchor" href="#nothing-types" aria-label="Link to this section">#</a></h2>
+<p>Check in this order. No field is focused, so there is nowhere to type. Or the keypad is in scope mode without a <code>VirtualKeypadScope</code> above it. Or a plain <code>TextField</code> is being used in scope mode, where <code>VirtualKeypadTextField</code> is required.</p>
+<div class="codeblock"><pre><code>VirtualKeypadScope(
+  child: Column(
+    children: [
+      VirtualKeypadTextField(controller: controller),
+      const VirtualKeypad(),
+    ],
+  ),
+)</code></pre></div>
+<h2 id="the-keyboard-is-invisible-or-has-no-height">The keyboard is invisible or has no height<a class="anchor" href="#the-keyboard-is-invisible-or-has-no-height" aria-label="Link to this section">#</a></h2>
+<p>A keyboard inside an unbounded parent gets no height to lay out in. A <code>Column</code> inside a <code>SingleChildScrollView</code> is the usual source. Give it a bounded box or put it outside the scroll view.</p>
+
+<h2 id="keys-are-cut-off-at-the-sides">Keys are cut off at the sides<a class="anchor" href="#keys-are-cut-off-at-the-sides" aria-label="Link to this section">#</a></h2>
+<p>The keyboard fills the width it is given, so a narrow parent squeezes the keys. Set <code>width</code> explicitly, or use <a href="/floating-keyboard">the floating panel</a> with <code>maxWidth</code>, which was made for this.</p>
+
+<h2 id="switching-language-does-nothing">Switching language does nothing<a class="anchor" href="#switching-language-does-nothing" aria-label="Link to this section">#</a></h2>
+<p><code>initializeKeyboardLayouts()</code> was never called, so only English is registered and every switch resolves back to it. Call it once at startup, before the keyboard is built.</p>
+<div class="codeblock"><pre><code>void main() {
+  initializeKeyboardLayouts();
+  runApp(const MyApp());
+}</code></pre></div>
+<h2 id="the-language-picker-never-opens">The language picker never opens<a class="anchor" href="#the-language-picker-never-opens" aria-label="Link to this section">#</a></h2>
+<p>It opens on a long press of the space bar, and only when <code>availableLanguages</code> holds more than one code. With one entry there is nothing to pick.</p>
+
+<h2 id="emoji-are-blank-boxes">Emoji are blank boxes<a class="anchor" href="#emoji-are-blank-boxes" aria-label="Link to this section">#</a></h2>
+<p>On web, a first offline load has no emoji font yet. The package bundles a subset font for exactly that, so if you are still seeing boxes the font asset is likely missing from the build. On older Android some emoji genuinely have no glyph; <code>checkEmojiPlatformCompatibility: true</code> hides those instead of showing boxes.</p>
+
+<h2 id="a-custom-layout-throws-on-build">A custom layout throws on build<a class="anchor" href="#a-custom-layout-throws-on-build" aria-label="Link to this section">#</a></h2>
+<p><code>customLayout</code> and <code>type: KeyboardType.custom</code> must be used together. Each without the other asserts in debug on purpose, so the mistake surfaces at build time rather than as an empty keyboard.</p>
+
+<h2 id="the-d-pad-moves-app-focus-instead-of-the-highlight">The D-pad moves app focus instead of the highlight<a class="anchor" href="#the-d-pad-moves-app-focus-instead-of-the-highlight" aria-label="Link to this section">#</a></h2>
+<p><code>enableDpadNavigation: true</code> is missing. Note also that an arrow at the edge of the grid is deliberately left unhandled so focus can leave the keyboard, and that space does not press a key, so a paired Bluetooth keyboard still types spaces.</p>
+
+<h2 id="keys-click-twice-or-not-at-all">Keys click twice, or not at all<a class="anchor" href="#keys-click-twice-or-not-at-all" aria-label="Link to this section">#</a></h2>
+<p>Feedback is driven by the <code>feedback</code> parameter, not by Material's ink response, so a press is confirmed the same way whether it came from a tap or a D-pad. <code>KeyFeedback.sound</code> is the default; use <code>none</code> for silence or <code>both</code> to add a vibration.</p>
+<div class="codeblock"><pre><code>VirtualKeypad(feedback: KeyFeedback.none)</code></pre></div>
+<h2 id="something-else">Something else<a class="anchor" href="#something-else" aria-label="Link to this section">#</a></h2>
+<p>The <a href="https://github.com/almasumdev/virtual_keypad/issues">issue tracker</a> is the place. The platform, the mode you are using, and the smallest snippet that reproduces it are what make a report actionable.</p>
+<nav class="next" aria-label="Related guides"><a href="/standalone-mode">Use any TextField</a><a href="/custom-layouts">Custom layouts</a></nav>
+      <footer class="pagefoot">
+        virtual_keypad is open source under the MIT licence.
+        <a href="https://pub.dev/packages/virtual_keypad">pub.dev</a> &middot;
+        <a href="https://github.com/almasumdev/virtual_keypad">Source</a> &middot;
+        <a href="https://pub.dev/documentation/virtual_keypad/latest/">API reference</a>
+      </footer>
+    </article>
+  </main>
+
+  <aside class="toc"><nav aria-labelledby="toc-h"><h2 id="toc-h">On this page</h2><ul><li><a href="#install">Install</a></li><li><a href="#both-keyboards-appear">Both keyboards appear</a></li><li><a href="#nothing-types">Nothing types</a></li><li><a href="#the-keyboard-is-invisible-or-has-no-height">The keyboard is invisible or has no height</a></li><li><a href="#keys-are-cut-off-at-the-sides">Keys are cut off at the sides</a></li><li><a href="#switching-language-does-nothing">Switching language does nothing</a></li><li><a href="#the-language-picker-never-opens">The language picker never opens</a></li><li><a href="#emoji-are-blank-boxes">Emoji are blank boxes</a></li><li><a href="#a-custom-layout-throws-on-build">A custom layout throws on build</a></li><li><a href="#the-d-pad-moves-app-focus-instead-of-the-highlight">The D-pad moves app focus instead of the highlight</a></li><li><a href="#keys-click-twice-or-not-at-all">Keys click twice, or not at all</a></li><li><a href="#something-else">Something else</a></li></ul></nav></aside>
+</div>
+
+<script src="/docs.029eb910a1.js" defer></script>
+</body>
+</html>

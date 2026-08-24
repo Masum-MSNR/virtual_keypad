@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Theming an On-Screen Keyboard in Flutter</title>
+<meta name="description" content="Style a Flutter virtual keyboard: key colours, corner radius, text size, shadows, gaps, ripple and the D-pad focus highlight, with light and dark presets.">
+<link rel="canonical" href="https://virtualkeypad.web.app/theming">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Theming an On-Screen Keyboard in Flutter">
+<meta property="og:description" content="Style a Flutter virtual keyboard: key colours, corner radius, text size, shadows, gaps, ripple and the D-pad focus highlight, with light and dark presets.">
+<meta property="og:url" content="https://virtualkeypad.web.app/theming">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.503e9f0ddd.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Theming", "description": "Style a Flutter virtual keyboard: key colours, corner radius, text size, shadows, gaps, ripple and the D-pad focus highlight, with light and dark presets.", "url": "https://virtualkeypad.web.app/theming", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I change the keyboard colours in Flutter?", "acceptedAnswer": {"@type": "Answer", "text": "Pass a VirtualKeypadTheme, or call copyWith on one of the light and dark presets to change only the properties you care about."}}, {"@type": "Question", "name": "Does the virtual keyboard follow my app theme?", "acceptedAnswer": {"@type": "Answer", "text": "Not automatically, since a keyboard often wants to differ from the app around it. Read Theme.of(context).brightness and pass the matching preset if you want it to follow."}}, {"@type": "Question", "name": "How do I make the keys bigger?", "acceptedAnswer": {"@type": "Answer", "text": "Raise the keyboard height and the theme's keyTextSize, and increase horizontalGap and verticalGap. Distance from the screen matters more than screen size."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<header class="topbar">
+  <button class="menu" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar"><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">virtual_keypad</a>
+  <span class="ver">v1.1.0</span>
+  <div class="grow"></div>
+  <a class="ext" href="https://pub.dev/packages/virtual_keypad"><span>pub.dev</span></a>
+  <a class="ext" href="https://github.com/almasumdev/virtual_keypad" aria-label="Source on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>GitHub</span></a>
+</header>
+
+<div class="scrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Documentation"><h2>Start here</h2><ul><li><a href="/">Introduction</a></li><li><a href="/standalone-mode">Use any TextField</a></li><li><a href="/numeric-keypad-pin">Numeric and PIN pads</a></li></ul><h2>Modes</h2><ul><li><a href="/floating-keyboard">Floating panel</a></li><li><a href="/kiosk-and-pos">Kiosk and POS</a></li><li><a href="/android-tv">Android TV and D-pad</a></li></ul><h2>Customizing</h2><ul><li><a href="/custom-layouts">Custom layouts</a></li><li><a href="/theming" aria-current="page">Theming</a></li><li><a href="/languages-and-rtl">Languages and RTL</a></li><li><a href="/emoji-keyboard">Emoji</a></li></ul><h2>Help</h2><ul><li><a href="/troubleshooting">Troubleshooting</a></li></ul></nav>
+
+  <main class="content" id="content">
+    <article>
+      <h1>Theming</h1>
+      <p class="lede">Two presets to start from, and every property on them can be replaced.</p>
+      <h2 id="install">Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>flutter pub add virtual_keypad</code></pre></div>
+<div class="codeblock"><pre><code>import 'package:virtual_keypad/virtual_keypad.dart';</code></pre></div>
+<h2 id="the-presets">The presets<a class="anchor" href="#the-presets" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>VirtualKeypad(theme: VirtualKeypadTheme.light)
+VirtualKeypad(theme: VirtualKeypadTheme.dark)</code></pre></div>
+<h2 id="changing-part-of-one">Changing part of one<a class="anchor" href="#changing-part-of-one" aria-label="Link to this section">#</a></h2>
+<p><code>copyWith</code> is almost always what you want. Building a theme from scratch means restating every colour, and a value you forget is a default rather than an error.</p>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  theme: VirtualKeypadTheme.dark.copyWith(
+    keyBorderRadius: 12,
+    keyTextSize: 24,
+  ),
+)</code></pre></div>
+<h2 id="a-theme-of-your-own">A theme of your own<a class="anchor" href="#a-theme-of-your-own" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  theme: VirtualKeypadTheme(
+    backgroundColor: Colors.grey[900]!,
+    keyColor: Colors.grey[800]!,
+    actionKeyColor: Colors.grey[700]!,
+    keyTextColor: Colors.white,
+    keyBorderRadius: 12,
+  ),
+)</code></pre></div>
+<h2 id="every-property">Every property<a class="anchor" href="#every-property" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><div class="tablewrap"><table>
+<thead><tr><th>Property</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>backgroundColor</code></td><td><code>Color</code></td><td><code>#D1D3D9</code></td><td>Keyboard background</td></tr>
+<tr><td><code>keyColor</code></td><td><code>Color</code></td><td><code>#FFFFFF</code></td><td>Character key background</td></tr>
+<tr><td><code>actionKeyColor</code></td><td><code>Color</code></td><td><code>#ADB3BC</code></td><td>Action key background</td></tr>
+<tr><td><code>keyTextColor</code></td><td><code>Color</code></td><td><code>#1C1C1E</code></td><td>Text and icon colour</td></tr>
+<tr><td><code>keyTextSize</code></td><td><code>double</code></td><td><code>22.0</code></td><td>Font size</td></tr>
+<tr><td><code>keyBorderRadius</code></td><td><code>double</code></td><td><code>6.0</code></td><td>Corner radius</td></tr>
+<tr><td><code>keyShadow</code></td><td><code>bool</code></td><td><code>true</code></td><td>Key shadows</td></tr>
+<tr><td><code>splashColor</code></td><td><code>Color?</code></td><td><code>null</code></td><td>Tap ripple colour</td></tr>
+<tr><td><code>horizontalGap</code></td><td><code>double</code></td><td></td><td>Space between keys in a row</td></tr>
+<tr><td><code>verticalGap</code></td><td><code>double</code></td><td></td><td>Space between rows</td></tr>
+<tr><td><code>focusBorderColor</code></td><td><code>Color?</code></td><td><code>keyTextColor</code></td><td>D-pad highlight border</td></tr>
+<tr><td><code>focusBorderWidth</code></td><td><code>double</code></td><td><code>3.0</code></td><td>D-pad highlight border width</td></tr>
+<tr><td><code>focusColor</code></td><td><code>Color?</code></td><td><code>null</code></td><td>D-pad highlight fill</td></tr>
+</tbody></table></div></div>
+
+<h2 id="following-the-app-theme">Following the app theme<a class="anchor" href="#following-the-app-theme" aria-label="Link to this section">#</a></h2>
+<p>The keyboard does not read <code>Theme.of(context)</code> on its own, because a keyboard often wants to differ from the surrounding app. Wire it up yourself when you do want it to match.</p>
+<div class="codeblock"><pre><code>final dark = Theme.of(context).brightness == Brightness.dark;
+
+VirtualKeypad(
+  theme: dark ? VirtualKeypadTheme.dark : VirtualKeypadTheme.light,
+)</code></pre></div>
+<h2 id="sizing-for-the-screen">Sizing for the screen<a class="anchor" href="#sizing-for-the-screen" aria-label="Link to this section">#</a></h2>
+<p>Colour is the easy part. The change that matters most is key size, and it depends entirely on how far away the user is.</p>
+<div class="tablewrap"><div class="tablewrap"><table>
+<thead><tr><th>Screen</th><th>Reasonable starting point</th></tr></thead>
+<tbody>
+<tr><td>Phone</td><td>Defaults, held close and tapped with a thumb</td></tr>
+<tr><td>Tablet or desktop</td><td><code>keyTextSize: 24</code>, a little more gap</td></tr>
+<tr><td>Kiosk or POS</td><td><code>height: 340</code>, <code>keyTextSize: 26</code>, gaps at 8</td></tr>
+<tr><td>Television</td><td>Dark theme, a strong focus highlight, large text</td></tr>
+</tbody></table></div></div>
+<nav class="next" aria-label="Related guides"><a href="/kiosk-and-pos">Kiosk and POS</a><a href="/android-tv">Android TV and D-pad</a></nav>
+      <footer class="pagefoot">
+        virtual_keypad is open source under the MIT licence.
+        <a href="https://pub.dev/packages/virtual_keypad">pub.dev</a> &middot;
+        <a href="https://github.com/almasumdev/virtual_keypad">Source</a> &middot;
+        <a href="https://pub.dev/documentation/virtual_keypad/latest/">API reference</a>
+      </footer>
+    </article>
+  </main>
+
+  <aside class="toc"><nav aria-labelledby="toc-h"><h2 id="toc-h">On this page</h2><ul><li><a href="#install">Install</a></li><li><a href="#the-presets">The presets</a></li><li><a href="#changing-part-of-one">Changing part of one</a></li><li><a href="#a-theme-of-your-own">A theme of your own</a></li><li><a href="#every-property">Every property</a></li><li><a href="#following-the-app-theme">Following the app theme</a></li><li><a href="#sizing-for-the-screen">Sizing for the screen</a></li></ul></nav></aside>
+</div>
+
+<script src="/docs.029eb910a1.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Build a Numeric Keypad or PIN Pad in Flutter</title>
+<meta name="description" content="Create an on-screen numeric keypad, PIN pad or OTP entry in Flutter with a custom key layout, for checkout, ATM, POS and lock screens.">
+<link rel="canonical" href="https://virtualkeypad.web.app/numeric-keypad-pin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Build a Numeric Keypad or PIN Pad in Flutter">
+<meta property="og:description" content="Create an on-screen numeric keypad, PIN pad or OTP entry in Flutter with a custom key layout, for checkout, ATM, POS and lock screens.">
+<meta property="og:url" content="https://virtualkeypad.web.app/numeric-keypad-pin">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.503e9f0ddd.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Numeric and PIN pads", "description": "Create an on-screen numeric keypad, PIN pad or OTP entry in Flutter with a custom key layout, for checkout, ATM, POS and lock screens.", "url": "https://virtualkeypad.web.app/numeric-keypad-pin", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I make a PIN pad in Flutter?", "acceptedAnswer": {"@type": "Answer", "text": "Pass type: KeyboardType.custom with a customLayout of digit keys plus backspace and done. The two parameters must be used together."}}, {"@type": "Question", "name": "How do I show a numeric keypad instead of a full keyboard?", "acceptedAnswer": {"@type": "Answer", "text": "Set the field's keyboardType to TextInputType.number and the keyboard switches to a numeric pad on its own, or define a custom layout for full control."}}, {"@type": "Question", "name": "How do I make one key wider than the others?", "acceptedAnswer": {"@type": "Answer", "text": "Give it a flex value. A key with flex: 2 spans two columns, which is how a wide zero or space key is built."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<header class="topbar">
+  <button class="menu" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar"><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">virtual_keypad</a>
+  <span class="ver">v1.1.0</span>
+  <div class="grow"></div>
+  <a class="ext" href="https://pub.dev/packages/virtual_keypad"><span>pub.dev</span></a>
+  <a class="ext" href="https://github.com/almasumdev/virtual_keypad" aria-label="Source on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>GitHub</span></a>
+</header>
+
+<div class="scrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Documentation"><h2>Start here</h2><ul><li><a href="/">Introduction</a></li><li><a href="/standalone-mode">Use any TextField</a></li><li><a href="/numeric-keypad-pin" aria-current="page">Numeric and PIN pads</a></li></ul><h2>Modes</h2><ul><li><a href="/floating-keyboard">Floating panel</a></li><li><a href="/kiosk-and-pos">Kiosk and POS</a></li><li><a href="/android-tv">Android TV and D-pad</a></li></ul><h2>Customizing</h2><ul><li><a href="/custom-layouts">Custom layouts</a></li><li><a href="/theming">Theming</a></li><li><a href="/languages-and-rtl">Languages and RTL</a></li><li><a href="/emoji-keyboard">Emoji</a></li></ul><h2>Help</h2><ul><li><a href="/troubleshooting">Troubleshooting</a></li></ul></nav>
+
+  <main class="content" id="content">
+    <article>
+      <h1>Numeric and PIN pads</h1>
+      <p class="lede">A PIN pad is a custom layout, which means you decide exactly which keys exist and where.</p>
+      <h2 id="install">Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>flutter pub add virtual_keypad</code></pre></div>
+<div class="codeblock"><pre><code>import 'package:virtual_keypad/virtual_keypad.dart';</code></pre></div>
+<h2 id="the-quickest-numeric-pad">The quickest numeric pad<a class="anchor" href="#the-quickest-numeric-pad" aria-label="Link to this section">#</a></h2>
+<p>If you only want digits, a number field already gets one with no layout work.</p>
+<div class="codeblock"><pre><code>TextField(
+  controller: controller,
+  keyboardType: TextInputType.number,
+)
+// with VirtualKeypad(standalone: true) below it</code></pre></div>
+<h2 id="a-pin-pad-you-control">A PIN pad you control<a class="anchor" href="#a-pin-pad-you-control" aria-label="Link to this section">#</a></h2>
+<p>For a lock screen, an OTP box or a checkout, describe the grid yourself. This is the same mechanism ATM and POS flows use.</p>
+<div class="codeblock"><pre><code>final pinLayout = [
+  [
+    VirtualKey.character(text: '1'),
+    VirtualKey.character(text: '2'),
+    VirtualKey.character(text: '3'),
+  ],
+  [
+    VirtualKey.character(text: '4'),
+    VirtualKey.character(text: '5'),
+    VirtualKey.character(text: '6'),
+  ],
+  [
+    VirtualKey.character(text: '7'),
+    VirtualKey.character(text: '8'),
+    VirtualKey.character(text: '9'),
+  ],
+  [
+    VirtualKey.action(action: KeyAction.backSpace),
+    VirtualKey.character(text: '0'),
+    VirtualKey.action(action: KeyAction.done, label: 'OK'),
+  ],
+];
+
+VirtualKeypad(
+  type: KeyboardType.custom,
+  customLayout: pinLayout,
+)</code></pre></div>
+<p><code>customLayout</code> and <code>type: KeyboardType.custom</code> go together. Using one without the other asserts immediately in debug, so the mistake surfaces at once rather than as an empty keyboard.</p>
+
+<h2 id="making-it-look-like-a-pad-not-a-keyboard">Making it look like a pad, not a keyboard<a class="anchor" href="#making-it-look-like-a-pad-not-a-keyboard" aria-label="Link to this section">#</a></h2>
+<p>A PIN pad wants big keys and few of them, so theme it rather than accepting keyboard defaults.</p>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  type: KeyboardType.custom,
+  customLayout: pinLayout,
+  height: 360,
+  width: 320,
+  theme: VirtualKeypadTheme.dark.copyWith(
+    keyTextSize: 28,
+    keyBorderRadius: 16,
+    verticalGap: 10,
+    horizontalGap: 10,
+  ),
+)</code></pre></div>
+<h2 id="confirming-each-digit">Confirming each digit<a class="anchor" href="#confirming-each-digit" aria-label="Link to this section">#</a></h2>
+<p>On a payment terminal a mis-registered digit is expensive, and the screen is often the only feedback the user gets.</p>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  type: KeyboardType.custom,
+  customLayout: pinLayout,
+  feedback: KeyFeedback.both,
+)</code></pre></div>
+<h2 id="reading-the-value">Reading the value<a class="anchor" href="#reading-the-value" aria-label="Link to this section">#</a></h2>
+<p>Scope mode gives you the digits without going through a text field, which suits a PIN display made of dots.</p>
+<div class="codeblock"><pre><code>final pin = VirtualKeypadController();
+
+pin.addListener(() {
+  if (pin.text.length == 4) verify(pin.text);
+});</code></pre></div>
+<h2 id="wider-keys">Wider keys<a class="anchor" href="#wider-keys" aria-label="Link to this section">#</a></h2>
+<p>A key's <code>flex</code> sets how many columns it spans, so a zero key can span two while the rest span one.</p>
+<div class="codeblock"><pre><code>[
+  VirtualKey.character(text: '0', flex: 2),
+  VirtualKey.action(action: KeyAction.backSpace),
+]</code></pre></div><nav class="next" aria-label="Related guides"><a href="/custom-layouts">Custom layouts</a><a href="/kiosk-and-pos">Kiosk and POS</a></nav>
+      <footer class="pagefoot">
+        virtual_keypad is open source under the MIT licence.
+        <a href="https://pub.dev/packages/virtual_keypad">pub.dev</a> &middot;
+        <a href="https://github.com/almasumdev/virtual_keypad">Source</a> &middot;
+        <a href="https://pub.dev/documentation/virtual_keypad/latest/">API reference</a>
+      </footer>
+    </article>
+  </main>
+
+  <aside class="toc"><nav aria-labelledby="toc-h"><h2 id="toc-h">On this page</h2><ul><li><a href="#install">Install</a></li><li><a href="#the-quickest-numeric-pad">The quickest numeric pad</a></li><li><a href="#a-pin-pad-you-control">A PIN pad you control</a></li><li><a href="#making-it-look-like-a-pad-not-a-keyboard">Making it look like a pad, not a keyboard</a></li><li><a href="#confirming-each-digit">Confirming each digit</a></li><li><a href="#reading-the-value">Reading the value</a></li><li><a href="#wider-keys">Wider keys</a></li></ul></nav></aside>
+</div>
+
+<script src="/docs.029eb910a1.js" defer></script>
+</body>
+</html>

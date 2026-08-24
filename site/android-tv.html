@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A D-Pad Navigable Keyboard for Flutter on Android TV</title>
+<meta name="description" content="Make an on-screen keyboard usable with nothing but a remote in Flutter, for Android TV, Fire TV and set-top boxes, including focus highlight styling.">
+<link rel="canonical" href="https://virtualkeypad.web.app/android-tv">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A D-Pad Navigable Keyboard for Flutter on Android TV">
+<meta property="og:description" content="Make an on-screen keyboard usable with nothing but a remote in Flutter, for Android TV, Fire TV and set-top boxes, including focus highlight styling.">
+<meta property="og:url" content="https://virtualkeypad.web.app/android-tv">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.503e9f0ddd.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Android TV and D-pad", "description": "Make an on-screen keyboard usable with nothing but a remote in Flutter, for Android TV, Fire TV and set-top boxes, including focus highlight styling.", "url": "https://virtualkeypad.web.app/android-tv", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I make a Flutter keyboard work with a TV remote?", "acceptedAnswer": {"@type": "Answer", "text": "Set enableDpadNavigation: true. Arrow keys move a highlight between keys and select or enter presses the highlighted one."}}, {"@type": "Question", "name": "Why does space not press the highlighted key?", "acceptedAnswer": {"@type": "Answer", "text": "Because a Bluetooth keyboard paired to a TV is common, and space there should type a space. Select, enter and the primary gamepad button press the key."}}, {"@type": "Question", "name": "How do I style the D-pad focus highlight?", "acceptedAnswer": {"@type": "Answer", "text": "Use the theme's focusBorderColor, focusBorderWidth and focusColor. On a television, use a fill and an outline together so the highlight reads from across a room."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<header class="topbar">
+  <button class="menu" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar"><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">virtual_keypad</a>
+  <span class="ver">v1.1.0</span>
+  <div class="grow"></div>
+  <a class="ext" href="https://pub.dev/packages/virtual_keypad"><span>pub.dev</span></a>
+  <a class="ext" href="https://github.com/almasumdev/virtual_keypad" aria-label="Source on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>GitHub</span></a>
+</header>
+
+<div class="scrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Documentation"><h2>Start here</h2><ul><li><a href="/">Introduction</a></li><li><a href="/standalone-mode">Use any TextField</a></li><li><a href="/numeric-keypad-pin">Numeric and PIN pads</a></li></ul><h2>Modes</h2><ul><li><a href="/floating-keyboard">Floating panel</a></li><li><a href="/kiosk-and-pos">Kiosk and POS</a></li><li><a href="/android-tv" aria-current="page">Android TV and D-pad</a></li></ul><h2>Customizing</h2><ul><li><a href="/custom-layouts">Custom layouts</a></li><li><a href="/theming">Theming</a></li><li><a href="/languages-and-rtl">Languages and RTL</a></li><li><a href="/emoji-keyboard">Emoji</a></li></ul><h2>Help</h2><ul><li><a href="/troubleshooting">Troubleshooting</a></li></ul></nav>
+
+  <main class="content" id="content">
+    <article>
+      <h1>Android TV and D-pad</h1>
+      <p class="lede">On a television the only input device is a directional pad, so every key has to be reachable with four arrows and a select button.</p>
+      <h2 id="install">Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>flutter pub add virtual_keypad</code></pre></div>
+<div class="codeblock"><pre><code>import 'package:virtual_keypad/virtual_keypad.dart';</code></pre></div>
+<h2 id="turning-it-on">Turning it on<a class="anchor" href="#turning-it-on" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  standalone: true,
+  enableDpadNavigation: true,
+  theme: VirtualKeypadTheme.dark.copyWith(
+    focusBorderColor: Colors.amber,
+    focusBorderWidth: 4,
+  ),
+)</code></pre></div>
+<p>One key is highlighted at a time. Arrow keys move the highlight, and select, enter or the primary gamepad button presses it.</p>
+
+<h2 id="moving-between-rows">Moving between rows<a class="anchor" href="#moving-between-rows" aria-label="Link to this section">#</a></h2>
+<p>Keyboard rows are not the same length, so a naive index-based move lands somewhere unrelated when going up or down. Moving vertically picks the key in the next row that sits closest horizontally, which keeps wide keys such as space and shift reachable instead of being skipped past.</p>
+
+<h2 id="two-decisions-worth-knowing-about">Two decisions worth knowing about<a class="anchor" href="#two-decisions-worth-knowing-about" aria-label="Link to this section">#</a></h2>
+<p><strong>Space does not press the highlighted key.</strong> Pairing a Bluetooth keyboard to a TV is common, and someone typing there expects space to type a space rather than fire whatever the highlight happens to be on.</p>
+<p><strong>An arrow at the edge of the grid is left unhandled.</strong> That lets your app move focus off the keyboard and on to the rest of the screen, rather than trapping the user inside a grid they cannot leave.</p>
+
+<h2 id="make-the-highlight-obvious">Make the highlight obvious<a class="anchor" href="#make-the-highlight-obvious" aria-label="Link to this section">#</a></h2>
+<p>A television is watched from across a room, so a subtle highlight is no highlight at all.</p>
+<div class="codeblock"><pre><code>VirtualKeypadTheme.dark.copyWith(
+  focusBorderColor: Colors.amber,
+  focusBorderWidth: 4,
+  focusColor: Colors.amber.withValues(alpha: 0.15),
+)</code></pre></div>
+<p><code>focusColor</code> fills the highlighted key, <code>focusBorderColor</code> outlines it. Using both reads better at distance than either alone.</p>
+
+<h2 id="confirming-a-press-without-a-click">Confirming a press without a click<a class="anchor" href="#confirming-a-press-without-a-click" aria-label="Link to this section">#</a></h2>
+<p>A remote gives no tactile confirmation and a TV has no vibration motor, so sound is the only channel available.</p>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  enableDpadNavigation: true,
+  feedback: KeyFeedback.sound,
+)</code></pre></div>
+<p>Feedback fires for D-pad activation as well as taps, so the confirmation does not depend on how the key was reached.</p>
+
+<h2 id="only-one-keyboard-responds">Only one keyboard responds<a class="anchor" href="#only-one-keyboard-responds" aria-label="Link to this section">#</a></h2>
+<p>If two keypads are mounted at once, only the visible one consumes a D-pad press. Without that rule a hidden keyboard offscreen would silently eat the remote input and the visible one would appear frozen.</p>
+<nav class="next" aria-label="Related guides"><a href="/theming">Theming</a><a href="/standalone-mode">Use any TextField</a></nav>
+      <footer class="pagefoot">
+        virtual_keypad is open source under the MIT licence.
+        <a href="https://pub.dev/packages/virtual_keypad">pub.dev</a> &middot;
+        <a href="https://github.com/almasumdev/virtual_keypad">Source</a> &middot;
+        <a href="https://pub.dev/documentation/virtual_keypad/latest/">API reference</a>
+      </footer>
+    </article>
+  </main>
+
+  <aside class="toc"><nav aria-labelledby="toc-h"><h2 id="toc-h">On this page</h2><ul><li><a href="#install">Install</a></li><li><a href="#turning-it-on">Turning it on</a></li><li><a href="#moving-between-rows">Moving between rows</a></li><li><a href="#two-decisions-worth-knowing-about">Two decisions worth knowing about</a></li><li><a href="#make-the-highlight-obvious">Make the highlight obvious</a></li><li><a href="#confirming-a-press-without-a-click">Confirming a press without a click</a></li><li><a href="#only-one-keyboard-responds">Only one keyboard responds</a></li></ul></nav></aside>
+</div>
+
+<script src="/docs.029eb910a1.js" defer></script>
+</body>
+</html>

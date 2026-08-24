@@ -1,3 +1,32 @@
+## 1.1.0
+
+Key press feedback, and a documentation website.
+
+### New
+
+- `KeyFeedback` and a `feedback` parameter on `VirtualKeypad` and
+  `VirtualKeypadFloating`. A touchscreen gives no tactile confirmation on its
+  own, and on a kiosk or POS terminal the key preview is often the only signal
+  that a tap registered at all. Four values: `sound` (the default), `haptic`,
+  `both`, and `none`.
+- Feedback now fires from the one place every key press goes through, so a
+  D-pad activation on a television is confirmed the same way a tap is. It
+  previously came from Material's ink response, which only ever saw taps.
+- Both effects are handled by the platform, so there is no asset to bundle.
+  A device with no vibration motor or no key click skips that effect instead of
+  failing, and both follow the user's system settings including silent mode.
+
+### Changed
+
+- The default, `KeyFeedback.sound`, reproduces what the keyboard already did:
+  Material played the platform key click on Android. Existing apps sound the
+  same as before unless they ask for something else.
+- Added a documentation website at https://virtualkeypad.web.app, with guides
+  for using any TextField, numeric and PIN pads, the floating panel, kiosk and
+  POS screens, Android TV and D-pad, custom layouts, theming, languages and
+  RTL, emoji, and troubleshooting. Linked from the package page through the new
+  `documentation` field.
+
 ## 1.0.1
 
 ### Improved
@@ -128,12 +157,12 @@ versioning.
 ## 0.5.0
 
 ### Added
-* **9 new keyboard languages** — Arabic (`ar`), German (`de`), Hindi (`hi`), Korean (`ko`), Portuguese (`pt`), Russian (`ru`), Spanish (`es`), Thai (`th`), and Turkish (`tr`), bringing the total to **12 built-in languages**
+* **9 new keyboard languages**: Arabic (`ar`), German (`de`), Hindi (`hi`), Korean (`ko`), Portuguese (`pt`), Russian (`ru`), Spanish (`es`), Thai (`th`), and Turkish (`tr`), bringing the total to **12 built-in languages**
 * Arabic layout with full RTL support (`isRTL: true`), Arabic-Indic numerals, diacritics, and Arabic punctuation (،/؟/؛)
 * Korean Dubeolsik (두벌식) layout with shift for double consonants (ㅃㅉㄸㄲㅆ) and compound vowels (ㅒㅖ)
-* Thai Kedmanee layout with Thai numerals (๑–๐), tone marks, and ฿ currency symbol
+* Thai Kedmanee layout with Thai numerals (๑-๐), tone marks, and ฿ currency symbol
 * Non-Latin scripts (Arabic, Bengali, Hindi, Korean, Russian, Thai) use Latin QWERTY for email/URL input types
-* Native numeral support for Arabic (١–٠), Bengali (১–০), Hindi (१–०), and Thai (๑–๐) number pads with Western digit fallback via capsText
+* Native numeral support for Arabic (١-٠), Bengali (১-০), Hindi (१-०), and Thai (๑-๐) number pads with Western digit fallback via capsText
 * Language dropdown selectors in Keyboard Preview and Language Switching example screens
 * Localized hint text for all 12 languages in the Language Switching example
 
@@ -149,7 +178,7 @@ versioning.
 ## 0.4.3
 
 ### Fixed
-* Fix encoding corruption (mojibake) in French keyboard tertiary layout — all special characters (`€`, `•`, `√`, `π`, `÷`, `×`, `¶`, `∆`, `£`, `¥`, `¢`, `°`, `©`, `®`, `™`, `✓`) now display correctly
+* Fix encoding corruption (mojibake) in French keyboard tertiary layout: all special characters (`€`, `•`, `√`, `π`, `÷`, `×`, `¶`, `∆`, `£`, `¥`, `¢`, `°`, `©`, `®`, `™`, `✓`) now display correctly
 * Fix dartdoc warnings from unescaped doc references in `VirtualKeypadController`, `VirtualKey`, and `VirtualKeypad`
 * `nativeName` for French language corrected from garbled text to `Français`
 
@@ -158,7 +187,7 @@ versioning.
 ## 0.4.2
 
 ### Fixed
-* Fix standalone keyboard breaking when navigating between pages that both use standalone mode — the previous page's `dispose` was restoring platform input control after the new page's `initState` had already set it (thanks @EArminjon, PR #7)
+* Fix standalone keyboard breaking when navigating between pages that both use standalone mode: the previous page's `dispose` was restoring platform input control after the new page's `initState` had already set it (thanks @EArminjon, PR #7)
 * Defer `setState` in standalone `onHide` callback via `addPostFrameCallback` to avoid calling it during build
 
 ---
@@ -177,9 +206,9 @@ versioning.
 ## 0.4.0
 
 ### Added
-* **`VirtualKeypadStandaloneScope`** — New widget that restricts a standalone-mode keyboard to only respond to text fields within its subtree. Useful for apps like Widgetbook where multiple widget previews are shown simultaneously.
+* **`VirtualKeypadStandaloneScope`**: New widget that restricts a standalone-mode keyboard to only respond to text fields within its subtree. Useful for apps like Widgetbook where multiple widget previews are shown simultaneously.
 * `VirtualKeypadStandaloneScope.maybeOf(context)` static method to look up the nearest scope.
-* Scope-aware focus handling in `VirtualKeypad` — the keyboard now hides when focus moves to a text field outside its scope.
+* Scope-aware focus handling in `VirtualKeypad`: the keyboard now hides when focus moves to a text field outside its scope.
 * Tests for `VirtualKeypadStandaloneScope` (`maybeOf` null case, ancestor lookup, sibling scope isolation).
 
 ### Fixed
@@ -196,13 +225,13 @@ versioning.
 ## 0.3.0
 
 ### Added
-* **Standalone mode** — `VirtualKeypad(standalone: true)` works with any standard Flutter `TextField` or `TextFormField` without requiring `VirtualKeypadScope` or `VirtualKeypadTextField`. The keyboard intercepts Flutter's text input system and routes key presses to whichever field has focus.
-* `StandaloneInputControl` — exported `TextInputControl` implementation that powers standalone mode.
+* **Standalone mode**: `VirtualKeypad(standalone: true)` works with any standard Flutter `TextField` or `TextFormField` without requiring `VirtualKeypadScope` or `VirtualKeypadTextField`. The keyboard intercepts Flutter's text input system and routes key presses to whichever field has focus.
+* `StandaloneInputControl`: exported `TextInputControl` implementation that powers standalone mode.
 * Auto-detects `TextInputType` from the focused field and adapts keyboard layout accordingly.
-* **French (AZERTY) keyboard** — full text, email, URL, number, and phone layouts (`'fr'`).
-* **`inputAction` parameter** on `VirtualKeypad` — override the enter/done key action label directly.
-* **Smart enter key** — shows action label (Done, Go, Search, Send, Next) for non-multiline keyboards; shows return icon for multiline.
-* `onKeyPressedWithText` callback — fires with `(VirtualKey key, String? text)`, where `text` is the actual inserted character (respecting shift/caps), or `null` for action keys.
+* **French (AZERTY) keyboard**: full text, email, URL, number, and phone layouts (`'fr'`).
+* **`inputAction` parameter** on `VirtualKeypad`: override the enter/done key action label directly.
+* **Smart enter key**: shows action label (Done, Go, Search, Send, Next) for non-multiline keyboards; shows return icon for multiline.
+* `onKeyPressedWithText` callback: fires with `(VirtualKey key, String? text)`, where `text` is the actual inserted character (respecting shift/caps), or `null` for action keys.
 * Standalone mode example screen in the example app.
 * French language added to the language switching example.
 

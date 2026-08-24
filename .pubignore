@@ -1,0 +1,22 @@
+# Files to keep in the GitHub repo but OUT of the published pub.dev archive.
+# NOTE: a .pubignore REPLACES .gitignore for `pub publish`, so every build
+# artifact .gitignore excludes has to be re-listed here.
+
+# Documentation website: generator and generated output live in the repo only.
+site/
+tool/
+
+# Build artifacts and tooling state.
+build/
+coverage/
+.dart_tool/
+**/.dart_tool/
+**/build/
+**/doc/api/
+.flutter-plugins-dependencies
+pubspec.lock
+
+# IDE and OS noise.
+.idea/
+*.iml
+.DS_Store

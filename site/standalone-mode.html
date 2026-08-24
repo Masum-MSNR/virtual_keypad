@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Use an On-Screen Keyboard with Any Flutter TextField</title>
+<meta name="description" content="Attach a virtual keyboard to the TextField widgets you already have in Flutter, keep the system keyboard from opening, and handle submit keys per field.">
+<link rel="canonical" href="https://virtualkeypad.web.app/standalone-mode">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Use an On-Screen Keyboard with Any Flutter TextField">
+<meta property="og:description" content="Attach a virtual keyboard to the TextField widgets you already have in Flutter, keep the system keyboard from opening, and handle submit keys per field.">
+<meta property="og:url" content="https://virtualkeypad.web.app/standalone-mode">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.503e9f0ddd.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Use any TextField", "description": "Attach a virtual keyboard to the TextField widgets you already have in Flutter, keep the system keyboard from opening, and handle submit keys per field.", "url": "https://virtualkeypad.web.app/standalone-mode", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I stop the system keyboard opening in Flutter?", "acceptedAnswer": {"@type": "Answer", "text": "Use VirtualKeypad(standalone: true). It suppresses the system keyboard for the fields it drives while leaving the caret and selection working, unlike readOnly."}}, {"@type": "Question", "name": "Does the virtual keyboard work with my existing TextEditingController?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Standalone mode types through the normal editing path, so controllers, validators and onChanged callbacks behave exactly as before."}}, {"@type": "Question", "name": "How do I handle the done or next key?", "acceptedAnswer": {"@type": "Answer", "text": "Pass onStandaloneInputAction. The key label follows each field's textInputAction, so next and done can move focus or submit."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<header class="topbar">
+  <button class="menu" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar"><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">virtual_keypad</a>
+  <span class="ver">v1.1.0</span>
+  <div class="grow"></div>
+  <a class="ext" href="https://pub.dev/packages/virtual_keypad"><span>pub.dev</span></a>
+  <a class="ext" href="https://github.com/almasumdev/virtual_keypad" aria-label="Source on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>GitHub</span></a>
+</header>
+
+<div class="scrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Documentation"><h2>Start here</h2><ul><li><a href="/">Introduction</a></li><li><a href="/standalone-mode" aria-current="page">Use any TextField</a></li><li><a href="/numeric-keypad-pin">Numeric and PIN pads</a></li></ul><h2>Modes</h2><ul><li><a href="/floating-keyboard">Floating panel</a></li><li><a href="/kiosk-and-pos">Kiosk and POS</a></li><li><a href="/android-tv">Android TV and D-pad</a></li></ul><h2>Customizing</h2><ul><li><a href="/custom-layouts">Custom layouts</a></li><li><a href="/theming">Theming</a></li><li><a href="/languages-and-rtl">Languages and RTL</a></li><li><a href="/emoji-keyboard">Emoji</a></li></ul><h2>Help</h2><ul><li><a href="/troubleshooting">Troubleshooting</a></li></ul></nav>
+
+  <main class="content" id="content">
+    <article>
+      <h1>Use any TextField</h1>
+      <p class="lede">One flag, no wrapper widgets, and the form you already wrote stays as it is.</p>
+      <h2 id="install">Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>flutter pub add virtual_keypad</code></pre></div>
+<div class="codeblock"><pre><code>import 'package:virtual_keypad/virtual_keypad.dart';</code></pre></div>
+<h2 id="standalone-mode">Standalone mode<a class="anchor" href="#standalone-mode" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>Column(
+  children: [
+    TextField(controller: emailController),
+    TextField(controller: passwordController),
+    VirtualKeypad(standalone: true),
+  ],
+)</code></pre></div>
+<p>The keyboard watches focus and types into whichever field has it. Your controllers, validators and <code>onChanged</code> callbacks all keep working, because the text goes in through the normal editing path rather than around it.</p>
+
+<h2 id="the-layout-follows-the-field">The layout follows the field<a class="anchor" href="#the-layout-follows-the-field" aria-label="Link to this section">#</a></h2>
+<p>Each field's <code>keyboardType</code> picks the layout, so you do not configure the keyboard per field.</p>
+<div class="tablewrap"><div class="tablewrap"><table>
+<thead><tr><th>Field</th><th>Layout</th></tr></thead>
+<tbody>
+<tr><td><code>TextInputType.emailAddress</code></td><td>QWERTY with <code>@</code> and <code>.</code> on the main page</td></tr>
+<tr><td><code>TextInputType.url</code></td><td>QWERTY with <code>/</code>, <code>:</code> and <code>.</code></td></tr>
+<tr><td><code>TextInputType.number</code></td><td>Numeric pad</td></tr>
+<tr><td><code>TextInputType.phone</code></td><td>Dialer</td></tr>
+<tr><td><code>TextInputType.multiline</code></td><td>QWERTY with a newline key</td></tr>
+</tbody></table></div></div>
+<p>Pass <code>type:</code> on the keypad to override that and pin one layout for every field.</p>
+
+<h2 id="keeping-the-system-keyboard-shut">Keeping the system keyboard shut<a class="anchor" href="#keeping-the-system-keyboard-shut" aria-label="Link to this section">#</a></h2>
+<p>On a phone or tablet both keyboards would otherwise appear. Standalone mode suppresses the system one for the fields it drives, so you do not need <code>readOnly: true</code> or a focus node that refuses focus. Those tricks also kill the caret and selection, which is why they are worth avoiding.</p>
+
+<h2 id="submit-keys">Submit keys<a class="anchor" href="#submit-keys" aria-label="Link to this section">#</a></h2>
+<p>Use <code>onStandaloneInputAction</code> to tell submit-style keys apart at the keyboard level, which is how a dialer or a search bar gets wired.</p>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  standalone: true,
+  onStandaloneInputAction: (action, text) {
+    switch (action) {
+      case KeyAction.next:
+        FocusScope.of(context).nextFocus();
+      case KeyAction.done:
+      case KeyAction.search:
+        submit(text);
+      default:
+        break;
+    }
+  },
+)</code></pre></div>
+<p>The callback receives the action and the field's current text, so a search bar can submit the query without reaching for the controller. The key's label follows each field's <code>textInputAction</code>, so a field marked <code>next</code> shows a next key and the one after shows done.</p>
+
+<h2 id="hiding-it-when-nothing-is-focused">Hiding it when nothing is focused<a class="anchor" href="#hiding-it-when-nothing-is-focused" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  standalone: true,
+  hideWhenUnfocused: true,
+  animationDuration: const Duration(milliseconds: 180),
+)</code></pre></div>
+<p>Useful on a phone-sized layout, where 280 pixels of keyboard under an unfocused form is wasted space. On a kiosk you usually want the opposite, so leave it off.</p>
+
+<h2 id="when-to-reach-for-scope-mode-instead">When to reach for scope mode instead<a class="anchor" href="#when-to-reach-for-scope-mode-instead" aria-label="Link to this section">#</a></h2>
+<p>Standalone mode is the right default. Move to <code>VirtualKeypadScope</code> with <code>VirtualKeypadTextField</code> when you want to own the text yourself: reading the cursor position, inserting programmatically, or driving something that is not a <code>TextField</code> at all.</p>
+<div class="codeblock"><pre><code>final controller = VirtualKeypadController();
+
+VirtualKeypadScope(
+  child: Column(
+    children: [
+      VirtualKeypadTextField(controller: controller),
+      const VirtualKeypad(),
+    ],
+  ),
+)
+
+controller.insertText('hello');
+controller.deleteBackward();</code></pre></div><nav class="next" aria-label="Related guides"><a href="/numeric-keypad-pin">Numeric and PIN pads</a><a href="/floating-keyboard">Floating panel</a></nav>
+      <footer class="pagefoot">
+        virtual_keypad is open source under the MIT licence.
+        <a href="https://pub.dev/packages/virtual_keypad">pub.dev</a> &middot;
+        <a href="https://github.com/almasumdev/virtual_keypad">Source</a> &middot;
+        <a href="https://pub.dev/documentation/virtual_keypad/latest/">API reference</a>
+      </footer>
+    </article>
+  </main>
+
+  <aside class="toc"><nav aria-labelledby="toc-h"><h2 id="toc-h">On this page</h2><ul><li><a href="#install">Install</a></li><li><a href="#standalone-mode">Standalone mode</a></li><li><a href="#the-layout-follows-the-field">The layout follows the field</a></li><li><a href="#keeping-the-system-keyboard-shut">Keeping the system keyboard shut</a></li><li><a href="#submit-keys">Submit keys</a></li><li><a href="#hiding-it-when-nothing-is-focused">Hiding it when nothing is focused</a></li><li><a href="#when-to-reach-for-scope-mode-instead">When to reach for scope mode instead</a></li></ul></nav></aside>
+</div>
+
+<script src="/docs.029eb910a1.js" defer></script>
+</body>
+</html>

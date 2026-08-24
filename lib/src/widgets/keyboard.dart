@@ -78,6 +78,7 @@ class VirtualKeypad extends StatefulWidget {
     this.height = 280,
     this.width,
     this.theme = VirtualKeypadTheme.light,
+    this.feedback = KeyFeedback.sound,
     this.onKeyPressed,
     this.onKeyPressedWithText,
     this.onStandaloneInputAction,
@@ -120,6 +121,12 @@ class VirtualKeypad extends StatefulWidget {
 
   /// Visual theme for the keyboard.
   final VirtualKeypadTheme theme;
+
+  /// Haptic and sound confirmation for each key press.
+  ///
+  /// Defaults to [KeyFeedback.sound], which is what the keyboard already did
+  /// through Material's ink response. See [KeyFeedback].
+  final KeyFeedback feedback;
 
   /// Optional callback invoked when any key is pressed.
   final void Function(VirtualKey key)? onKeyPressed;
@@ -450,7 +457,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
           ? VirtualKeypadStandaloneScope.maybeOf(focusedContext)
           : null;
       if (focusedScope != myScope) {
-        // The focused field is outside our scope – hide the keyboard.
+        // The focused field is outside our scope, so hide the keyboard.
         if (_standaloneVisible) setState(() => _standaloneVisible = false);
         return;
       }
@@ -1196,7 +1203,33 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
     return false;
   }
 
+  /// Fires the configured haptic and sound for one key press.
+  ///
+  /// Called for every activation, including D-pad and long-press repeat, so the
+  /// confirmation does not depend on how the key was reached. The key's ink
+  /// response has `enableFeedback: false` for the same reason: Material would
+  /// otherwise play the click on taps only, and play it twice here.
+  ///
+  /// Both calls are fire and forget. A platform with no vibration motor or no
+  /// key click resolves them to a no-op, and waiting on either would delay the
+  /// character reaching the field.
+  void _playKeyFeedback() {
+    switch (widget.feedback) {
+      case KeyFeedback.none:
+        return;
+      case KeyFeedback.haptic:
+        unawaited(HapticFeedback.lightImpact());
+      case KeyFeedback.sound:
+        unawaited(SystemSound.play(SystemSoundType.click));
+      case KeyFeedback.both:
+        unawaited(HapticFeedback.lightImpact());
+        unawaited(SystemSound.play(SystemSoundType.click));
+        break;
+    }
+  }
+
   void _onKeyPressed(VirtualKey key) {
+    _playKeyFeedback();
     String? insertedText;
 
     if (key.isCharacter) {
@@ -1679,6 +1712,9 @@ class _KeyWidgetState extends State<_KeyWidget> {
               onLongPressCancel: _stopRepeat,
               onSecondaryTapDown: _handleSecondaryTapDown,
               child: InkWell(
+                // Feedback is driven from the key handler instead, so that a
+                // D-pad press is confirmed the same way a tap is.
+                enableFeedback: false,
                 splashColor: widget.theme.splashColor ?? VkpColors.splashColor,
                 onTap: _activateKey,
                 child: ExcludeSemantics(

@@ -27,6 +27,18 @@ system keyboard stayed out of it. It drops into any standard `TextField` or
 `TextFormField` with one line, and it ships 12 languages including
 right-to-left Arabic.
 
+> 📘 **[Documentation](https://virtualkeypad.web.app)**: guides for
+> [using any TextField](https://virtualkeypad.web.app/standalone-mode),
+> [numeric and PIN pads](https://virtualkeypad.web.app/numeric-keypad-pin),
+> [the floating panel](https://virtualkeypad.web.app/floating-keyboard),
+> [kiosk and POS](https://virtualkeypad.web.app/kiosk-and-pos),
+> [Android TV and D-pad](https://virtualkeypad.web.app/android-tv),
+> [custom layouts](https://virtualkeypad.web.app/custom-layouts),
+> [theming](https://virtualkeypad.web.app/theming),
+> [languages and RTL](https://virtualkeypad.web.app/languages-and-rtl),
+> [emoji](https://virtualkeypad.web.app/emoji-keyboard) and
+> [troubleshooting](https://virtualkeypad.web.app/troubleshooting).
+
 > ⭐ **Find this useful?** [Star it on GitHub](https://github.com/almasumdev/virtual_keypad)
 > and 👍 [like it on pub.dev](https://pub.dev/packages/virtual_keypad). Stars and likes
 > help other Flutter developers find a maintained on-screen keyboard package.
@@ -83,7 +95,8 @@ platform. There is no native code and no platform channel involved.
     - [Build a PIN pad or numeric keypad](#build-a-pin-pad-or-numeric-keypad)
     - [Emoji support](#emoji-support)
     - [Android TV and remote control](#android-tv-and-remote-control)
-    - [Theming and customization](#theming-and-customization)
+    - [Key press feedback](#key-press-feedback)
+  - [Theming and customization](#theming-and-customization)
     - [Multi-language and RTL](#multi-language-and-rtl)
     - [Add your own language](#add-your-own-language)
     - [Drive the keyboard from code](#drive-the-keyboard-from-code)
@@ -204,7 +217,6 @@ What ships next is driven by user requests on the
 
 - ⬜ More built-in languages and layouts (contributions welcome)
 - ⬜ D-pad navigation inside the emoji page
-- ⬜ Key sound and haptic feedback options
 
 Shipped milestones are in the
 [changelog](https://github.com/almasumdev/virtual_keypad/blob/main/CHANGELOG.md).
@@ -229,6 +241,7 @@ snippet from [Getting started](#getting-started) below.
 
 ## Other useful links
 
+- [Documentation and guides](https://virtualkeypad.web.app)
 - [API reference](https://pub.dev/documentation/virtual_keypad/latest/)
 - [Source code on GitHub](https://github.com/almasumdev/virtual_keypad)
 - [Changelog](https://github.com/almasumdev/virtual_keypad/blob/main/CHANGELOG.md)
@@ -585,6 +598,33 @@ keyboard instead of trapping the user inside it.
 The highlight is drawn by the keyboard rather than by Flutter's focus system, so
 the text field keeps focus and the keyboard does not hide while the user moves
 around. Style it with `focusBorderColor`, `focusBorderWidth`, and `focusColor`.
+
+### Key press feedback
+
+A touchscreen gives no tactile confirmation on its own. On a kiosk or a POS
+terminal the key preview is often the only sign that a tap registered at all:
+
+```dart
+VirtualKeypad(feedback: KeyFeedback.both)   // click and a light vibration
+VirtualKeypad(feedback: KeyFeedback.none)   // silent and still
+```
+
+| Value | Does |
+|---|---|
+| `sound` | The platform key click. The default |
+| `haptic` | A light vibration, no sound |
+| `both` | Both |
+| `none` | Neither |
+
+`sound` is what the keyboard already did, through Material's ink response, so
+the default sounds the same as before. The difference is that feedback now
+comes from the single place every key press goes through, which means a D-pad
+activation on a television is confirmed the same way a tap is. The ink response
+only ever saw taps.
+
+Both effects are handled by the platform, so there is no asset to bundle. A
+device with no vibration motor or no key click skips that effect rather than
+failing, and both follow the user's own settings including silent mode.
 
 ### Theming and customization
 

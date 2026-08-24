@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Custom Keyboard Layouts in Flutter</title>
+<meta name="description" content="Define your own on-screen key layout in Flutter, with character keys, action keys, key spans and multi-page layouts for calculators, forms and branded keypads.">
+<link rel="canonical" href="https://virtualkeypad.web.app/custom-layouts">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Custom Keyboard Layouts in Flutter">
+<meta property="og:description" content="Define your own on-screen key layout in Flutter, with character keys, action keys, key spans and multi-page layouts for calculators, forms and branded keypads.">
+<meta property="og:url" content="https://virtualkeypad.web.app/custom-layouts">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/style.503e9f0ddd.css">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Custom layouts", "description": "Define your own on-screen key layout in Flutter, with character keys, action keys, key spans and multi-page layouts for calculators, forms and branded keypads.", "url": "https://virtualkeypad.web.app/custom-layouts", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I create a custom keyboard layout in Flutter?", "acceptedAnswer": {"@type": "Answer", "text": "Pass type: KeyboardType.custom and a customLayout, which is a list of rows where each row is a list of VirtualKey values."}}, {"@type": "Question", "name": "Can one key insert more than one character?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. VirtualKey.character takes any string, so a key can insert .com or a currency symbol and prefix together."}}, {"@type": "Question", "name": "How do I make a space bar or a wide key?", "acceptedAnswer": {"@type": "Answer", "text": "Give the key a flex value. It sets the key's share of the row, so flex: 4 makes it four times as wide as a flex: 1 neighbour."}}]}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<header class="topbar">
+  <button class="menu" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar"><svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <a class="brand" href="/"><img src="/logo.svg" alt="" width="24" height="24">virtual_keypad</a>
+  <span class="ver">v1.1.0</span>
+  <div class="grow"></div>
+  <a class="ext" href="https://pub.dev/packages/virtual_keypad"><span>pub.dev</span></a>
+  <a class="ext" href="https://github.com/almasumdev/virtual_keypad" aria-label="Source on GitHub"><svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg><span>GitHub</span></a>
+</header>
+
+<div class="scrim" aria-hidden="true"></div>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Documentation"><h2>Start here</h2><ul><li><a href="/">Introduction</a></li><li><a href="/standalone-mode">Use any TextField</a></li><li><a href="/numeric-keypad-pin">Numeric and PIN pads</a></li></ul><h2>Modes</h2><ul><li><a href="/floating-keyboard">Floating panel</a></li><li><a href="/kiosk-and-pos">Kiosk and POS</a></li><li><a href="/android-tv">Android TV and D-pad</a></li></ul><h2>Customizing</h2><ul><li><a href="/custom-layouts" aria-current="page">Custom layouts</a></li><li><a href="/theming">Theming</a></li><li><a href="/languages-and-rtl">Languages and RTL</a></li><li><a href="/emoji-keyboard">Emoji</a></li></ul><h2>Help</h2><ul><li><a href="/troubleshooting">Troubleshooting</a></li></ul></nav>
+
+  <main class="content" id="content">
+    <article>
+      <h1>Custom layouts</h1>
+      <p class="lede">A layout is a list of rows, and a row is a list of keys. There is nothing else to it.</p>
+      <h2 id="install">Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>flutter pub add virtual_keypad</code></pre></div>
+<div class="codeblock"><pre><code>import 'package:virtual_keypad/virtual_keypad.dart';</code></pre></div>
+<h2 id="the-shape">The shape<a class="anchor" href="#the-shape" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  type: KeyboardType.custom,
+  customLayout: [
+    [
+      VirtualKey.character(text: 'a'),
+      VirtualKey.character(text: 'b'),
+    ],
+    [
+      VirtualKey.action(action: KeyAction.backSpace),
+      VirtualKey.action(action: KeyAction.done),
+    ],
+  ],
+)</code></pre></div>
+<p>Rows do not have to be the same length. Keys are laid out evenly across the width, so a short row simply gets wider keys.</p>
+
+<h2 id="the-two-kinds-of-key">The two kinds of key<a class="anchor" href="#the-two-kinds-of-key" aria-label="Link to this section">#</a></h2>
+<div class="tablewrap"><div class="tablewrap"><table>
+<thead><tr><th>Constructor</th><th>Does</th></tr></thead>
+<tbody>
+<tr><td><code>VirtualKey.character(text: 'a')</code></td><td>Inserts text at the cursor</td></tr>
+<tr><td><code>VirtualKey.action(action: ...)</code></td><td>Runs a key action such as backspace, enter or done</td></tr>
+</tbody></table></div></div>
+<p>A character key is not limited to one character. <code>VirtualKey.character(text: '.com')</code> inserts all four, which is how a URL key or a currency shortcut is built.</p>
+
+<h2 id="labels">Labels<a class="anchor" href="#labels" aria-label="Link to this section">#</a></h2>
+<p>A character key shows the text it inserts, and that is not configurable: what you see is what goes in. Action keys take a <code>label</code>, because an action has no inserted text to show.</p>
+<div class="codeblock"><pre><code>VirtualKey.action(action: KeyAction.backSpace, label: 'Del')
+VirtualKey.action(action: KeyAction.done, label: 'Pay')</code></pre></div>
+<h2 id="spanning-columns">Spanning columns<a class="anchor" href="#spanning-columns" aria-label="Link to this section">#</a></h2>
+<div class="codeblock"><pre><code>[
+  VirtualKey.action(action: KeyAction.shift),
+  VirtualKey.character(text: ' ', flex: 4),
+  VirtualKey.action(action: KeyAction.backSpace),
+]</code></pre></div>
+<p><code>flex</code> is a share of the row, so the space key above is four times the width of the keys either side of it.</p>
+
+<h2 id="a-worked-example">A worked example<a class="anchor" href="#a-worked-example" aria-label="Link to this section">#</a></h2>
+<p>A calculator pad, where the operators sit in their own column.</p>
+<div class="codeblock"><pre><code>final calculator = [
+  [
+    VirtualKey.character(text: '7'),
+    VirtualKey.character(text: '8'),
+    VirtualKey.character(text: '9'),
+    VirtualKey.character(text: '/'),
+  ],
+  [
+    VirtualKey.character(text: '4'),
+    VirtualKey.character(text: '5'),
+    VirtualKey.character(text: '6'),
+    VirtualKey.character(text: '*'),
+  ],
+  [
+    VirtualKey.character(text: '1'),
+    VirtualKey.character(text: '2'),
+    VirtualKey.character(text: '3'),
+    VirtualKey.character(text: '-'),
+  ],
+  [
+    VirtualKey.character(text: '0', flex: 2),
+    VirtualKey.character(text: '.'),
+    VirtualKey.character(text: '+'),
+  ],
+];</code></pre></div>
+<h2 id="reacting-to-keys-yourself">Reacting to keys yourself<a class="anchor" href="#reacting-to-keys-yourself" aria-label="Link to this section">#</a></h2>
+<p><code>onKeyPressedWithText</code> reports both the key and the text it inserted, which is <code>null</code> for action keys.</p>
+<div class="codeblock"><pre><code>VirtualKeypad(
+  type: KeyboardType.custom,
+  customLayout: calculator,
+  onKeyPressedWithText: (key, text) {
+    if (text != null) log('inserted $text');
+  },
+)</code></pre></div>
+<h2 id="the-one-rule">The one rule<a class="anchor" href="#the-one-rule" aria-label="Link to this section">#</a></h2>
+<p><code>customLayout</code> requires <code>type: KeyboardType.custom</code>, and that type requires a layout. Either one alone asserts in debug, so a setup mistake fails loudly rather than rendering an empty keyboard you then have to diagnose.</p>
+<nav class="next" aria-label="Related guides"><a href="/numeric-keypad-pin">Numeric and PIN pads</a><a href="/languages-and-rtl">Languages and RTL</a></nav>
+      <footer class="pagefoot">
+        virtual_keypad is open source under the MIT licence.
+        <a href="https://pub.dev/packages/virtual_keypad">pub.dev</a> &middot;
+        <a href="https://github.com/almasumdev/virtual_keypad">Source</a> &middot;
+        <a href="https://pub.dev/documentation/virtual_keypad/latest/">API reference</a>
+      </footer>
+    </article>
+  </main>
+
+  <aside class="toc"><nav aria-labelledby="toc-h"><h2 id="toc-h">On this page</h2><ul><li><a href="#install">Install</a></li><li><a href="#the-shape">The shape</a></li><li><a href="#the-two-kinds-of-key">The two kinds of key</a></li><li><a href="#labels">Labels</a></li><li><a href="#spanning-columns">Spanning columns</a></li><li><a href="#a-worked-example">A worked example</a></li><li><a href="#reacting-to-keys-yourself">Reacting to keys yourself</a></li><li><a href="#the-one-rule">The one rule</a></li></ul></nav></aside>
+</div>
+
+<script src="/docs.029eb910a1.js" defer></script>
+</body>
+</html>
