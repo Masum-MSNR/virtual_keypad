@@ -27,17 +27,17 @@ system keyboard stayed out of it. It drops into any standard `TextField` or
 `TextFormField` with one line, and it ships 12 languages including
 right-to-left Arabic.
 
-> 📘 **[Documentation](https://virtualkeypad.web.app)**: guides for
-> [using any TextField](https://virtualkeypad.web.app/standalone-mode),
-> [numeric and PIN pads](https://virtualkeypad.web.app/numeric-keypad-pin),
-> [the floating panel](https://virtualkeypad.web.app/floating-keyboard),
-> [kiosk and POS](https://virtualkeypad.web.app/kiosk-and-pos),
-> [Android TV and D-pad](https://virtualkeypad.web.app/android-tv),
-> [custom layouts](https://virtualkeypad.web.app/custom-layouts),
-> [theming](https://virtualkeypad.web.app/theming),
-> [languages and RTL](https://virtualkeypad.web.app/languages-and-rtl),
-> [emoji](https://virtualkeypad.web.app/emoji-keyboard) and
-> [troubleshooting](https://virtualkeypad.web.app/troubleshooting).
+> 📘 **[Documentation](https://virtual-keypad-docs.web.app)**: guides for
+> [using any TextField](https://virtual-keypad-docs.web.app/standalone-mode),
+> [numeric and PIN pads](https://virtual-keypad-docs.web.app/numeric-keypad-pin),
+> [the floating panel](https://virtual-keypad-docs.web.app/floating-keyboard),
+> [kiosk and POS](https://virtual-keypad-docs.web.app/kiosk-and-pos),
+> [Android TV and D-pad](https://virtual-keypad-docs.web.app/android-tv),
+> [custom layouts](https://virtual-keypad-docs.web.app/custom-layouts),
+> [theming](https://virtual-keypad-docs.web.app/theming),
+> [languages and RTL](https://virtual-keypad-docs.web.app/languages-and-rtl),
+> [emoji](https://virtual-keypad-docs.web.app/emoji-keyboard) and
+> [troubleshooting](https://virtual-keypad-docs.web.app/troubleshooting).
 
 > ⭐ **Find this useful?** [Star it on GitHub](https://github.com/almasumdev/virtual_keypad)
 > and 👍 [like it on pub.dev](https://pub.dev/packages/virtual_keypad). Stars and likes
@@ -241,7 +241,7 @@ snippet from [Getting started](#getting-started) below.
 
 ## Other useful links
 
-- [Documentation and guides](https://virtualkeypad.web.app)
+- [Documentation and guides](https://virtual-keypad-docs.web.app)
 - [API reference](https://pub.dev/documentation/virtual_keypad/latest/)
 - [Source code on GitHub](https://github.com/almasumdev/virtual_keypad)
 - [Changelog](https://github.com/almasumdev/virtual_keypad/blob/main/CHANGELOG.md)

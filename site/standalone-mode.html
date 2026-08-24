@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Use an On-Screen Keyboard with Any Flutter TextField</title>
 <meta name="description" content="Attach a virtual keyboard to the TextField widgets you already have in Flutter, keep the system keyboard from opening, and handle submit keys per field.">
-<link rel="canonical" href="https://virtualkeypad.web.app/standalone-mode">
+<link rel="canonical" href="https://virtual-keypad-docs.web.app/standalone-mode">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Use an On-Screen Keyboard with Any Flutter TextField">
 <meta property="og:description" content="Attach a virtual keyboard to the TextField widgets you already have in Flutter, keep the system keyboard from opening, and handle submit keys per field.">
-<meta property="og:url" content="https://virtualkeypad.web.app/standalone-mode">
+<meta property="og:url" content="https://virtual-keypad-docs.web.app/standalone-mode">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="/logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.503e9f0ddd.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Use any TextField", "description": "Attach a virtual keyboard to the TextField widgets you already have in Flutter, keep the system keyboard from opening, and handle submit keys per field.", "url": "https://virtualkeypad.web.app/standalone-mode", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Use any TextField", "description": "Attach a virtual keyboard to the TextField widgets you already have in Flutter, keep the system keyboard from opening, and handle submit keys per field.", "url": "https://virtual-keypad-docs.web.app/standalone-mode", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I stop the system keyboard opening in Flutter?", "acceptedAnswer": {"@type": "Answer", "text": "Use VirtualKeypad(standalone: true). It suppresses the system keyboard for the fields it drives while leaving the caret and selection working, unlike readOnly."}}, {"@type": "Question", "name": "Does the virtual keyboard work with my existing TextEditingController?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Standalone mode types through the normal editing path, so controllers, validators and onChanged callbacks behave exactly as before."}}, {"@type": "Question", "name": "How do I handle the done or next key?", "acceptedAnswer": {"@type": "Answer", "text": "Pass onStandaloneInputAction. The key label follows each field's textInputAction, so next and done can move focus or submit."}}]}</script>
 </head>
 <body>

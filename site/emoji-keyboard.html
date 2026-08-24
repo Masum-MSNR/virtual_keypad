@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Add an Emoji Keyboard to a Flutter App</title>
 <meta name="description" content="Show an emoji picker page inside a Flutter on-screen keyboard, with a bundled font so emoji render on a first offline web load.">
-<link rel="canonical" href="https://virtualkeypad.web.app/emoji-keyboard">
+<link rel="canonical" href="https://virtual-keypad-docs.web.app/emoji-keyboard">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Add an Emoji Keyboard to a Flutter App">
 <meta property="og:description" content="Show an emoji picker page inside a Flutter on-screen keyboard, with a bundled font so emoji render on a first offline web load.">
-<meta property="og:url" content="https://virtualkeypad.web.app/emoji-keyboard">
+<meta property="og:url" content="https://virtual-keypad-docs.web.app/emoji-keyboard">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="/logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.503e9f0ddd.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Emoji", "description": "Show an emoji picker page inside a Flutter on-screen keyboard, with a bundled font so emoji render on a first offline web load.", "url": "https://virtualkeypad.web.app/emoji-keyboard", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Emoji", "description": "Show an emoji picker page inside a Flutter on-screen keyboard, with a bundled font so emoji render on a first offline web load.", "url": "https://virtual-keypad-docs.web.app/emoji-keyboard", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I add an emoji picker to a Flutter keyboard?", "acceptedAnswer": {"@type": "Answer", "text": "Set enableEmojiKey: true. An emoji key appears in the layout and opens an emoji page, with showEmojiKeyboardInitially to open on it directly."}}, {"@type": "Question", "name": "Why do emoji show as blank boxes on Flutter web?", "acceptedAnswer": {"@type": "Answer", "text": "Flutter downloads an emoji font on demand, so a first offline load has none. This package bundles a subset font and applies it on web to avoid that."}}, {"@type": "Question", "name": "Can I use colour emoji on web?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Pass colorEmojiFontLoader returning the font bytes. It is called lazily the first time the emoji page opens."}}]}</script>
 </head>
 <body>

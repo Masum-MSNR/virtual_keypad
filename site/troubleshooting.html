@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Flutter Virtual Keyboard Problems and How to Fix Them</title>
 <meta name="description" content="Fixes for a Flutter on-screen keyboard that does not appear, types into the wrong field, shows the system keyboard as well, or renders blank emoji.">
-<link rel="canonical" href="https://virtualkeypad.web.app/troubleshooting">
+<link rel="canonical" href="https://virtual-keypad-docs.web.app/troubleshooting">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Flutter Virtual Keyboard Problems and How to Fix Them">
 <meta property="og:description" content="Fixes for a Flutter on-screen keyboard that does not appear, types into the wrong field, shows the system keyboard as well, or renders blank emoji.">
-<meta property="og:url" content="https://virtualkeypad.web.app/troubleshooting">
+<meta property="og:url" content="https://virtual-keypad-docs.web.app/troubleshooting">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="/logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.503e9f0ddd.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Troubleshooting", "description": "Fixes for a Flutter on-screen keyboard that does not appear, types into the wrong field, shows the system keyboard as well, or renders blank emoji.", "url": "https://virtualkeypad.web.app/troubleshooting", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Troubleshooting", "description": "Fixes for a Flutter on-screen keyboard that does not appear, types into the wrong field, shows the system keyboard as well, or renders blank emoji.", "url": "https://virtual-keypad-docs.web.app/troubleshooting", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Why does the system keyboard still open in Flutter?", "acceptedAnswer": {"@type": "Answer", "text": "The keypad is probably missing standalone: true, so it never takes over the field. Avoid readOnly, which also removes the caret and selection."}}, {"@type": "Question", "name": "Why does my virtual keyboard have no height?", "acceptedAnswer": {"@type": "Answer", "text": "It is inside an unbounded parent, usually a Column in a SingleChildScrollView. Give it a bounded box or move it outside the scroll view."}}, {"@type": "Question", "name": "Why does changing the keyboard language do nothing?", "acceptedAnswer": {"@type": "Answer", "text": "initializeKeyboardLayouts was never called, so only English is registered. Call it once at startup before the keyboard is built."}}]}</script>
 </head>
 <body>

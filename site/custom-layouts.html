@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Custom Keyboard Layouts in Flutter</title>
 <meta name="description" content="Define your own on-screen key layout in Flutter, with character keys, action keys, key spans and multi-page layouts for calculators, forms and branded keypads.">
-<link rel="canonical" href="https://virtualkeypad.web.app/custom-layouts">
+<link rel="canonical" href="https://virtual-keypad-docs.web.app/custom-layouts">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Custom Keyboard Layouts in Flutter">
 <meta property="og:description" content="Define your own on-screen key layout in Flutter, with character keys, action keys, key spans and multi-page layouts for calculators, forms and branded keypads.">
-<meta property="og:url" content="https://virtualkeypad.web.app/custom-layouts">
+<meta property="og:url" content="https://virtual-keypad-docs.web.app/custom-layouts">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="/logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.503e9f0ddd.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Custom layouts", "description": "Define your own on-screen key layout in Flutter, with character keys, action keys, key spans and multi-page layouts for calculators, forms and branded keypads.", "url": "https://virtualkeypad.web.app/custom-layouts", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Custom layouts", "description": "Define your own on-screen key layout in Flutter, with character keys, action keys, key spans and multi-page layouts for calculators, forms and branded keypads.", "url": "https://virtual-keypad-docs.web.app/custom-layouts", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I create a custom keyboard layout in Flutter?", "acceptedAnswer": {"@type": "Answer", "text": "Pass type: KeyboardType.custom and a customLayout, which is a list of rows where each row is a list of VirtualKey values."}}, {"@type": "Question", "name": "Can one key insert more than one character?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. VirtualKey.character takes any string, so a key can insert .com or a currency symbol and prefix together."}}, {"@type": "Question", "name": "How do I make a space bar or a wide key?", "acceptedAnswer": {"@type": "Answer", "text": "Give the key a flex value. It sets the key's share of the row, so flex: 4 makes it four times as wide as a flex: 1 neighbour."}}]}</script>
 </head>
 <body>

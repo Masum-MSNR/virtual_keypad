@@ -17,7 +17,7 @@ def emit_asset(src, name, ext):
     return '/' + out
 
 
-BASE    = "https://virtualkeypad.web.app"
+BASE    = "https://virtual-keypad-docs.web.app"
 OUT     = "site"
 VERSION = "1.1.0"
 # IndexNow verification key. Must stay in step with the file emitted

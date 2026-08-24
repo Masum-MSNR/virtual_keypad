@@ -4,7 +4,7 @@ version: 1.1.0
 homepage: https://github.com/almasumdev/virtual_keypad
 repository: https://github.com/almasumdev/virtual_keypad
 issue_tracker: https://github.com/almasumdev/virtual_keypad/issues
-documentation: https://virtualkeypad.web.app
+documentation: https://virtual-keypad-docs.web.app
 
 topics:
   - keyboard

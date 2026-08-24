@@ -21,7 +21,7 @@ Key press feedback, and a documentation website.
 - The default, `KeyFeedback.sound`, reproduces what the keyboard already did:
   Material played the platform key click on Android. Existing apps sound the
   same as before unless they ask for something else.
-- Added a documentation website at https://virtualkeypad.web.app, with guides
+- Added a documentation website at https://virtual-keypad-docs.web.app, with guides
   for using any TextField, numeric and PIN pads, the floating panel, kiosk and
   POS screens, Android TV and D-pad, custom layouts, theming, languages and
   RTL, emoji, and troubleshooting. Linked from the package page through the new

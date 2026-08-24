@@ -16,7 +16,7 @@
       ]
     },
     {
-      "site": "virtualkeypad",
+      "site": "virtual-keypad-docs",
       "public": "site",
       "ignore": [
         "firebase.json",

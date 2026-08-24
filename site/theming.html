@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Theming an On-Screen Keyboard in Flutter</title>
 <meta name="description" content="Style a Flutter virtual keyboard: key colours, corner radius, text size, shadows, gaps, ripple and the D-pad focus highlight, with light and dark presets.">
-<link rel="canonical" href="https://virtualkeypad.web.app/theming">
+<link rel="canonical" href="https://virtual-keypad-docs.web.app/theming">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Theming an On-Screen Keyboard in Flutter">
 <meta property="og:description" content="Style a Flutter virtual keyboard: key colours, corner radius, text size, shadows, gaps, ripple and the D-pad focus highlight, with light and dark presets.">
-<meta property="og:url" content="https://virtualkeypad.web.app/theming">
+<meta property="og:url" content="https://virtual-keypad-docs.web.app/theming">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="/logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/style.503e9f0ddd.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Theming", "description": "Style a Flutter virtual keyboard: key colours, corner radius, text size, shadows, gaps, ripple and the D-pad focus highlight, with light and dark presets.", "url": "https://virtualkeypad.web.app/theming", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Theming", "description": "Style a Flutter virtual keyboard: key colours, corner radius, text size, shadows, gaps, ripple and the D-pad focus highlight, with light and dark presets.", "url": "https://virtual-keypad-docs.web.app/theming", "author": {"@type": "Person", "name": "Nurullah Al Masum"}, "about": {"@type": "SoftwareSourceCode", "name": "virtual_keypad", "programmingLanguage": "Dart", "codeRepository": "https://github.com/almasumdev/virtual_keypad"}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I change the keyboard colours in Flutter?", "acceptedAnswer": {"@type": "Answer", "text": "Pass a VirtualKeypadTheme, or call copyWith on one of the light and dark presets to change only the properties you care about."}}, {"@type": "Question", "name": "Does the virtual keyboard follow my app theme?", "acceptedAnswer": {"@type": "Answer", "text": "Not automatically, since a keyboard often wants to differ from the app around it. Read Theme.of(context).brightness and pass the matching preset if you want it to follow."}}, {"@type": "Question", "name": "How do I make the keys bigger?", "acceptedAnswer": {"@type": "Answer", "text": "Raise the keyboard height and the theme's keyTextSize, and increase horizontalGap and verticalGap. Distance from the screen matters more than screen size."}}]}</script>
 </head>
 <body>
