@@ -1,0 +1,81 @@
+name: Bug report
+description: Something does not work the way the docs say it should
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you expected, and what you got instead.
+      placeholder: the system keyboard still appears when the keypad is on screen
+    validations:
+      required: true
+
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Which mode
+      multiple: true
+      options:
+        - Standalone (attaches to any TextField)
+        - Scope (VirtualKeypadScope)
+        - Floating
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - Android
+        - iOS
+        - Windows
+        - macOS
+        - Linux
+        - Web
+    validations:
+      required: true
+
+  - type: input
+    id: package-version
+    attributes:
+      label: virtual_keypad version
+      placeholder: 1.2.0
+    validations:
+      required: true
+
+  - type: input
+    id: flutter
+    attributes:
+      label: Flutter version
+      description: Output of `flutter --version`.
+      placeholder: 3.35.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Code that reproduces it
+      description: The smallest widget tree that shows the problem.
+      render: dart
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and stack trace
+      description: Anything from the console, plus `flutter doctor -v`.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I reproduced this on the latest published version.
+          required: true

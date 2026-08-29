@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or help with a layout
+    url: https://github.com/almasumdev/virtual_keypad/discussions
+    about: Ask here if you are not sure it is a bug. Questions stay searchable for the next person.
+  - name: Documentation and guides
+    url: https://virtual-keypad-docs.web.app
+    about: Modes, theming, custom layouts, languages, kiosk and TV setups.

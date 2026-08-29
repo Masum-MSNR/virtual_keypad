@@ -1,0 +1,42 @@
+name: Feature request
+description: Something the package cannot do yet
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to build
+      description: Describe the screen and the interaction, not the API you have in mind.
+      placeholder: a PIN pad for a payment terminal where the digits move between attempts
+    validations:
+      required: true
+
+  - type: textarea
+    id: workaround
+    attributes:
+      label: What are you doing instead today
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      multiple: true
+      options:
+        - Layouts and languages
+        - Theming and appearance
+        - Key behaviour
+        - Focus and text input
+        - Floating mode
+        - TV and D-pad
+        - Accessibility
+        - Documentation
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked the README and the documentation site to see whether this already exists.
+          required: true

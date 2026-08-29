@@ -20,3 +20,12 @@ pubspec.lock
 .idea/
 *.iml
 .DS_Store
+
+# Hosting config and internal notes: repo-only, never part of the package.
+firebase.json
+.firebaserc
+site_redirect/
+CLAUDE.md
+docs/
+.claude/
+.github/
