@@ -74,8 +74,30 @@ VirtualKeypad(
 | `actionKeyColor` | `Color` | `#ADB3BC` | Action key color |
 | `keyTextColor` | `Color` | `#1C1C1E` | Text/icon color |
 | `keyTextSize` | `double` | `22.0` | Font size |
+| `keyTextStyle` | `TextStyle?` | `null` | Key label style, merged over the color and size |
 | `keyBorderRadius` | `double` | `6.0` | Corner radius |
 | `keyShadow` | `bool` | `true` | Show shadows |
 | `splashColor` | `Color?` | `null` | Tap ripple color |
 | `horizontalGap` | `double` | `6.0` | Horizontal spacing |
 | `verticalGap` | `double` | `8.0` | Vertical spacing |
+
+## A brand font on the keys
+
+`keyTextStyle` sits on top of `keyTextColor` and `keyTextSize`, so you only set
+what you want to change:
+
+```dart
+VirtualKeypad(
+  theme: VirtualKeypadTheme.light.copyWith(
+    keyTextStyle: const TextStyle(
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w600,
+      letterSpacing: 1.2,
+    ),
+  ),
+)
+```
+
+Setting `fontSize` or `color` inside the style overrides `keyTextSize` and
+`keyTextColor` for the labels. Icons on action keys keep following
+`keyTextColor` and `keyTextSize`, since a font family does not apply to them.

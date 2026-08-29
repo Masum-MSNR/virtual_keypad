@@ -1,3 +1,40 @@
+## 1.2.0
+
+Give the system keyboard back when the keypad is gone, and put your own font on
+the keys.
+
+### Fixed
+
+- **Standalone mode left the system keyboard suppressed after the keypad was
+  disposed.** `TextInput.setInputControl` replaces the platform text input
+  control for the whole application and it stays replaced until it is handed
+  back, which never happened. Any app that showed a `VirtualKeypad(standalone:
+  true)` on one screen and ordinary `TextField`s on another ended up with no
+  keyboard at all on those other fields, for the rest of the session. The
+  control is now restored on dispose, and there are tests covering both halves:
+  the keyboard stays suppressed while a standalone keypad is alive, and works
+  again once it is gone.
+
+### New
+
+- `VirtualKeypadTheme.keyTextStyle` sets the text style for key labels. It is
+  merged over `keyTextColor` and `keyTextSize`, so naming only a font family or
+  weight keeps the themed colour and size, and setting `fontSize` or `color`
+  inside the style overrides them. Kiosk and point of sale builds can finally
+  put their brand font on the keys. Icons on action keys still follow
+  `keyTextColor` and `keyTextSize`, since a font family does not apply to them.
+
+### Changed
+
+- The declared Flutter floor moves from 3.0.0 to 3.3.0. Standalone mode has
+  always called `TextInput.setInputControl`, which landed in 3.3, so the old
+  floor never actually built. This documents what was already required.
+
+### Docs
+
+- Theming guide and site page cover `keyTextStyle`, and the example app has a
+  Branded preset that uses it.
+
 ## 1.1.1
 
 ### Changed

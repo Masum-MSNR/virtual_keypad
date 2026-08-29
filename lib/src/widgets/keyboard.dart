@@ -353,6 +353,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
 
   // Standalone mode state
   StandaloneInputControl? _inputControl;
+  bool _controlInstalled = false;
   bool _standaloneVisible = false;
 
   @override
@@ -407,13 +408,30 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
         });
       },
     );
-    TextInput.setInputControl(_inputControl!);
+    _installControl(true);
     FocusManager.instance.addListener(_onFocusChanged);
+  }
+
+  /// Install or hand back the application-wide platform text input control.
+  ///
+  /// [TextInput.setInputControl] replaces the control for the whole
+  /// application, not just this widget, and it stays replaced until it is
+  /// handed back. Every install therefore needs a matching restore, or text
+  /// fields elsewhere in the app keep their system keyboard suppressed.
+  void _installControl(bool install) {
+    if (_inputControl == null || _controlInstalled == install) return;
+    _controlInstalled = install;
+    if (install) {
+      TextInput.setInputControl(_inputControl!);
+    } else {
+      TextInput.restorePlatformInputControl();
+    }
   }
 
   void _disposeStandalone() {
     FocusManager.instance.removeListener(_onFocusChanged);
     if (_inputControl != null) {
+      _installControl(false);
       _inputControl = null;
     }
   }
@@ -429,7 +447,13 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
       return;
     }
 
-    // If wrapped in a scope, hide when focus moves outside that scope
+    // If wrapped in a scope, hide when focus moves outside that scope.
+    //
+    // The keypad keeps the platform input control while it is alive, rather
+    // than swapping it per focus change. A text field attaches to the platform
+    // before FocusManager notifies its listeners, so toggling the control here
+    // would apply to the field focused after next, not this one, and a scoped
+    // keypad would end up suppressing exactly the fields it should leave alone.
     final myScope = VirtualKeypadStandaloneScope.maybeOf(context);
     if (myScope != null && _standaloneVisible) {
       final focusedScope = VirtualKeypadStandaloneScope.maybeOf(focus.context!);
@@ -1931,10 +1955,7 @@ class _KeyWidgetState extends State<_KeyWidget> {
     if (key.isCharacter) {
       return Text(
         key.getDisplayText(shift: widget.shift, capsLock: widget.capsLock),
-        style: TextStyle(
-          fontSize: widget.theme.keyTextSize,
-          color: widget.theme.keyTextColor,
-        ),
+        style: widget.theme.effectiveKeyTextStyle,
       );
     }
 

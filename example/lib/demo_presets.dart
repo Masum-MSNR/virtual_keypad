@@ -112,4 +112,19 @@ final keypadPresets = <KeypadPreset>[
       focusBorderWidth: 4,
     ),
   ),
+
+  // A brand font on the keys. keyTextStyle is merged over keyTextColor and
+  // keyTextSize, so this only has to name what it wants to change.
+  const KeypadPreset(
+    'Branded',
+    VirtualKeypadTheme(
+      backgroundColor: Color(0xFF1A1423),
+      keyColor: Color(0xFF3D314A),
+      actionKeyColor: Color(0xFF684756),
+      keyTextColor: Color(0xFFF5F0F6),
+      keyTextSize: 24,
+      keyBorderRadius: 10,
+      keyTextStyle: TextStyle(fontWeight: FontWeight.w700, letterSpacing: 1.5),
+    ),
+  ),
 ];

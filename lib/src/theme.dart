@@ -24,6 +24,7 @@ class VirtualKeypadTheme {
     this.actionKeyColor = VkpColors.actionKeyColor,
     this.keyTextColor = VkpColors.keyTextColor,
     this.keyTextSize = 22.0,
+    this.keyTextStyle,
     this.keyBorderRadius = 6.0,
     this.keyShadow = true,
     this.splashColor,
@@ -48,6 +49,30 @@ class VirtualKeypadTheme {
 
   /// Font size for key text.
   final double keyTextSize;
+
+  /// Text style for key labels, merged over [keyTextColor] and [keyTextSize].
+  ///
+  /// Set this to put a brand font, weight or letter spacing on the keys. Only
+  /// the properties you set are applied, so leaving `fontSize` or `color` out
+  /// keeps [keyTextSize] and [keyTextColor]. Icons on action keys follow
+  /// [keyTextColor] and [keyTextSize] as before, since a font does not apply
+  /// to them.
+  ///
+  /// ```dart
+  /// VirtualKeypadTheme(
+  ///   keyTextStyle: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600),
+  /// )
+  /// ```
+  final TextStyle? keyTextStyle;
+
+  /// The effective style for a character key label.
+  ///
+  /// [keyTextStyle] is layered on top of the size and color, so a caller that
+  /// sets only a font family still gets the themed size and color.
+  TextStyle get effectiveKeyTextStyle {
+    final base = TextStyle(fontSize: keyTextSize, color: keyTextColor);
+    return keyTextStyle == null ? base : base.merge(keyTextStyle);
+  }
 
   /// Border radius for key buttons.
   final double keyBorderRadius;
@@ -129,6 +154,7 @@ class VirtualKeypadTheme {
     Color? actionKeyColor,
     Color? keyTextColor,
     double? keyTextSize,
+    TextStyle? keyTextStyle,
     double? keyBorderRadius,
     bool? keyShadow,
     Color? splashColor,
@@ -144,6 +170,7 @@ class VirtualKeypadTheme {
       actionKeyColor: actionKeyColor ?? this.actionKeyColor,
       keyTextColor: keyTextColor ?? this.keyTextColor,
       keyTextSize: keyTextSize ?? this.keyTextSize,
+      keyTextStyle: keyTextStyle ?? this.keyTextStyle,
       keyBorderRadius: keyBorderRadius ?? this.keyBorderRadius,
       keyShadow: keyShadow ?? this.keyShadow,
       splashColor: splashColor ?? this.splashColor,

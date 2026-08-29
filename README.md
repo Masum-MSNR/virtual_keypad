@@ -651,6 +651,17 @@ VirtualKeypad(
     keyTextSize: 24,
   ),
 )
+
+// Put your brand font on the keys. Anything you leave out keeps the
+// themed value, so this still uses keyTextSize and keyTextColor.
+VirtualKeypad(
+  theme: VirtualKeypadTheme.light.copyWith(
+    keyTextStyle: TextStyle(
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+)
 ```
 
 | Property | Type | Default | Description |
@@ -660,6 +671,7 @@ VirtualKeypad(
 | `actionKeyColor` | `Color` | `#ADB3BC` | Action key background |
 | `keyTextColor` | `Color` | `#1C1C1E` | Text and icon color |
 | `keyTextSize` | `double` | `22.0` | Font size |
+| `keyTextStyle` | `TextStyle?` | `null` | Key label style, merged over the color and size |
 | `keyBorderRadius` | `double` | `6.0` | Corner radius |
 | `keyShadow` | `bool` | `true` | Show key shadows |
 | `splashColor` | `Color?` | `null` | Tap ripple color |

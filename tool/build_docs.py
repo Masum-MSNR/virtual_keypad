@@ -805,6 +805,20 @@ VirtualKeypad(
   ),
 )
 """) + """
+<h2>A font of your own</h2>
+<p>Kiosk and point of sale builds usually have a brand font, and the keys should use it. <code>keyTextStyle</code> is merged over <code>keyTextColor</code> and <code>keyTextSize</code>, so you set only what you want to change.</p>
+""" + pre("""
+VirtualKeypad(
+  theme: VirtualKeypadTheme.light.copyWith(
+    keyTextStyle: const TextStyle(
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w600,
+      letterSpacing: 1.2,
+    ),
+  ),
+)
+""") + """
+<p>A <code>fontSize</code> or <code>color</code> inside the style wins over <code>keyTextSize</code> and <code>keyTextColor</code> for the labels. Icons on action keys keep following the colour and size, since a font family does not apply to them.</p>
 <h2>Every property</h2>
 <div class="tablewrap"><table>
 <thead><tr><th>Property</th><th>Type</th><th>Default</th><th>What it does</th></tr></thead>
@@ -814,6 +828,7 @@ VirtualKeypad(
 <tr><td><code>actionKeyColor</code></td><td><code>Color</code></td><td><code>#ADB3BC</code></td><td>Action key background</td></tr>
 <tr><td><code>keyTextColor</code></td><td><code>Color</code></td><td><code>#1C1C1E</code></td><td>Text and icon colour</td></tr>
 <tr><td><code>keyTextSize</code></td><td><code>double</code></td><td><code>22.0</code></td><td>Font size</td></tr>
+<tr><td><code>keyTextStyle</code></td><td><code>TextStyle?</code></td><td><code>null</code></td><td>Key label style, merged over the colour and size</td></tr>
 <tr><td><code>keyBorderRadius</code></td><td><code>double</code></td><td><code>6.0</code></td><td>Corner radius</td></tr>
 <tr><td><code>keyShadow</code></td><td><code>bool</code></td><td><code>true</code></td><td>Key shadows</td></tr>
 <tr><td><code>splashColor</code></td><td><code>Color?</code></td><td><code>null</code></td><td>Tap ripple colour</td></tr>
