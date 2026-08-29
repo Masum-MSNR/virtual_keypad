@@ -246,6 +246,7 @@ snippet from [Getting started](#getting-started) below.
 - [Source code on GitHub](https://github.com/almasumdev/virtual_keypad)
 - [Changelog](https://github.com/almasumdev/virtual_keypad/blob/main/CHANGELOG.md)
 - [Issue tracker](https://github.com/almasumdev/virtual_keypad/issues)
+- [Contributing](https://github.com/almasumdev/virtual_keypad/blob/main/CONTRIBUTING.md)
 - [Floating mode guide](https://github.com/almasumdev/virtual_keypad/blob/main/doc/floating-mode.md)
 - [Custom layouts guide](https://github.com/almasumdev/virtual_keypad/blob/main/doc/custom-layouts.md)
 - [Adding languages guide](https://github.com/almasumdev/virtual_keypad/blob/main/doc/adding-languages.md)
