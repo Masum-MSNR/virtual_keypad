@@ -680,6 +680,27 @@ VirtualKeypad(
 | `focusBorderWidth` | `double` | `3.0` | D-pad highlight border width |
 | `focusColor` | `Color?` | `null` | D-pad highlight background |
 
+### Draw a key yourself
+
+`keyBuilder` replaces the content of a key. Return `null` for the keys you do
+not want to change, so you can restyle one key and leave the rest alone:
+
+```dart
+VirtualKeypad(
+  keyBuilder: (context, info) => info.key.action == KeyAction.enter
+      ? const Text('GO', style: TextStyle(fontWeight: FontWeight.bold))
+      : null,
+)
+```
+
+`info` carries the key, its resolved `label` (null for keys drawn as an icon),
+the current `shift` and `capsLock`, whether the key is D-pad `isFocused`, and
+the `theme` in force.
+
+This controls content only. The key's background, size, tap handling, repeat,
+D-pad focus and accessibility stay with the package, so a builder cannot break
+the keyboard's behaviour.
+
 ### Multi-language and RTL
 
 ```dart

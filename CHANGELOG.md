@@ -1,3 +1,19 @@
+## 1.3.0
+
+Draw a key yourself when a theme is not enough.
+
+### New
+
+- `VirtualKeypad.keyBuilder` replaces the content of a key. It is handed a
+  `VirtualKeyContext` carrying the key, its resolved label (null for a key drawn
+  as an icon), the current shift and caps lock, whether the key is the D-pad
+  target, and the theme in force. Returning `null` declines that key and the
+  package draws it normally, so overriding one key out of forty does not mean
+  reimplementing the other thirty-nine.
+- The builder controls content only. Background, size, tap handling, key repeat,
+  D-pad focus and accessibility stay with the package, so a builder cannot break
+  the keyboard's behaviour. A replaced key still reports presses as before.
+
 ## 1.2.0
 
 Give the system keyboard back when the keypad is gone, and put your own font on

@@ -97,6 +97,7 @@ class VirtualKeypad extends StatefulWidget {
     this.onVisibilityChanged,
     this.animationDuration = const Duration(milliseconds: 200),
     this.animationCurve = Curves.easeInOut,
+    this.keyBuilder,
   })  : assert(
           type != KeyboardType.custom || customLayout != null,
           'VirtualKeypad.customLayout is required when type is KeyboardType.custom.',
@@ -294,6 +295,24 @@ class VirtualKeypad extends StatefulWidget {
 
   /// Animation curve for show/hide transitions.
   final Curve animationCurve;
+
+  /// Draws the content of a key, overriding the default label or icon.
+  ///
+  /// Return `null` for a key you do not want to change, which is what makes it
+  /// practical to restyle one key and leave the rest alone:
+  ///
+  /// ```dart
+  /// VirtualKeypad(
+  ///   keyBuilder: (context, info) => info.key.action == KeyAction.enter
+  ///       ? const Text('GO', style: TextStyle(fontWeight: FontWeight.bold))
+  ///       : null,
+  /// )
+  /// ```
+  ///
+  /// This controls content only. The key's background, size, tap handling,
+  /// repeat, D-pad focus and accessibility stay with the package, so a builder
+  /// cannot break the keyboard's behaviour.
+  final VirtualKeypadKeyBuilder? keyBuilder;
 
   @override
   State<VirtualKeypad> createState() => _VirtualKeypadState();
@@ -1112,6 +1131,7 @@ class _VirtualKeypadState extends State<VirtualKeypad> {
                   canOpenLanguagePicker: _canSwitchLanguages,
                   onSpaceLongPress: _showLanguagePicker,
                   onPressed: _onKeyPressed,
+                  keyBuilder: widget.keyBuilder,
                 );
               }),
             );
@@ -1557,6 +1577,7 @@ class _KeyWidget extends StatefulWidget {
     required this.canOpenLanguagePicker,
     required this.onSpaceLongPress,
     required this.onPressed,
+    required this.keyBuilder,
     this.isDpadFocused = false,
   });
 
@@ -1576,6 +1597,7 @@ class _KeyWidget extends StatefulWidget {
   final bool canOpenLanguagePicker;
   final ValueChanged<Offset> onSpaceLongPress;
   final void Function(VirtualKey) onPressed;
+  final VirtualKeypadKeyBuilder? keyBuilder;
 
   @override
   State<_KeyWidget> createState() => _KeyWidgetState();
@@ -1951,6 +1973,29 @@ class _KeyWidgetState extends State<_KeyWidget> {
 
   Widget _buildKeyContent() {
     final key = widget.virtualKey;
+
+    final builder = widget.keyBuilder;
+    if (builder != null) {
+      // A builder that returns null is declining this key, so fall through to
+      // the default content rather than drawing nothing.
+      final custom = builder(
+        context,
+        VirtualKeyContext(
+          key: key,
+          label: key.isCharacter
+              ? key.getDisplayText(
+                  shift: widget.shift,
+                  capsLock: widget.capsLock,
+                )
+              : null,
+          shift: widget.shift,
+          capsLock: widget.capsLock,
+          isFocused: widget.isDpadFocused,
+          theme: widget.theme,
+        ),
+      );
+      if (custom != null) return custom;
+    }
 
     if (key.isCharacter) {
       return Text(

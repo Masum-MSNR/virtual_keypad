@@ -101,3 +101,22 @@ VirtualKeypad(
 Setting `fontSize` or `color` inside the style overrides `keyTextSize` and
 `keyTextColor` for the labels. Icons on action keys keep following
 `keyTextColor` and `keyTextSize`, since a font family does not apply to them.
+
+## Drawing a key yourself
+
+When a theme is not enough, `keyBuilder` replaces a key's content outright:
+
+```dart
+VirtualKeypad(
+  keyBuilder: (context, info) {
+    if (info.key.action != KeyAction.enter) return null; // leave others alone
+    return const Text('GO', style: TextStyle(fontWeight: FontWeight.bold));
+  },
+)
+```
+
+Returning `null` declines the key and the package draws it normally, which is
+what makes it practical to override one key out of forty.
+
+The builder owns the content and nothing else. Background, size, tap handling,
+key repeat, D-pad focus and accessibility labels stay with the package.

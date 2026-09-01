@@ -1,3 +1,6 @@
+import 'package:flutter/widgets.dart';
+
+import 'theme.dart';
 import 'enums.dart';
 
 /// Represents a single key on the virtual keyboard or keypad.
@@ -96,3 +99,52 @@ typedef KeyRow = List<VirtualKey>;
 
 /// A complete keyboard layout consisting of multiple rows.
 typedef KeyboardLayout = List<KeyRow>;
+
+/// What a [VirtualKeypadKeyBuilder] is told about the key it is drawing.
+///
+/// {@category Theming}
+class VirtualKeyContext {
+  /// Creates the context handed to a key builder.
+  const VirtualKeyContext({
+    required this.key,
+    required this.label,
+    required this.shift,
+    required this.capsLock,
+    required this.isFocused,
+    required this.theme,
+  });
+
+  /// The key being drawn, including its [VirtualKey.text] and
+  /// [VirtualKey.action].
+  final VirtualKey key;
+
+  /// The text this key would show, with shift and caps lock already applied.
+  ///
+  /// `null` for a key the package draws as an icon, such as backspace or enter.
+  final String? label;
+
+  /// Whether shift is currently held.
+  final bool shift;
+
+  /// Whether caps lock is currently on.
+  final bool capsLock;
+
+  /// Whether this key is the current D-pad target and is being highlighted.
+  final bool isFocused;
+
+  /// The theme in force, so a builder can follow it instead of hard-coding.
+  final VirtualKeypadTheme theme;
+}
+
+/// Draws the content of a single key.
+///
+/// Return `null` to let the package draw that key normally, which is what makes
+/// it practical to override one key and leave the rest alone.
+///
+/// This controls the key's *content* only. Its background, size, tap handling,
+/// repeat, D-pad focus and accessibility stay with the package, so a builder
+/// cannot accidentally break the keyboard's behaviour.
+///
+/// {@category Theming}
+typedef VirtualKeypadKeyBuilder = Widget? Function(
+    BuildContext context, VirtualKeyContext info);
